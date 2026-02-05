@@ -4924,15 +4924,15 @@ def export_to_word_RD(data_dict, value_2024, value_2025, value_2033, currency, c
     
     word_count = len(title_text.split())
     
-    # STEP 1: If exceeds 35 words, simplify region text first
-    if word_count > 35:
+    # STEP 1: If exceeds 40 words, simplify region text first
+    if word_count > 40:
         segments_text_list[-1] = region_text_short
         segments_text = ", ".join(segments_text_list)
         title_text = f"{data_dict['title']}, {segments_text} - Industry Forecast 2026-2033"
         word_count = len(title_text.split())
     
-    # STEP 2: If still exceeds 35 words, remove last segment's sub-items (before Region)
-    if word_count > 35 and len(segments_text_list) > 1:
+    # STEP 2: If still exceeds 40 words, remove last segment's sub-items (before Region)
+    if word_count > 40 and len(segments_text_list) > 1:
         # Find last non-region segment and remove its sub-items
         for i in range(len(segments_text_list) - 2, -1, -1):  # -2 because last is Region
             if "(" in segments_text_list[i]:
@@ -4945,8 +4945,8 @@ def export_to_word_RD(data_dict, value_2024, value_2025, value_2033, currency, c
         title_text = f"{data_dict['title']}, {segments_text} - Industry Forecast 2026-2033"
         word_count = len(title_text.split())
     
-    # STEP 3: If still exceeds 35 words, keep only last segment with sub-items, remove others
-    if word_count > 35 and len(segments_text_list) > 1:
+    # STEP 3: If still exceeds 40 words, keep only last segment with sub-items, remove others
+    if word_count > 40 and len(segments_text_list) > 1:
         # Keep first segments without sub-items, only last one before region has sub-items
         simplified_list = []
         for i, seg in enumerate(segments_text_list[:-1]):  # Exclude Region

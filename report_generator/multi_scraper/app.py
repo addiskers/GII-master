@@ -2234,7 +2234,7 @@ def submit_to_skyquest():
                 multi_scraper_dir = os.path.join(current_dir, 'multi_scraper')
                 if multi_scraper_dir not in sys.path:
                     sys.path.insert(0, multi_scraper_dir)
-                from excel_gen import generate_excel, generate_template_excel, clean_filename
+                from excel_gen import generate_excel, clean_filename
                 
                 # Try to find matching JSON in dominating_region folder
                 dominating_region_dir = os.path.join(current_dir, 'dominating_region')
@@ -2277,29 +2277,18 @@ def submit_to_skyquest():
                     wb.save(excel_path)
                     print(f'[SkyQuest] Excel generated from data: {excel_path}')
                 else:
-                    # Generate template Excel if no data available
-                    print('[SkyQuest] No dominating_region data found, generating template Excel...')
-                    value_unit = submission.get('value_unit', 'Million')
-                    wb = generate_template_excel(market_name, value_unit)
-                    excel_path = os.path.join(submission_folder, f'{clean_filename(market_name)}.xlsx')
-                    wb.save(excel_path)
-                    print(f'[SkyQuest] Template Excel generated: {excel_path}')
+                    # No dominating_region data available - FAIL (Excel is mandatory)
+                    error_msg = f'Excel generation failed: No dominating_region data found for "{market_name}". Excel file is mandatory for SkyQuest submission.'
+                    print(f'[SkyQuest] ERROR: {error_msg}')
+                    return jsonify({'error': error_msg}), 400
                     
             except Exception as e:
-                print(f'[SkyQuest] Excel generation failed: {e}')
+                # Excel generation error - FAIL (Excel is mandatory)
+                error_msg = f'Excel generation failed: {str(e)}. Excel file is mandatory for SkyQuest submission.'
+                print(f'[SkyQuest] ERROR: {error_msg}')
                 import traceback
                 traceback.print_exc()
-                # Generate template Excel as fallback
-                try:
-                    from excel_gen import generate_template_excel, clean_filename
-                    value_unit = submission.get('value_unit', 'Million')
-                    wb = generate_template_excel(market_name, value_unit)
-                    excel_path = os.path.join(submission_folder, f'{clean_filename(market_name)}.xlsx')
-                    wb.save(excel_path)
-                    print(f'[SkyQuest] Fallback template Excel generated: {excel_path}')
-                except Exception as fallback_error:
-                    print(f'[SkyQuest] Fallback Excel generation also failed: {fallback_error}')
-                    excel_path = None
+                return jsonify({'error': error_msg}), 400
         
         # Step 5: Upload to SkyQuest
         print('[SkyQuest] Step 5/5: Uploading to SkyQuest API...')

@@ -33,27 +33,6 @@ def clean_filename(name):
     return re.sub(r'[\\/:*?"<>|]', '', name).strip()
 
 
-def generate_template_excel(market_name, unit="Million"):
-    """Generate a basic template Excel when no dominating_region data is available"""
-    wb = Workbook()
-    ws = wb.active
-    ws.title = "Template"
-    
-    # Add header
-    ws['A1'] = f"{market_name} - Regional Analysis Template"
-    ws['A2'] = "Note: This is a template file. No regional data available."
-    ws['A4'] = "Region"
-    ws['B4'] = f"Market Size ({unit})"
-    
-    # Add sample regions
-    regions = ["North America", "Europe", "Asia Pacific", "Latin America", "Middle East & Africa"]
-    for idx, region in enumerate(regions, start=5):
-        ws[f'A{idx}'] = region
-        ws[f'B{idx}'] = "N/A"
-    
-    return wb
-
-
 # ================= GPT SINGLE CALL (DOM + FAST) =================
 def get_gpt_dominating_and_fastest_sub_segments(market_name, sub_segments):
     if not sub_segments:
