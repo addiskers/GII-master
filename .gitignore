@@ -63,3 +63,6 @@ report_generator/multi_scraper/dominating_region/
 
 # Logs
 *.log
+
+# Website submission output
+website_submission/

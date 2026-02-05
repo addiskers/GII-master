@@ -2,6 +2,10 @@ import io
 import os
 from PIL import Image, ImageDraw, ImageFont
 from google import genai
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
@@ -205,8 +209,12 @@ def generate_market_image(market_name: str):
     gen_img = gen_img.resize((box_w, box_h), Image.Resampling.LANCZOS)
     base.paste(gen_img, (IMAGE_BOX[0], IMAGE_BOX[1]))
 
+    # Create images folder if it doesn't exist
+    images_folder = "images"
+    os.makedirs(images_folder, exist_ok=True)
+    
     safe_name = market_name.replace(" ", "_").replace("/", "-")
-    output_file = f"{safe_name}.webp"
+    output_file = os.path.join(images_folder, f"{safe_name}.webp")
 
     final_quality, final_size = compress_webp_under_target(base, output_file, target_kb=18)
 

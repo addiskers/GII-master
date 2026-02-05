@@ -47,6 +47,9 @@
     .btn-save{background:#1e7d44;color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:13px;cursor:pointer;font-weight:600}
     .btn-save:hover{background:#166534}
     .btn-cancel{background:#6c757d;color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:13px;cursor:pointer;font-weight:600;margin-left:8px}
+    .btn-skyquest{background:#00b894;color:#fff;border:none;border-radius:8px;padding:6px 10px;font-size:11px;cursor:pointer;font-weight:600;margin-left:6px}
+    .btn-skyquest:hover{background:#00a085}
+    .btn-skyquest:disabled{background:#95a5a6;cursor:not-allowed}
     .edit-input{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;margin-top:4px}
     .edit-textarea{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;margin-top:4px;min-height:100px;resize:vertical}
     .form-group{margin-bottom:16px}
@@ -122,6 +125,7 @@
                 </td>
                 <td>
                   <button class="btn-view" data-id="{{ s.id }}">View</button>
+                  <button class="btn-skyquest" data-id="{{ s.id }}" data-name="{{ s.market_name }}">Submit</button>
                 </td>
               </tr>
               {% endfor %}
@@ -405,5 +409,48 @@
     // Close modal
     closeBtn.addEventListener('click', () => { modal.style.display = 'none'; });
     modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
+
+    // SkyQuest Submit Handler
+    document.querySelectorAll('.btn-skyquest').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.dataset.id;
+        const name = btn.dataset.name;
+        
+        const confirmMsg = 'Submit "' + name + '" to SkyQuest?\n\n' +
+          'This will:\n' +
+          '1. Generate DOCX report (~10 min)\n' +
+          '2. Generate image (~1-2 min)\n' +
+          '3. Generate Excel (~2 min)\n' +
+          '4. Upload all files to SkyQuest\n\n' +
+          'Total time: ~15 minutes. Do not close this page.';
+        
+        if (!confirm(confirmMsg)) return;
+        
+        btn.disabled = true;
+        const originalText = btn.textContent;
+        btn.textContent = 'Processing...';
+        
+        try {
+          const res = await fetch('/api/submit-to-skyquest', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ submission_id: id })
+          });
+          const data = await res.json();
+          
+          if (data.success) {
+            alert('Success: ' + data.message);
+            location.reload();
+          } else {
+            alert('Error: ' + (data.error || 'Unknown error'));
+          }
+        } catch (err) {
+          alert('Error: ' + err.message);
+        } finally {
+          btn.disabled = false;
+          btn.textContent = originalText;
+        }
+      });
+    });
   </script>
 {% endblock %}

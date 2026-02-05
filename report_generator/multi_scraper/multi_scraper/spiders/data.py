@@ -4583,6 +4583,9 @@ def export_to_word_RD(data_dict, value_2024, value_2025, value_2033, currency, c
     market_name = data_dict.get("title", "")
     toc_list = data_dict.get("table_of_contents", [])
     
+    # Add companies to data_dict for add_company_profiles function
+    data_dict["company_profiles"] = companies
+    
     # Define market input variables from parameters (passed from generate_docx_from_data)
     value_2024_use = value_2024
     value_2025_calc = value_2025
@@ -5167,6 +5170,9 @@ def generate_docx_from_data(data, output_path=None, doc=None):
     )
     rd_meta = [(k, meta_desc if k == "Meta Description" else v) for k, v in rd_meta]
     
+    # Get companies from data, not the global variable
+    companies_list = data.get("companies", [])
+    
     return export_to_word_RD(
         data_dict=data,
         value_2024=value_2024_use,
@@ -5174,7 +5180,7 @@ def generate_docx_from_data(data, output_path=None, doc=None):
         value_2033=value_2033_calc,
         currency=currency_use,
         cagr=cagr_use,
-        companies=companies,
+        companies=companies_list,
         rd_meta=rd_meta,
         output_path=output_path,
         doc=doc

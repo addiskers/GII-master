@@ -1,0 +1,36 @@
+# Environment variables
+.env
+.env.local
+
+# Database
+*.db
+*.sqlite
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Application specific
+scraped_json/
+saved_data/
+website_submission/
+dominating_region/
+images/
+submitted_docs/
+*.bak

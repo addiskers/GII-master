@@ -15,12 +15,17 @@ from openai import OpenAI
 from dotenv import load_dotenv
 import re
 import tempfile
+import secrets
 
 app = Flask(__name__, template_folder='templates', static_folder='templates', static_url_path='/templates')
-app.secret_key = os.getenv('FLASK_SECRET', 'dev-secret-key')
 
-# Load environment variables
+# Load environment variables first
 load_dotenv()
+
+# Use strong random secret key if not set in environment
+app.secret_key = os.getenv('FLASK_SECRET') or secrets.token_hex(32)
+if not os.getenv('FLASK_SECRET'):
+    app.logger.warning('FLASK_SECRET not set! Using random key. Sessions will be invalidated on restart. Set FLASK_SECRET in .env for production.')
 
 # IST Timezone (UTC+5:30)
 IST = timezone(timedelta(hours=5, minutes=30))
@@ -223,7 +228,12 @@ with app.app_context():
     db = get_db()
     cur = db.execute('SELECT COUNT(*) as cnt FROM users WHERE role = ?', ('admin',))
     r = cur.fetchone()
-    admin_pass = os.getenv('DEFAULT_ADMIN_PASSWORD', 'admin123')
+    # Use strong default password from env, or generate a random one
+    admin_pass = os.getenv('DEFAULT_ADMIN_PASSWORD')
+    if not admin_pass:
+        admin_pass = secrets.token_urlsafe(16)
+        app.logger.warning(f'DEFAULT_ADMIN_PASSWORD not set! Generated random password: {admin_pass}')
+        app.logger.warning('Set DEFAULT_ADMIN_PASSWORD in .env for production.')
     if not r or r['cnt'] == 0:
         # Create default admin using pbkdf2
         create_user('admin', admin_pass, 'admin', created_by='system')
@@ -582,15 +592,21 @@ def tool():
 @app.route('/auth/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
+        username = request.form.get('username', '').strip()
+        password = request.form.get('password', '')
+        
+        # Basic input validation
+        if not username or not password:
+            flash('Username and password are required', 'danger')
+            return render_template('auth/login.html')
+        
+        # TODO: Add rate limiting here (e.g., Flask-Limiter) to prevent brute force
         user = get_user_by_username(username)
         if user and check_password_hash(user['password_hash'], password):
             session['username'] = user['username']
             session['role'] = user['role']
             update_last_login(user['username'])
             flash('Logged in', 'success')
-            # Redirect directly based on role to avoid index/login loop
             if user['role'] == 'admin':
                 return redirect(url_for('admin_dashboard'))
             if user['role'] == 'researcher':
@@ -648,7 +664,11 @@ def admin_dashboard():
     from datetime import datetime, timedelta
     def parse_iso(ts):
         try:
-            return datetime.fromisoformat(ts) if ts else None
+            dt = datetime.fromisoformat(ts) if ts else None
+            # Make timezone-naive if timezone-aware
+            if dt and dt.tzinfo is not None:
+                dt = dt.replace(tzinfo=None)
+            return dt
         except Exception:
             return None
     
@@ -1995,8 +2015,23 @@ def download_file():
     try:
         file_path = request.args.get('file_path')
         
-        if not file_path or not os.path.exists(file_path):
+        if not file_path:
+            return "Error: File path is required.", 400
+        
+        # Prevent path traversal attacks - normalize and validate path
+        file_path = os.path.abspath(file_path)
+        temp_dir = os.path.abspath(tempfile.gettempdir())
+        current_dir = os.path.abspath(os.path.dirname(__file__))
+        
+        # Only allow files from temp directory or current directory tree
+        if not (file_path.startswith(temp_dir) or file_path.startswith(current_dir)):
+            app.logger.warning(f'Path traversal attempt blocked: {file_path}')
+            return "Error: Invalid file path.", 403
+        
+        if not os.path.exists(file_path):
             return "Error: The file does not exist.", 404
+        
+        file_name = os.path.basename(file_path)
         
         file_name = os.path.basename(file_path)
         
@@ -2009,6 +2044,350 @@ def download_file():
     
     except Exception as e:
         return f"Error downloading file: {str(e)}", 500
+
+@app.route('/api/submit-to-skyquest', methods=['POST'])
+@login_required(role='admin')
+def submit_to_skyquest():
+    """Submit report to SkyQuest website API - Admin only
+    
+    Process: Get token -> Generate DOCX -> Generate Image -> Generate Excel -> Upload
+    Each step is done sequentially with no retries.
+    Note: DOCX takes ~10min, Image ~1-2min, Excel ~2min
+    """
+    import requests
+    import shutil
+    
+    try:
+        data = request.json or {}
+        submission_id = data.get('submission_id')
+        
+        if not submission_id:
+            return jsonify({'error': 'submission_id is required'}), 400
+        
+        # Get submission from database
+        db = get_db()
+        cur = db.execute('SELECT * FROM rd_submissions WHERE id = ?', (submission_id,))
+        row = cur.fetchone()
+        
+        if not row:
+            return jsonify({'error': 'Submission not found'}), 404
+        
+        submission = dict(row)
+        market_name = submission.get('market_name', 'Unknown')
+        
+        # Create website_submission folder
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        safe_market_name = market_name.replace(' ', '_').replace('/', '-')
+        submission_folder = os.path.join(current_dir, 'website_submission', safe_market_name)
+        os.makedirs(submission_folder, exist_ok=True)
+        
+        print(f'[SkyQuest] Starting submission for: {market_name}')
+        print(f'[SkyQuest] Output folder: {submission_folder}')
+        
+        # Step 1: Get SkyQuest token
+        print('[SkyQuest] Step 1/5: Getting auth token...')
+        login_url = 'https://www.skyquestt.com/api/login'
+        
+        # Get credentials from environment variables
+        skyquest_email = os.getenv('SKYQUEST_EMAIL')
+        skyquest_password = os.getenv('SKYQUEST_PASSWORD')
+        
+        if not skyquest_email or not skyquest_password:
+            return jsonify({'error': 'SkyQuest credentials not configured. Set SKYQUEST_EMAIL and SKYQUEST_PASSWORD environment variables.'}), 500
+        
+        login_response = requests.post(login_url, data={
+            'email': skyquest_email,
+            'password': skyquest_password
+        }, timeout=60)
+        
+        if login_response.status_code != 200:
+            return jsonify({'error': f'Failed to get SkyQuest token: {login_response.text}'}), 500
+        
+        token_data = login_response.json()
+        token = token_data.get('token')
+        
+        if not token:
+            return jsonify({'error': 'No token received from SkyQuest'}), 500
+        
+        print(f'[SkyQuest] Token received, expires: {token_data.get("expires_in")}')
+        
+        # Step 2: Generate DOCX report (takes ~10 minutes)
+        print('[SkyQuest] Step 2/5: Generating DOCX report (this may take 10+ minutes)...')
+        
+        segments = submission.get('segments', [])
+        if isinstance(segments, str):
+            try:
+                segments = json.loads(segments)
+            except:
+                segments = []
+        
+        ai_gen_seg = submission.get('ai_gen_seg', [])
+        if isinstance(ai_gen_seg, str):
+            try:
+                ai_gen_seg = json.loads(ai_gen_seg)
+            except:
+                ai_gen_seg = []
+        
+        companies = submission.get('companies', [])
+        if isinstance(companies, str):
+            try:
+                companies = json.loads(companies)
+            except:
+                companies = []
+        
+        # Debug: Print all submission data
+        print(f'[SkyQuest] Submission data:')
+        print(f'[SkyQuest]   - sector: {submission.get("sector")}')
+        print(f'[SkyQuest]   - industry_group: {submission.get("industry_group")}')
+        print(f'[SkyQuest]   - industry: {submission.get("industry")}')
+        print(f'[SkyQuest]   - sub_industry: {submission.get("sub_industry")}')
+        print(f'[SkyQuest]   - cagr: {submission.get("cagr")}')
+        print(f'[SkyQuest]   - value_unit: {submission.get("value_unit")}')
+        print(f'[SkyQuest]   - segments count: {len(segments)}')
+        print(f'[SkyQuest]   - companies count: {len(companies)}')
+        
+        # Build report data with all required fields
+        report_data = {
+            'title': market_name,
+            'table_of_contents': segments,
+            'companies': companies,
+            'industry_classification': {
+                'sector': submission.get('sector', ''),
+                'industry_group': submission.get('industry_group', ''),
+                'industry': submission.get('industry', ''),
+                'sub_industry': submission.get('sub_industry', '')
+            },
+            'market_inputs': {
+                'cagr': submission.get('cagr'),
+                'unit': submission.get('value_unit', 'Million'),
+                'value_2024': submission.get('market_size_2024'),
+                'value_2025': submission.get('market_size_2025'),
+                'value_2033': submission.get('projected_size_2033')
+            }
+        }
+        
+        # Check for existing DOCX in submission folder
+        import time
+        import glob as glob_module
+        
+        existing_docx = glob_module.glob(os.path.join(submission_folder, '*.docx'))
+        if existing_docx:
+            doc_path = existing_docx[0]
+            print(f'[SkyQuest] Using existing DOCX: {doc_path}')
+        else:
+            doc = Document()
+            generate_docx_from_data(report_data, doc=doc)
+            doc_path = os.path.join(submission_folder, f'{safe_market_name}.docx')
+            doc.save(doc_path)
+            print(f'[SkyQuest] DOCX saved: {doc_path}')
+        
+        # Step 3: Generate Image (takes ~1-2 minutes) with retry
+        print('[SkyQuest] Step 3/5: Checking for existing image or generating new...')
+        
+        # Check for existing image
+        existing_images = glob_module.glob(os.path.join(submission_folder, '*.webp'))
+        if not existing_images:
+            existing_images = glob_module.glob(os.path.join(submission_folder, '*.png'))
+        if not existing_images:
+            existing_images = glob_module.glob(os.path.join(submission_folder, '*.jpg'))
+        
+        image_path = None
+        if existing_images:
+            image_path = existing_images[0]
+            print(f'[SkyQuest] Using existing image: {image_path}')
+        else:
+            # Try up to 10 times with 30 sec delay
+            max_retries = 10
+            for attempt in range(1, max_retries + 1):
+                print(f'[SkyQuest] Image generation attempt {attempt}/{max_retries}...')
+                try:
+                    from image_gen import generate_market_image
+                    image_output = generate_market_image(market_name)
+                    image_dest = os.path.join(submission_folder, os.path.basename(image_output))
+                    if os.path.exists(image_output):
+                        shutil.move(image_output, image_dest)
+                    image_path = image_dest
+                    print(f'[SkyQuest] Image saved: {image_path}')
+                    break
+                except Exception as e:
+                    print(f'[SkyQuest] Image attempt {attempt} failed: {e}')
+                    if attempt < max_retries:
+                        print(f'[SkyQuest] Waiting 30 seconds before retry...')
+                        time.sleep(30)
+                    else:
+                        print('[SkyQuest] All image attempts failed, continuing without image...')
+                        image_path = None
+        
+        # Step 4: Generate Excel if data exists (takes ~2 minutes)
+        print('[SkyQuest] Step 4/5: Checking for existing Excel or generating new...')
+        
+        # Check for existing Excel
+        existing_excel = glob_module.glob(os.path.join(submission_folder, '*.xlsx'))
+        
+        excel_path = None
+        if existing_excel:
+            excel_path = existing_excel[0]
+            print(f'[SkyQuest] Using existing Excel: {excel_path}')
+        else:
+            try:
+                import sys
+                multi_scraper_dir = os.path.join(current_dir, 'multi_scraper')
+                if multi_scraper_dir not in sys.path:
+                    sys.path.insert(0, multi_scraper_dir)
+                from excel_gen import generate_excel, generate_template_excel, clean_filename
+                
+                # Try to find matching JSON in dominating_region folder
+                dominating_region_dir = os.path.join(current_dir, 'dominating_region')
+                matching_json = None
+                
+                if os.path.exists(dominating_region_dir):
+                    json_files = [f for f in os.listdir(dominating_region_dir) if f.endswith('.json')]
+                    
+                    # Try multiple matching strategies
+                    # 1. Exact match (case insensitive)
+                    for jf in json_files:
+                        if market_name.lower() in jf.lower():
+                            matching_json = os.path.join(dominating_region_dir, jf)
+                            break
+                    
+                    # 2. If no match, try removing " Market" suffix and match beginning
+                    if not matching_json:
+                        market_name_base = market_name.lower().replace(' market', '').strip()
+                        for jf in json_files:
+                            jf_lower = jf.lower()
+                            # Check if filename starts with the market name base
+                            if jf_lower.startswith(market_name_base):
+                                matching_json = os.path.join(dominating_region_dir, jf)
+                                print(f'[SkyQuest] Matched by prefix: {jf}')
+                                break
+                    
+                    # 3. If still no match, try fuzzy match (first 30 chars)
+                    if not matching_json and len(market_name) > 30:
+                        market_prefix = market_name.lower()[:30]
+                        for jf in json_files:
+                            if market_prefix in jf.lower():
+                                matching_json = os.path.join(dominating_region_dir, jf)
+                                print(f'[SkyQuest] Matched by fuzzy prefix: {jf}')
+                                break
+                
+                if matching_json:
+                    # Generate Excel from dominating_region data
+                    wb, extracted_name = generate_excel(matching_json)
+                    excel_path = os.path.join(submission_folder, f'{clean_filename(extracted_name or market_name)}.xlsx')
+                    wb.save(excel_path)
+                    print(f'[SkyQuest] Excel generated from data: {excel_path}')
+                else:
+                    # Generate template Excel if no data available
+                    print('[SkyQuest] No dominating_region data found, generating template Excel...')
+                    value_unit = submission.get('value_unit', 'Million')
+                    wb = generate_template_excel(market_name, value_unit)
+                    excel_path = os.path.join(submission_folder, f'{clean_filename(market_name)}.xlsx')
+                    wb.save(excel_path)
+                    print(f'[SkyQuest] Template Excel generated: {excel_path}')
+                    
+            except Exception as e:
+                print(f'[SkyQuest] Excel generation failed: {e}')
+                import traceback
+                traceback.print_exc()
+                # Generate template Excel as fallback
+                try:
+                    from excel_gen import generate_template_excel, clean_filename
+                    value_unit = submission.get('value_unit', 'Million')
+                    wb = generate_template_excel(market_name, value_unit)
+                    excel_path = os.path.join(submission_folder, f'{clean_filename(market_name)}.xlsx')
+                    wb.save(excel_path)
+                    print(f'[SkyQuest] Fallback template Excel generated: {excel_path}')
+                except Exception as fallback_error:
+                    print(f'[SkyQuest] Fallback Excel generation also failed: {fallback_error}')
+                    excel_path = None
+        
+        # Step 5: Upload to SkyQuest
+        print('[SkyQuest] Step 5/5: Uploading to SkyQuest API...')
+        upload_url = 'https://www.skyquestt.com/api/importRDFile'
+        headers = {'Authorization': f'Bearer {token}'}
+        
+        files = {}
+        file_handles = []
+        
+        if os.path.exists(doc_path):
+            fh = open(doc_path, 'rb')
+            files['report_rd'] = fh
+            file_handles.append(fh)
+        
+        if image_path and os.path.exists(image_path):
+            fh = open(image_path, 'rb')
+            files['report_image'] = fh
+            file_handles.append(fh)
+        
+        if excel_path and os.path.exists(excel_path):
+            fh = open(excel_path, 'rb')
+            files['report_graph'] = fh
+            file_handles.append(fh)
+        
+        # Validate required files before upload
+        if 'report_rd' not in files:
+            return jsonify({'error': 'DOCX report is required but could not be generated'}), 400
+        
+        if 'report_graph' not in files:
+            return jsonify({'error': 'Excel file is required but could not be generated. Check logs for details.'}), 400
+        
+        print(f'[SkyQuest] Files to upload:')
+        print(f'[SkyQuest]   - report_rd: {doc_path}')
+        print(f'[SkyQuest]   - report_image: {image_path if image_path else "None (optional)"}')
+        print(f'[SkyQuest]   - report_graph: {excel_path}')
+        
+        try:
+            upload_response = requests.post(upload_url, headers=headers, files=files, timeout=300)
+            
+            # Close all file handles
+            for fh in file_handles:
+                fh.close()
+            
+            print(f'[SkyQuest] Response status: {upload_response.status_code}')
+            print(f'[SkyQuest] Response body: {upload_response.text}')
+            
+            if upload_response.status_code == 200:
+                print('[SkyQuest] Upload successful!')
+                
+                # Update submission status in database
+                db.execute('''
+                    UPDATE rd_submissions 
+                    SET downloaded = 1, last_downloaded_at = ? 
+                    WHERE id = ?
+                ''', (datetime.now(timezone.utc).isoformat(), submission_id))
+                db.commit()
+                
+                return jsonify({
+                    'success': True,
+                    'message': f'Successfully submitted {market_name} to SkyQuest',
+                    'files': {
+                        'doc': doc_path if os.path.exists(doc_path) else None,
+                        'image': image_path,
+                        'excel': excel_path
+                    },
+                    'skyquest_response': upload_response.text
+                })
+            else:
+                print(f'[SkyQuest] Upload failed: {upload_response.status_code}')
+                return jsonify({
+                    'error': f'SkyQuest upload failed with status {upload_response.status_code}',
+                    'details': upload_response.text
+                }), 500
+                
+        except Exception as e:
+            # Close file handles on error
+            for fh in file_handles:
+                try:
+                    fh.close()
+                except:
+                    pass
+            raise e
+        
+    except Exception as e:
+        print(f'[SkyQuest] Error: {str(e)}')
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': f'Failed to submit to SkyQuest: {str(e)}'}), 500
 
 if __name__ == '__main__':
     port = int(os.getenv('PORT', '5001'))
