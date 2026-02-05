@@ -1,0 +1,31 @@
+{% extends 'auth/base.html' %}
+{% block content %}
+  <style>
+    .login-wrap{display:flex;align-items:center;justify-content:center;margin-top:24px}
+    .login-card{background:#fff;border-radius:12px;box-shadow:0 8px 24px rgba(31,36,48,0.08);padding:18px;max-width:480px;width:100%}
+    .login-title{margin:0 0 4px 0;font-size:22px;font-weight:700;color:#1f2430}
+    .login-sub{margin:0 0 14px 0;color:#7a8aa0;font-size:14px}
+    .login-form .field{margin-bottom:12px}
+    .login-form label{display:block;margin-bottom:6px;color:#394150;font-weight:600}
+    .login-form input{padding:10px 12px;border:1px solid #e6e9f0;border-radius:8px;width:100%;box-sizing:border-box}
+    .login-btn{display:inline-block;width:100%;padding:10px 12px;border-radius:8px;background:#6014FA;color:#fff;border:1px solid #6014FA;cursor:pointer;font-weight:600}
+    .login-btn:hover{background:#5211e6}
+  </style>
+  <div class="login-wrap">
+    <div class="login-card" role="region" aria-label="Login">
+      <h3 class="login-title">Welcome back</h3>
+      <p class="login-sub">Sign in to Skyquest Technologies</p>
+      <form method="post" class="login-form">
+        <div class="field">
+          <label for="username">Username</label>
+          <input id="username" type="text" name="username" required placeholder="Enter your username" />
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input id="password" type="password" name="password" required placeholder="Enter your password" />
+        </div>
+        <button type="submit" class="login-btn">Login</button>
+      </form>
+    </div>
+  </div>
+{% endblock %}

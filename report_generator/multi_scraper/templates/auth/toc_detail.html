@@ -1,0 +1,211 @@
+{% extends 'auth/base.html' %}
+{% block content %}
+  <style>
+    /* Make admin layout span full width and remove left padding so sidebar sits at extreme left */
+    .container{max-width:100%;margin:0;padding-left:24px}
+    :root{--primary:#6C5CE7;--border:#e6e9f0;--card:#ffffff;--text:#1f2430;--muted:#7a8aa0;--success:#1e7d44;--warning:#b46900}
+    .admin-layout{display:grid;grid-template-columns:250px 1fr;gap:18px;margin-top:12px}
+    .sidebar{background:var(--card);border-radius:14px;box-shadow:0 10px 30px rgba(31,36,48,0.08);padding:18px;min-height:70vh}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--text);margin-bottom:14px}
+    .brand .logo{width:28px;height:28px;border-radius:8px;border:2px solid var(--primary);display:flex;align-items:center;justify-content:center;color:var(--primary)}
+    .nav{display:flex;flex-direction:column;gap:8px}
+    .nav a{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:10px;color:#394150;text-decoration:none;border:1px solid var(--border)}
+    .nav a:hover{background:#f7f7fb}
+    .nav a.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+    .card{background:var(--card);border-radius:14px;box-shadow:0 10px 30px rgba(31,36,48,0.08);padding:16px;margin-bottom:16px}
+    .toc-header{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+    .header-box{background:#f7f7fb;border:1px solid var(--border);border-radius:10px;padding:16px}
+    .header-box h4{margin:0 0 12px 0;color:var(--text);font-size:14px;font-weight:600;text-transform:uppercase}
+    .header-item{display:flex;justify-content:space-between;padding:6px 0;font-size:13px;color:#394150}
+    .header-label{font-weight:500;color:var(--muted)}
+    .header-value{font-weight:600;color:var(--text)}
+    .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:16px}
+    .metric-box{background:#f7f7fb;border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+    .metric-label{font-size:12px;color:var(--muted);margin-bottom:4px}
+    .metric-value{font-size:18px;font-weight:700;color:var(--primary)}
+    .table-pro{width:100%;border-collapse:separate;border-spacing:0}
+    .table-pro thead th{background:#f7f7fb;color:#394150;font-weight:600;padding:12px;border-bottom:1px solid var(--border);text-align:left;font-size:13px}
+    .table-pro tbody td{padding:12px;border-bottom:1px solid #f0f2f6;color:#2f3443;font-size:13px}
+    .table-pro tbody tr:hover{background:#fafbff}
+    .badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:11px;font-weight:600}
+    .badge-success{background:#e9f7ef;color:var(--success);border:1px solid #cbead7}
+    .badge-warning{background:#fff7e6;color:var(--warning);border:1px solid #ffe0b2}
+    .toc-tree{margin:12px 0}
+    .tree-item{position:relative;padding-left:16px;margin:4px 0;font-size:13px;color:#2f3443}
+    .tree-item::before{content:"";position:absolute;left:0;top:8px;width:8px;height:1px;background:#d0d7e3}
+    .tree-item-label{display:inline-block;margin:0}
+    .tree-item-level-1{margin-left:0;font-weight:600;color:var(--primary)}
+    .tree-item-level-2{margin-left:16px;color:#2f3443}
+    .tree-item-level-3{margin-left:32px;color:#5a6370}
+    .companies-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+    .company-badge{background:#f7f7fb;border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:12px;color:#2f3443;text-align:center}
+    .sections-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
+    .section-card{background:#f9fafc;border:1px solid var(--border);border-radius:10px;padding:14px}
+    .section-title{font-weight:600;color:var(--text);margin:0 0 10px 0;font-size:14px}
+    .section-content{font-size:12px;color:#2f3443;line-height:1.6}
+    .link-strong{font-weight:600;color:#394150;text-decoration:none}
+    .link-strong:hover{color:#1f2430;text-decoration:underline}
+  </style>
+
+  {# TOC Tree Renderer - shows hierarchical structure with proper indentation #}
+  {% macro render_toc_tree(val, level=0) %}
+    {% if val is string %}
+      <div class="tree-item tree-item-level-{{ [1, 2, 3]|min(level + 1) }}">
+        <span class="tree-item-label">{{ val }}</span>
+      </div>
+    {% elif val is sequence %}
+      {% for item in val %}
+        <div class="tree-item tree-item-level-{{ [1, 2, 3]|min(level + 1) }}">
+          {% if item is string %}
+            <span class="tree-item-label">{{ item }}</span>
+          {% elif item is mapping or item is sequence %}
+            {{ render_toc_tree(item, level + 1) }}
+          {% else %}
+            <span class="tree-item-label">{{ item }}</span>
+          {% endif %}
+        </div>
+      {% endfor %}
+    {% elif val is mapping %}
+      {% for k, v in val.items() %}
+        <div class="tree-item tree-item-level-{{ [1, 2, 3]|min(level + 1) }}">
+          <span class="tree-item-label"><strong>{{ k }}</strong></span>
+          {{ render_toc_tree(v, level + 1) }}
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="tree-item tree-item-level-{{ [1, 2, 3]|min(level + 1) }}">
+        <span class="tree-item-label">{{ val }}</span>
+      </div>
+    {% endif %}
+  {% endmacro %}
+
+  {# Segments Outline Renderer - for simple numbered segments #}
+  {% macro render_outline(val) %}
+    {% if val is string %}
+      <div style="margin:4px 0;font-family:monospace;color:#2f3443">{{ val }}</div>
+    {% elif val is sequence %}
+      <div style="margin:0">
+        {% for item in val %}
+          {% if item is string %}
+            <div style="margin:4px 0;padding-left:8px;font-family:monospace;color:#2f3443">{{ item }}</div>
+          {% else %}
+            {{ render_outline(item) }}
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% elif val is mapping %}
+      <div style="margin:4px 0">
+        {% for k, v in val.items() %}
+          <div style="margin:4px 0;font-weight:600;color:#2f3443">{{ k }}</div>
+          {{ render_outline(v) }}
+        {% endfor %}
+      </div>
+    {% else %}
+      <div style="margin:4px 0">{{ val }}</div>
+    {% endif %}
+  {% endmacro %}
+  
+  <div class="admin-layout">
+    <aside class="sidebar" aria-label="Admin navigation">
+      <div class="brand"><div class="logo">⬢</div> Dashboard <span class="muted">v0.1</span></div>
+      <nav class="nav" id="adminNav">
+        <a href="/auth/admin">Dashboard</a>
+        <a href="/auth/admin/submissions">Submissions</a>
+        <a href="/auth/admin/researchers">Researchers</a>
+        <a href="/auth/admin/creators">Creators</a>
+        <a href="/auth/admin/toc" class="active">TOC</a>
+        <a href="/tool">Research Tool</a>
+        <a href="/auth/logout">Logout</a>
+      </nav>
+    </aside>
+    
+    <main>
+      <div class="card">
+        <h2 style="margin:0 0 16px 0">Table of Contents Details</h2>
+        <p style="margin:0;color:var(--muted);font-size:13px">Complete TOC structure with market segments, hierarchy, and details</p>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <h3 style="margin:0">Summary</h3>
+          <span style="font-size:12px;color:var(--muted)">Total TOCs: {{ metrics.total_submissions }}</span>
+        </div>
+        <div class="metrics">
+          <div class="metric-box">
+            <div class="metric-label">Total TOCs</div>
+            <div class="metric-value">{{ metrics.total_submissions }}</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Total Segments</div>
+            <div class="metric-value">{{ metrics.total_changes }}</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Pending</div>
+            <div class="metric-value">{{ metrics.pending_count }}</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-label">Downloaded</div>
+            <div class="metric-value">{{ metrics.downloaded_count }}</div>
+          </div>
+        </div>
+      </div>
+
+      {% for s in submissions %}
+      <div class="card">
+        <!-- Market Header -->
+        <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)">
+          <div>
+            <h3 style="margin:0 0 4px 0;color:var(--text)">{{ s.market_name or '—' }}</h3>
+            <div style="font-size:12px;color:var(--muted)">
+              Researcher: <a class="link-strong" href="/auth/admin/researchers/{{ s.researcher_username }}">{{ s.researcher_username }}</a> | 
+              Creator: <a class="link-strong" href="/auth/admin/creators">{{ s.creator_username }}</a>
+            </div>
+          </div>
+          <div style="text-align:right">
+            {% if s.downloaded %}
+              <span class="badge badge-success">Downloaded</span>
+            {% else %}
+              <span class="badge badge-warning">Pending</span>
+            {% endif %}
+            <div style="font-size:11px;color:var(--muted);margin-top:4px">{{ s.submitted_at | fmt_ts }}</div>
+          </div>
+        </div>
+
+        <!-- Segments Comparison -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+          <div style="background:#f9fafc;border:1px solid var(--border);border-radius:10px;padding:12px">
+            <h5 style="margin:0 0 8px 0;color:#394150;font-size:12px;font-weight:600">AI Generated Segments</h5>
+            <div style="font-size:12px;color:#2f3443;line-height:1.6">
+              {{ render_outline(s.segments_before) }}
+            </div>
+          </div>
+          <div style="background:#f9fafc;border:1px solid var(--border);border-radius:10px;padding:12px">
+            <h5 style="margin:0 0 8px 0;color:#394150;font-size:12px;font-weight:600">Final Segments (After Changes)</h5>
+            <div style="font-size:12px;color:#2f3443;line-height:1.6">
+              {{ render_outline(s.segments_after) }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Download Button -->
+        <div style="display:flex;gap:10px;margin-bottom:16px">
+          <a href="/auth/admin/toc/download/{{ s.id }}" style="display:inline-flex;align-items:center;gap:6px;background:var(--primary);color:#fff;padding:10px 16px;border-radius:8px;text-decoration:none;font-weight:600;font-size:13px;transition:background 0.2s">
+            <span>↓</span> Download JSON
+          </a>
+        </div>
+
+        <hr style="border:none;border-top:1px solid var(--border);margin:16px 0">
+      </div>
+      {% endfor %}
+
+      {% if not submissions %}
+      <div class="card">
+        <div style="text-align:center;padding:40px 20px;color:var(--muted)">
+          <p>No TOC submissions found</p>
+        </div>
+      </div>
+      {% endif %}
+    </main>
+  </div>
+
+{% endblock %}

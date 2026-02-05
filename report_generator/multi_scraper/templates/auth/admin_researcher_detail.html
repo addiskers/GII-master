@@ -1,0 +1,163 @@
+{% extends 'auth/base.html' %}
+{% block content %}
+  <style>
+    /* Make admin layout span full width and remove left padding so sidebar sits at extreme left */
+    .container{max-width:100%;margin:0;padding-left:24px}
+    :root{--primary:#6C5CE7;--border:#e6e9f0;--card:#ffffff;--text:#1f2430;--muted:#7a8aa0}
+    .admin-layout{display:grid;grid-template-columns:250px 1fr;gap:18px;margin-top:12px}
+    .sidebar{background:var(--card);border-radius:14px;box-shadow:0 10px 30px rgba(31,36,48,0.08);padding:18px;min-height:70vh}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--text);margin-bottom:14px}
+    .brand .logo{width:28px;height:28px;border-radius:8px;border:2px solid var(--primary);display:flex;align-items:center;justify-content:center;color:var(--primary)}
+    .nav{display:flex;flex-direction:column;gap:8px}
+    .nav a{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:10px;color:#394150;text-decoration:none;border:1px solid var(--border)}
+    .nav a:hover{background:#f7f7fb}
+    .nav a.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+    .card{background:var(--card);border-radius:14px;box-shadow:0 10px 30px rgba(31,36,48,0.08);padding:16px}
+    .metrics{display:flex;gap:10px;flex-wrap:wrap}
+    .metric{background:#f7f7fb;border:1px solid var(--border);border-radius:10px;padding:8px 12px;color:#394150}
+    .table-pro{width:100%;border-collapse:separate;border-spacing:0}
+    .table-pro thead th{background:#f7f7fb;color:#394150;font-weight:600;padding:12px;border-bottom:1px solid var(--border)}
+    .table-pro tbody td{padding:12px;border-bottom:1px solid #f0f2f6;color:#2f3443}
+    .table-pro tbody tr:hover{background:#fafbff}
+    .badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:12px;font-weight:600}
+    .badge-success{background:#e9f7ef;color:#1e7d44;border:1px solid #cbead7}
+    .badge-warning{background:#fff7e6;color:#b46900;border:1px solid #ffe0b2}
+    .changes{background:#f9fafc;border:1px solid var(--border);border-radius:10px;padding:10px;white-space:pre-wrap;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-size:12px;color:#2f3443}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .panel{background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px}
+    .panel h5{margin:0 0 8px 0;color:#394150}
+    /* Outline numbering styles */
+    .outline .tree{margin:6px 0}
+    .outline .tree-item{position:relative;padding-left:12px;margin:4px 0 6px 8px;border-left:2px solid #e6e9f0}
+    .outline .tree-label{font-weight:600;color:#2f3443}
+    .outline .num{color:#6C5CE7;margin-right:6px}
+    .outline .leaf{margin:2px 0}
+    .link-strong{font-weight:600;color:#394150;text-decoration:none}
+    .link-strong:hover{color:#1f2430;text-decoration:underline}
+  </style>
+  {% macro render_h(val) %}
+    {% if val is string %}
+      <div class="leaf">{{ val }}</div>
+    {% elif val is mapping %}
+      <ul class="tree">
+        {% for k, v in val.items() %}
+          <li>
+            <div class="node-key">{{ k }}</div>
+            {{ render_h(v) }}
+          </li>
+        {% endfor %}
+      </ul>
+    {% elif val is sequence %}
+      <ul class="tree">
+        {% for item in val %}
+          <li>{{ render_h(item) }}</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <div class="leaf">{{ val }}</div>
+    {% endif %}
+  {% endmacro %}
+  <div class="admin-layout">
+    <aside class="sidebar" aria-label="Admin navigation">
+      <div class="brand"><div class="logo">⬢</div> Dashboard <span class="muted">v0.1</span></div>
+      <nav class="nav" id="adminNav">
+        <a href="/auth/admin">Dashboard</a>
+        <a href="/auth/admin/submissions">Submissions</a>
+        <a href="/auth/admin/researchers" class="active">Researchers</a>
+        <a href="/auth/admin/creators">Creators</a>
+        <a href="/auth/admin/toc">TOC</a>
+        <a href="/tool">Research Tool</a>
+        <a href="/auth/logout">Logout</a>
+      </nav>
+    </aside>
+    <main>
+      <div class="card" style="display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <h3 style="margin:0">Researcher: {{ username }}</h3>
+          <div class="metrics" style="margin-top:8px">
+            <span class="metric">Total submissions: {{ metrics.total_submissions }}</span>
+            <span class="metric">Total changes: {{ metrics.total_changes }}</span>
+            <span class="metric">Pending: {{ metrics.pending_count }}</span>
+            <span class="metric">Downloaded: {{ metrics.downloaded_count }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <table class="table-pro" id="detailTable">
+          <thead>
+            <tr>
+              <th>Market</th>
+              <th>Creator</th>
+              <th>Submitted At</th>
+              <th>Changes</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for s in submissions %}
+              <tr>
+                <td>{{ s.market_name or '—' }}</td>
+                <td><a class="link-strong" href="/auth/admin/creators">{{ s.creator_username }}</a></td>
+                <td>{{ s.submitted_at or '—' }}</td>
+                <td>{{ s.changes_count }}</td>
+                <td>
+                  {% if s.downloaded %}
+                    <span class="badge badge-success">Downloaded</span>
+                  {% else %}
+                    <span class="badge badge-warning">Pending</span>
+                  {% endif %}
+                </td>
+              </tr>
+              <tr>
+                <td colspan="5">
+                  <div class="two-col">
+                    <div class="panel">
+                      <h5>AI Generated (before)</h5>
+                      <div class="outline">{{ render_outline(s.segments_before) }}</div>
+                    </div>
+                    <div class="panel">
+                      <h5>Changes (after)</h5>
+                      <div class="outline">{{ render_outline(s.segments_after) }}</div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+            {% if not submissions %}
+              <tr><td colspan="5" class="muted">No submissions found for this researcher</td></tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+{% endblock %}
+  {# Numbered hierarchical renderer #}
+  {% macro render_outline(val) %}
+    {% if val is string %}
+      <div class="leaf">{{ val }}</div>
+    {% elif val is mapping %}
+      <div class="tree">
+        {% for k, v in val.items() %}
+          <div class="tree-item">
+            <div class="tree-label">{{ k }}</div>
+            {{ render_outline(v) }}
+          </div>
+        {% endfor %}
+      </div>
+    {% elif val is sequence %}
+      <div class="tree">
+        {% for item in val %}
+          <div class="tree-item">
+            {% if item is mapping or item is sequence %}
+              {{ render_outline(item) }}
+            {% else %}
+              <div class="leaf">{{ item }}</div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="leaf">{{ val }}</div>
+    {% endif %}
+  {% endmacro %}

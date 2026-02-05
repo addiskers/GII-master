@@ -1,0 +1,450 @@
+{% extends 'auth/base.html' %}
+{% block content %}
+  <style>
+    /* Make admin layout span full width and remove left padding so sidebar sits at extreme left */
+    .container{max-width:100%;margin:0;padding-left:24px}
+    :root{
+      --primary:#6C5CE7; /* Soft purple close to screenshot */
+      --bg:#f5f6fa;
+      --text:#1f2430;
+      --muted:#7a8aa0;
+      --border:#e6e9f0;
+      --card:#ffffff;
+      --success-bg:#e9f7ef;
+      --success:#1e7d44;
+      --warning-bg:#fff7e6;
+      --warning:#b46900;
+    }
+    .page-chrome{position:relative}
+    .page-chrome:before,.page-chrome:after{content:"";position:fixed;left:0;right:0;height:10px;background:var(--primary);z-index:0}
+    .page-chrome:before{top:0}.page-chrome:after{bottom:0}
+    .admin-layout{display:grid;grid-template-columns:250px 1fr;gap:18px;margin-top:12px}
+    .sidebar{background:var(--card);border-radius:14px;box-shadow:0 10px 30px rgba(31,36,48,0.08);padding:18px;min-height:70vh}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--text);margin-bottom:14px}
+    .brand .logo{width:28px;height:28px;border-radius:8px;border:2px solid var(--primary);display:flex;align-items:center;justify-content:center;color:var(--primary)}
+    .nav{display:flex;flex-direction:column;gap:8px}
+    .nav a{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:10px;color:#394150;text-decoration:none;border:1px solid var(--border)}
+    .nav a:hover{background:#f7f7fb}
+    .nav a.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+    .main{display:flex;flex-direction:column;gap:14px}
+    .card{background:var(--card);border-radius:14px;box-shadow:0 10px 30px rgba(31,36,48,0.08);padding:16px}
+    .hero-card{background:linear-gradient(135deg,#ff8aa5 0%, #ff7a6e 40%, #ffb07a 100%);color:#fff;position:relative;overflow:hidden}
+    .hero-card:after{content:"";position:absolute;right:-40px;top:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,0.15)}
+    .header-row{display:flex;align-items:center;justify-content:space-between}
+    .greet{font-size:22px;font-weight:700;color:var(--text);margin:0}
+    .hero-card .greet{color:#fff}
+    .search-top{flex:0 0 280px;display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--border);border-radius:999px;padding:6px 12px}
+    .search-top input{border:none;outline:none;flex:1}
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .stat-card{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;border:1px solid rgba(108,92,231,0.08);transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1)}
+    .stat-card:hover{transform:translateY(-4px);box-shadow:0 16px 48px rgba(108,92,231,0.12);border-color:rgba(108,92,231,0.15)}
+    .stat-card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg, var(--stat-color) 0%, transparent 100%)}
+    .stat-card.submissions{--stat-color:#ff6b6b}
+    .stat-card.researchers{--stat-color:#6014FA}
+    .stat-card.active{--stat-color:#10b981}
+    .stat-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+    .stat-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;background:rgba(96,20,250,0.08)}
+    .stat-title{color:var(--muted);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.4px;margin:0}
+    .stat-main{display:flex;align-items:baseline;gap:6px;margin-bottom:10px}
+    .stat-number{font-size:32px;font-weight:800;color:var(--text);line-height:1}
+    .stat-unit{color:var(--muted);font-size:13px;font-weight:500}
+    .stat-footer{display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid rgba(0,0,0,0.04)}
+    .stat-trend{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600}
+    .stat-trend.positive{color:#10b981}
+    .stat-trend.negative{color:#ef4444}
+    .stat-trend.neutral{color:var(--muted)}
+    .stat-context{font-size:11px;color:var(--muted);font-weight:500}
+    .stat-bar{height:3px;background:linear-gradient(90deg, rgba(96,20,250,0.1) 0%, rgba(96,20,250,0.05) 100%);border-radius:999px;overflow:hidden;margin-top:8px}
+    .stat-bar-fill{height:100%;background:var(--stat-color);border-radius:999px;transition:width 0.6s ease-out}
+    .table-card h4{margin:0 0 6px 0}
+    .table-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+    .search{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--border);border-radius:999px;padding:6px 12px}
+    .search input{border:none;outline:none;flex:1}
+    .sort{display:flex;align-items:center;gap:8px}
+    .sort select{padding:8px 10px;border:1px solid var(--border);border-radius:10px}
+    .table-pro{width:100%;border-collapse:separate;border-spacing:0}
+    .table-pro thead th{background:#f7f7fb;color:#394150;font-weight:600;padding:12px;border-bottom:1px solid var(--border)}
+    .table-pro tbody td{padding:12px;border-bottom:1px solid #f0f2f6;color:#2f3443}
+    .table-pro tbody tr:hover{background:#fafbff}
+    .badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:12px;font-weight:600}
+    .badge-success{background:var(--success-bg);color:var(--success);border:1px solid #cbead7}
+    .badge-warning{background:var(--warning-bg);color:var(--warning);border:1px solid #ffe0b2}
+    .muted{color:var(--muted)}
+  </style>
+  <div class="page-chrome">
+    <div class="admin-layout">
+      <aside class="sidebar" aria-label="Admin navigation">
+        <div class="brand"><div class="logo">⬢</div> Dashboard <span class="muted">v0.1</span></div>
+        <nav class="nav" id="adminNav">
+          <a href="/auth/admin">Dashboard</a>
+          <a href="/auth/admin/researchers">Researchers</a>
+          <a href="/auth/admin/submissions">Submissions</a>
+          <a href="/tool">Research Tool</a>
+          <a href="/auth/logout">Logout</a>
+        </nav>
+      </aside>
+
+      <main class="main">
+        <div class="card hero-card">
+          <div class="header-row">
+            <h3 class="greet">Hello {{ session.username }}, 👋</h3>
+            <div class="search-top"><span class="muted">🔍</span><input type="text" placeholder="Search" /></div>
+          </div>
+        </div>
+
+        <div class="stats">
+          <!-- Total Submissions Card -->
+          <div class="card stat-card submissions">
+            <div class="stat-header">
+              <h4 class="stat-title">Total Submissions</h4>
+              <div class="stat-icon">📋</div>
+            </div>
+            <div class="stat-main">
+              <span class="stat-number">{{ total_submissions }}</span>
+            </div>
+            <div class="stat-footer">
+              <div class="stat-trend positive">
+                <span>↑ 12%</span>
+              </div>
+              <div class="stat-context">vs last month</div>
+            </div>
+            <div class="stat-bar">
+              <div class="stat-bar-fill" style="width: 75%"></div>
+            </div>
+          </div>
+
+          <!-- Researchers Card -->
+          <div class="card stat-card researchers">
+            <div class="stat-header">
+              <h4 class="stat-title">Researchers</h4>
+              <div class="stat-icon">👥</div>
+            </div>
+            <div class="stat-main">
+              <span class="stat-number">{{ researchers_count }}</span>
+              <span class="stat-unit">active</span>
+            </div>
+            <div class="stat-footer">
+              <div class="stat-trend neutral">
+                <span>→ 0%</span>
+              </div>
+              <div class="stat-context">this month</div>
+            </div>
+            <div class="stat-bar">
+              <div class="stat-bar-fill" style="width: 68%"></div>
+            </div>
+          </div>
+
+          <!-- Active Now Card -->
+          <div class="card stat-card active">
+            <div class="stat-header">
+              <h4 class="stat-title">Active Now</h4>
+              <div class="stat-icon">🔴</div>
+            </div>
+            <div class="stat-main">
+              <span class="stat-number">{{ active_researchers_today }}</span>
+              <span class="stat-unit">online</span>
+            </div>
+            <div class="stat-footer">
+              <div class="stat-trend positive">
+                <span>🟢 Live</span>
+              </div>
+              <div class="stat-context">last 24h</div>
+            </div>
+            <div class="stat-bar">
+              <div class="stat-bar-fill" style="width: 85%"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card table-card" id="submissionsSection">
+          <h4>All Submissions</h4>
+          <div class="table-toolbar">
+            <div class="search"><span class="muted">🔍</span><input id="adminSearch" type="text" placeholder="Search" /></div>
+            <div class="sort"><span class="muted">Sort by :</span>
+              <select id="adminStatus">
+                <option value="">Newest</option>
+                <option value="pending">Pending</option>
+                <option value="downloaded">Downloaded</option>
+              </select>
+            </div>
+          </div>
+          <table class="table-pro" id="adminTable">
+            <thead>
+              <tr>
+                <th>Researcher</th>
+                <th>Market Name</th>
+                <th>Submitted At</th>
+                <th>Market Value (2024)</th>
+                <th>CAGR</th>
+                <th>Segments</th>
+                <th>Companies</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for s in submissions %}
+                <tr data-r="{{ s.researcher_username|lower }}" data-m="{{ (s.market_name or '')|lower }}" data-status="{% if s.downloaded %}downloaded{% else %}pending{% endif %}">
+                  <td style="font-weight:600">{{ s.researcher_username }}</td>
+                  <td>{{ s.market_name or '—' }}</td>
+                  <td>{{ s.submitted_at|fmt_ts }}</td>
+                  <td>{{ s.value_2024 or '—' }} {{ s.currency or '' }}</td>
+                  <td>{{ s.cagr or '—' }}%</td>
+                  <td>{{ s.segment_count or 0 }}</td>
+                  <td>{{ s.company_count or 0 }}</td>
+                  <td>
+                    {% if s.downloaded %}
+                      <span class="badge badge-success">Downloaded</span>
+                    {% else %}
+                      <span class="badge badge-warning">Pending</span>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+              {% if not submissions %}
+                <tr><td colspan="8" class="muted">No submissions yet</td></tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+
+        
+
+        <script>
+          // Active tab highlighting based on current path
+          (function(){
+            const nav = document.getElementById('adminNav');
+            if(!nav) return;
+            const links = Array.from(nav.querySelectorAll('a'));
+            const path = window.location.pathname;
+            links.forEach(l => l.classList.remove('active'));
+            const map = {
+              '/auth/admin': 'Dashboard',
+              '/auth/admin/researchers': 'Researchers',
+              '/auth/admin/submissions': 'Submissions'
+            };
+            const label = map[path] || 'Dashboard';
+            const target = links.find(l => l.textContent.trim() === (label || 'Dashboard') || l.getAttribute('href') === path);
+            if(target) target.classList.add('active');
+          })();
+        </script>
+
+        <div class="card" id="marketsSection">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div class="muted">Users</div>
+            <a href="{{ url_for('admin_create_user') }}" class="muted" style="text-decoration:none">Create new user →</a>
+          </div>
+          <table class="table-pro" style="margin-top:8px">
+            <thead>
+              <tr><th>Username</th><th>Role</th><th>Created By</th><th>Created At</th><th>Last Login</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+              {% for u in users %}
+                <tr>
+                  <td style="font-weight:600">{{ u['username'] }}</td>
+                  <td>{{ u['role'] }}</td>
+                  <td>{{ u['created_by'] or '—' }}</td>
+                  <td>{{ u['created_at']|fmt_ts }}</td>
+                  <td>{{ u['last_login']|fmt_ts }}</td>
+                  <td>
+                    <button class="btn-delete-user" data-username="{{ u['username'] }}" data-role="{{ u['role'] }}" {% if u['role'] == 'admin' or u['username'] == session.username %}disabled title="Cannot delete admin or yourself"{% endif %} style="background:#e74c3c;color:#fff;border:none;border-radius:8px;padding:6px 10px;cursor:pointer">Delete</button>
+                  </td>
+                </tr>
+              {% endfor %}
+              {% if not users %}
+                <tr><td colspan="6" class="muted">No users found</td></tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    // Admin: Delete user client-side
+    (function(){
+      function bindDeleteButtons(){
+        const buttons = Array.from(document.querySelectorAll('.btn-delete-user'));
+        buttons.forEach(btn => {
+          if(btn.__bound) return; // avoid double-binding
+          btn.__bound = true;
+          btn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            if(btn.disabled) return;
+            const username = btn.dataset.username;
+            const role = btn.dataset.role;
+            if(!username) return;
+            const ok = window.confirm(`Delete user "${username}"? This cannot be undone.`);
+            if(!ok) return;
+            btn.disabled = true; btn.textContent = 'Deleting…';
+            try{
+              const res = await fetch('/auth/admin/delete_user', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username })
+              });
+              const data = await res.json().catch(()=>({ status:'error', error:'Invalid response'}));
+              if(res.ok && data && (data.ok === true || data.status === 'ok')){
+                const row = btn.closest('tr');
+                if(row) row.remove();
+              } else {
+                const msg = (data && (data.error||data.message)) || 'Delete failed';
+                alert(msg);
+                btn.disabled = (role === 'admin');
+                btn.textContent = 'Delete';
+              }
+            }catch(err){
+              console.error('delete user failed', err);
+              alert('Network error while deleting user');
+              btn.disabled = (role === 'admin');
+              btn.textContent = 'Delete';
+            }
+          });
+        });
+      }
+      // Bind once DOM is ready
+      if(document.readyState === 'loading'){
+        document.addEventListener('DOMContentLoaded', bindDeleteButtons);
+      } else {
+        bindDeleteButtons();
+      }
+    })();
+  </script>
+
+  <script>
+    // Simple search/filter for submissions
+    (function(){
+      const q = document.getElementById('adminSearch');
+      const status = document.getElementById('adminStatus');
+      const rows = Array.from(document.querySelectorAll('#adminTable tbody tr'));
+      function apply(){
+        const term = (q && q.value||'').trim().toLowerCase();
+        const st = (status && status.value||'').trim();
+        rows.forEach(r=>{
+          const match = (!term || r.dataset.r.includes(term) || r.dataset.c.includes(term) || r.dataset.m.includes(term));
+          const stOk = (!st || r.dataset.status === st);
+          r.style.display = (match && stOk) ? '' : 'none';
+        });
+      }
+      q && q.addEventListener('input', apply);
+      status && status.addEventListener('change', apply);
+    })();
+  </script>
+  
+  <!-- Chatbar: Admin <-> Researcher selector -->
+  <style>
+    .chatbar{position:fixed;right:18px;bottom:78px;width:360px;background:#fff;border:1px solid #e6e9f0;border-radius:14px;box-shadow:0 12px 32px rgba(31,36,48,0.14);display:none;flex-direction:column;overflow:hidden;z-index:1000}
+    .chatbar.open{display:flex}
+    .chatbar header{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:#6C5CE7;color:#fff;gap:8px}
+    .chatbar .messages{max-height:280px;overflow:auto;padding:10px;background:#f7f7fb}
+    .msg{display:flex;margin-bottom:8px}
+    .msg .bubble{padding:8px 10px;border-radius:12px;max-width:75%}
+    .msg.me{justify-content:flex-end}
+    .msg.me .bubble{background:#6C5CE7;color:#fff;border-top-right-radius:4px}
+    .msg.other .bubble{background:#fff;border:1px solid #e6e9f0;color:#1f2430;border-top-left-radius:4px}
+    .chatbar form{display:flex;gap:8px;padding:10px;background:#fff;border-top:1px solid #e6e9f0}
+    .chatbar input{flex:1;border:1px solid #e6e9f0;border-radius:10px;padding:8px 10px}
+    .chatbar button{background:#6C5CE7;color:#fff;border:none;border-radius:10px;padding:8px 12px;cursor:pointer}
+    .chatbar .close{background:transparent;color:#fff;border:none;font-size:18px;line-height:18px;padding:0 6px}
+    .chatbar select{border:1px solid rgba(255,255,255,0.6);background:rgba(255,255,255,0.25);color:#fff;border-radius:8px;padding:6px 8px}
+    /* Floating action button */
+    .chat-fab{position:fixed;right:18px;bottom:18px;width:52px;height:52px;border-radius:50%;background:#6C5CE7;color:#fff;display:flex;align-items:center;justify-content:center;border:none;box-shadow:0 8px 20px rgba(108,92,231,0.35);cursor:pointer;z-index:1001;font-size:22px}
+    .chat-fab:hover{filter:brightness(1.05)}
+  </style>
+  <div class="chatbar" id="chatbar-admin" aria-hidden="true">
+    <header>
+      <span>Chat with User</span>
+      <select id="chatTarget">
+        {% for u in users %}
+          {% if u.role != 'admin' %}
+            <option value="{{ u.username }}">{{ u.username }}{% if u.role %} ({{ u.role }}){% endif %}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button id="chatRefreshAdmin" style="background:rgba(255,255,255,0.2);color:#fff;border:none;border-radius:8px;padding:4px 8px;cursor:pointer">Refresh</button>
+        <button id="chatCloseAdmin" class="close" aria-label="Close">×</button>
+      </div>
+    </header>
+    <div class="messages" id="chatMessagesAdmin" aria-live="polite"></div>
+    <form id="chatFormAdmin" autocomplete="off">
+      <input type="text" id="chatInputAdmin" placeholder="Type a message" required />
+      <button type="submit">Send</button>
+    </form>
+  </div>
+  <button id="chatFabAdmin" class="chat-fab" aria-label="Open chat">💬</button>
+
+  <script>
+    (function(){
+      const me = "{{ session.username }}";
+      const targetSel = document.getElementById('chatTarget');
+      const list = document.getElementById('chatMessagesAdmin');
+      const input = document.getElementById('chatInputAdmin');
+      const form = document.getElementById('chatFormAdmin');
+      const refreshBtn = document.getElementById('chatRefreshAdmin');
+      const chatbar = document.getElementById('chatbar-admin');
+      const chatFab = document.getElementById('chatFabAdmin');
+      const chatClose = document.getElementById('chatCloseAdmin');
+      let pollTimer = null;
+      function other(){ return (targetSel && targetSel.value) || ''; }
+      function render(messages){
+        list.innerHTML = '';
+        messages.forEach(m => {
+          const div = document.createElement('div');
+          div.className = 'msg ' + (m.from_username === me ? 'me' : 'other');
+          const bubble = document.createElement('div');
+          bubble.className = 'bubble';
+          // format: dd mon yyyy HH:MM
+          function fmtIso(ts){
+            const s = (ts || '').trim();
+            const m = s.match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})/);
+            if(!m) return s.slice(0,16).replace('T',' ');
+            const months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+            const y = m[1], mo = parseInt(m[2],10), d = m[3], hh = m[4], mm = m[5];
+            return `${d} ${months[mo-1]} ${y} ${hh}:${mm}`;
+          }
+          const when = fmtIso(m.sent_at);
+          bubble.textContent = m.content + '  \u00b7 ' + when;
+          div.appendChild(bubble);
+          list.appendChild(div);
+        });
+        list.scrollTop = list.scrollHeight;
+      }
+      async function fetchMessages(){
+        const o = other(); if(!o) { list.innerHTML = '<div class="muted">No researcher selected</div>'; return; }
+        try{
+          const res = await fetch(`/api/chat/messages?with=${encodeURIComponent(o)}&limit=200`);
+          const data = await res.json();
+          if(data && Array.isArray(data.messages)) render(data.messages);
+        }catch(e){ console.warn('chat fetch failed', e); }
+      }
+      async function sendMessage(text){
+        const o = other(); if(!o) return;
+        try{
+          await fetch('/api/chat/send', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ to: o, content: text }) });
+          input.value = '';
+          fetchMessages();
+        }catch(e){ console.warn('chat send failed', e); }
+      }
+      form.addEventListener('submit', (ev)=>{ ev.preventDefault(); const t = input.value.trim(); if(t) sendMessage(t); });
+      refreshBtn.addEventListener('click', fetchMessages);
+      targetSel && targetSel.addEventListener('change', fetchMessages);
+      function openChat(){
+        chatbar.classList.add('open');
+        chatbar.setAttribute('aria-hidden','false');
+        fetchMessages();
+        if (pollTimer) clearInterval(pollTimer);
+        pollTimer = setInterval(fetchMessages, 2500);
+        setTimeout(()=>input.focus(),10);
+      }
+      function closeChat(){
+        chatbar.classList.remove('open');
+        chatbar.setAttribute('aria-hidden','true');
+        if (pollTimer){ clearInterval(pollTimer); pollTimer = null; }
+      }
+      chatFab.addEventListener('click', openChat);
+      chatClose.addEventListener('click', closeChat);
+      document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeChat(); });
+    })();
+  </script>
+{% endblock %}

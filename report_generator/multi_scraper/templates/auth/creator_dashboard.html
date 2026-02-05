@@ -1,0 +1,677 @@
+{% extends 'auth/base.html' %}
+{% block content %}
+  <style>
+    :root{--card-bg:#ffffff;--muted:#7a8aa0;--accent:#6014FA;--success:#1e7d44;--warning:#b46900}
+    .dashboard-wrap{margin-top:10px;font-family:Inter,system-ui,Arial,sans-serif}
+    .page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+    .page-title{font-size:24px;font-weight:700;color:#0f1724;margin:0}
+    .page-meta{color:var(--muted);font-size:14px;display:flex;gap:12px;align-items:center}
+    .card{background:var(--card-bg);border-radius:12px;box-shadow:0 8px 30px rgba(31,36,48,0.06);padding:16px}
+    .stats-grid .card{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:18px}
+    .stat-value{font-size:26px;font-weight:700;color:#0f1724}
+    .stat-label{color:var(--muted);font-size:12px}
+    .table-wrapper{overflow:auto;border-radius:10px;border:1px solid #eef1f6}
+    .table-pro{width:100%;border-collapse:collapse;border-spacing:0;min-width:900px}
+    .table-pro thead th{background:#fbfbfe;color:#394150;font-weight:700;padding:12px 14px;border-bottom:1px solid #eef1f6;text-align:left}
+    .table-pro tbody td{padding:12px 14px;border-bottom:1px solid #fbfbff;color:#21303a}
+    .table-pro tbody tr:hover{background:#fcf9ff}
+    .cell-ellipsis{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:360px}
+    .actions{display:flex;gap:8px;align-items:center}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;text-decoration:none;cursor:pointer;border:1px solid transparent;font-weight:600}
+    .btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+    .btn-secondary{background:#fff;color:var(--accent);border:1px solid #e9e5ff}
+    .btn-ghost{background:transparent;color:#394150;border:1px solid transparent;padding:6px 10px;border-radius:8px}
+    /* Pagination buttons: on hover use accent background with white text for better contrast */
+    #paginationControls .btn-ghost:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+    /* Transition for smoother hover feedback */
+    #paginationControls .btn-ghost, #exportCsv, #resetFilters, .table-card .actions .btn-ghost, .table-card .actions .btn-secondary { transition: background .15s, color .15s; }
+    /* Apply same hover style for Export, Reset and action View/Mark buttons */
+    #exportCsv:hover, #resetFilters:hover, .table-card .actions .btn-ghost:hover, .table-card .actions .btn-secondary:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .btn-link{color:var(--accent);text-decoration:none;background:transparent;padding:6px 8px;border-radius:6px}
+    .badge{display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700}
+    .badge-success{background:#e9f7ef;color:var(--success);border:1px solid #cbead7}
+    .badge-warning{background:#fff7e6;color:var(--warning);border:1px solid #ffe0b2}
+    .muted{color:var(--muted)}
+    /* Modal styles (shared) */
+    .modal-overlay{position:fixed;inset:0;background:rgba(23,26,31,0.45);display:none;align-items:center;justify-content:center;z-index:9999}
+    .modal-overlay.show{display:flex}
+    .modal-card{background:#fff;border-radius:12px;max-width:840px;width:94%;max-height:80vh;overflow:auto;box-shadow:0 12px 34px rgba(0,0,0,0.12)}
+    .modal-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #eef1f6}
+    .modal-body{padding:14px 16px}
+    .modal-close{border:none;background:transparent;font-size:22px;cursor:pointer;color:#6b7280}
+    .segments-list{list-style:none;padding-left:0;margin:0}
+    .segments-list li{padding:4px 0;font-size:14px;border-left:3px solid #f2f2f2;padding-left:8px}
+    /* header unread */
+    .notif-btn{position:relative;display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;background:#fff;border:1px solid #eef1f6}
+    .notif-badge{position:absolute;top:-6px;right:-6px;background:#ef4444;color:#fff;border-radius:999px;padding:4px 7px;font-size:12px}
+  </style>
+
+  <div class="dashboard-wrap">
+    <div class="page-header">
+      <div>
+        <h3 class="page-title">Creator Dashboard</h3>
+        <div class="muted" style="margin-top:4px">Hand-offs assigned to <strong>{{ username }}</strong></div>
+      </div>
+      <div class="page-meta">
+        <a href="{{ url_for('creator_notifications') }}" class="notif-btn" id="headerNotifBtn">Notifications
+          <span id="headerNotifBadge" class="notif-badge" style="display:none">0</span>
+        </a>
+        <a href="{{ url_for('profile') }}" class="btn-ghost">Profile</a>
+      </div>
+    </div>
+
+    {% if submissions and submissions|length > 0 %}
+      {% set ns = namespace(total=submissions|length, downloaded=0, pending=0) %}
+      {% for s in submissions %}
+        {% if s.downloaded %}
+          {% set ns.downloaded = ns.downloaded + 1 %}
+        {% else %}
+          {% set ns.pending = ns.pending + 1 %}
+        {% endif %}
+      {% endfor %}
+
+      <div class="stats-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px">
+        <div class="card" style="padding:16px">
+          <div style="color:#7a8aa0;font-size:12px">Total Submissions</div>
+          <div style="font-size:26px;font-weight:700;color:#1f2430">{{ ns.total }}</div>
+        </div>
+        <div class="card" style="padding:16px">
+          <div style="color:#7a8aa0;font-size:12px">Pending</div>
+          <div style="font-size:26px;font-weight:700;color:#b46900">{{ ns.pending }}</div>
+        </div>
+        <div class="card" style="padding:16px">
+          <div style="color:#7a8aa0;font-size:12px">Downloaded</div>
+          <div style="font-size:26px;font-weight:700;color:#1e7d44">{{ ns.downloaded }}</div>
+        </div>
+        <div class="card" style="padding:16px">
+          <div style="color:#7a8aa0;font-size:12px">Last Updated</div>
+          <div style="font-size:18px;font-weight:700;color:#2f3443">{{ submissions[0].submitted_at or '—' }}</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+        <div style="display:flex;gap:8px;align-items:center;flex:1 1 420px">
+          <input id="searchInput" type="text" placeholder="Search by researcher or market" style="flex:1;padding:10px 14px;border:1px solid #eef1f6;border-radius:10px" />
+          <select id="statusFilter" style="padding:10px 12px;border:1px solid #eef1f6;border-radius:10px">
+            <option value="">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="downloaded">Downloaded</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button id="resetFilters" class="btn-secondary">Reset</button>
+          <button id="exportCsv" class="btn-ghost">Export CSV</button>
+        </div>
+      </div>
+
+      <div class="card table-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;flex-wrap:wrap">
+          <div style="display:flex;gap:8px;align-items:center">
+            <label class="muted" style="font-size:13px">Rows per page</label>
+            <select id="pageSize" style="padding:8px;border:1px solid #eef1f6;border-radius:8px">
+              <option value="10">10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <div id="paginationControls" style="display:flex;gap:6px;align-items:center"></div>
+          </div>
+        </div>
+        <div class="table-wrapper">
+        <table class="table-pro">
+          <thead>
+            <tr>
+              <th>Researcher Name</th>
+              <th>Market Name</th>
+              <th>AI Segments</th>
+              <th>Segment Changes</th>
+              <th>Time of Submission</th>
+              <th>Status</th>
+              <th>Download</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for s in submissions %}
+            <tr data-researcher="{{ s.researcher_username|lower }}" data-market="{{ (s.market_name or '')|lower }}" data-status="{% if s.downloaded %}downloaded{% else %}pending{% endif %}">
+              <td style="font-weight:600">{{ s.researcher_username }}</td>
+              <td style="color:#394150">{{ s.market_name or '—' }}</td>
+              <td class="cell-ellipsis">
+                {% if s.ai_segments_json %}
+                  <a href="#" class="ai-segments-link btn-link" data-segments='{{ s.ai_segments_json | e }}' title="View full AI segments">View</a>
+                {% else %}
+                  —
+                {% endif %}
+              </td>
+              <td class="cell-ellipsis">
+                {% if s.segment_changes_json %}
+                  <a href="#" class="segment-changes-link btn-link" data-changes='{{ s.segment_changes_json | e }}' data-segments='{{ s.ai_segments_json | e }}' title="View updated segments">View</a>
+                {% else %}
+                  —
+                {% endif %}
+              </td>
+              <td>{{ s.submitted_at or '—' }}</td>
+              <td>
+                {% if s.downloaded %}
+                  <span class="badge badge-success">Downloaded</span>
+                {% else %}
+                  <span class="badge badge-warning">Pending</span>
+                {% endif %}
+              </td>
+              <td>
+                <div class="actions">
+                  <a href="{{ url_for('creator_download', submission_id=s.id) }}" class="btn btn-primary">Download</a>
+                  {% if not s.downloaded %}
+                    <button class="btn-secondary mark-downloaded" data-id="{{ s.id }}">Mark downloaded</button>
+                  {% endif %}
+                  <button class="btn-ghost open-changes" data-changes='{{ s.segment_changes_json | e }}' data-segments='{{ s.ai_segments_json | e }}'>View</button>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="card" style="text-align:center;color:#6b7280">No submissions yet.</div>
+    {% endif %}
+  </div>
+  
+  <!-- AI Segments Modal -->
+  <div class="modal-overlay" id="aiSegmentsModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <strong>AI Segments</strong>
+        <button class="modal-close" id="closeAiSegments" aria-label="Close">×</button>
+      </div>
+      <div class="modal-body">
+        <div id="aiSegmentsContainer"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Segment Changes Modal -->
+  <div class="modal-overlay" id="segmentChangesModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <strong>Updated Segments</strong>
+        <button class="modal-close" id="closeSegmentChanges" aria-label="Close">×</button>
+      </div>
+      <div class="modal-body">
+        <div id="segmentChangesContainer"></div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Chatbar: Creator <-> (Admin / Researchers) -->
+  <style>
+    .chatbar-creator{position:fixed;right:18px;bottom:78px;width:360px;max-width:calc(100% - 36px);background:#fff;border:1px solid #e6e9f0;border-radius:14px;box-shadow:0 18px 48px rgba(31,36,48,0.16);display:none;flex-direction:column;overflow:hidden;z-index:1000;transition:transform .18s ease,opacity .18s}
+    .chatbar-creator.open{display:flex;transform:translateY(0);opacity:1}
+    .chatbar-creator header{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:linear-gradient(90deg,var(--accent),#7b58ff);color:#fff;gap:8px}
+    /* header buttons: make Close highly visible on purple background */
+    .chatbar-creator header button{background:transparent;color:#fff;border:none;border-radius:8px;padding:6px 8px;cursor:pointer;height:40px;display:inline-flex;align-items:center;justify-content:center;z-index:3}
+    .chatbar-creator header .close{width:40px;height:40px;border-radius:10px;background:#fff;color:var(--accent);font-weight:700;box-shadow:0 6px 18px rgba(31,36,48,0.08);flex:0 0 auto}
+    /* make select flexible so it doesn't push buttons out of the header */
+    .chatbar-creator header select{flex:1;min-width:0;margin:0 10px;max-width:100%}
+    .chatbar-creator .chat-head-right{flex:0 0 auto;display:flex;gap:8px;align-items:center}
+    .chatbar-creator header select option{font-weight:700}
+      /* Responsive: ensure select doesn't push Close off-screen on small viewports */
+      @media (max-width:480px){
+        .chatbar-creator header{padding:6px 10px}
+        .chatbar-creator header select{font-size:13px;padding:6px 8px;margin:0 6px;max-width:60%;}
+        .chatbar-creator header .close{width:36px;height:36px}
+        .chatbar-creator .chat-avatar{width:32px;height:32px}
+      }
+    .chatbar-creator header select{appearance:none;-webkit-appearance:none;background:#fff;color:#0f1724;padding:8px 12px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);min-width:160px;font-weight:700;margin:0 8px;height:40px}
+    .chatbar-creator header select:focus{outline:none;box-shadow:0 6px 18px rgba(31,36,48,0.06)}
+    .chatbar-creator .chat-head-left{display:flex;align-items:center;gap:10px}
+    .chatbar-creator .chat-avatar{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.14);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff}
+    .chatbar-creator .chat-title{font-weight:700;font-size:14px}
+    .chatbar-creator .chat-sub{font-size:12px;opacity:0.9}
+    .chatbar-creator .messages{max-height:300px;overflow:auto;padding:14px;background:#f7f7fb;display:flex;flex-direction:column;gap:8px}
+    .chatbar-creator .msg{display:flex;gap:8px;align-items:flex-end;width:100%}
+    .chatbar-creator .msg.me{justify-content:flex-end}
+    .chatbar-creator .msg.other{justify-content:flex-start}
+    .chatbar-creator .msg .avatar{width:28px;height:28px;border-radius:50%;background:#dfe7ff;display:inline-flex;align-items:center;justify-content:center;font-size:13px;color:#243447;flex:0 0 auto}
+    /* prevent bubbles from pushing avatars to opposite side */
+    .chatbar-creator .bubble{flex:0 0 auto}
+    .chatbar-creator .bubble{max-width:72%;padding:10px 12px;border-radius:12px;box-shadow:0 6px 18px rgba(31,36,48,0.06);font-size:13px;line-height:1.3;display:inline-flex;align-items:center;gap:8px}
+    .chatbar-creator .bubble-content{display:inline-block}
+    .chatbar-creator .msg.me .bubble{background:var(--accent);color:#fff;border-bottom-right-radius:6px;border-bottom-left-radius:12px}
+    .chatbar-creator .msg.other .bubble{background:#fff;border:1px solid #eef1f6;color:#21303a;border-bottom-left-radius:6px;border-bottom-right-radius:12px}
+    .chatbar-creator .bubble-meta{display:inline-block;font-size:11px;color:var(--muted);margin-left:6px;opacity:0.95}
+    .chatbar-creator form{display:flex;gap:8px;padding:10px;background:#fff;border-top:1px solid #e6e9f0}
+    .chatbar-creator input{flex:1;border:1px solid #eef1f6;border-radius:10px;padding:10px 12px;font-size:14px}
+    .chatbar-creator button.send-btn{background:var(--accent);color:#fff;border:none;padding:8px 12px;border-radius:10px;cursor:pointer;font-weight:700}
+    .chatbar-creator button.send-btn[disabled]{opacity:0.6;cursor:not-allowed}
+    .chat-fab-creator{position:fixed;right:18px;bottom:18px;width:56px;height:56px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;border:none;box-shadow:0 12px 28px rgba(108,92,231,0.35);cursor:pointer;z-index:1001;font-size:22px;transition:transform .18s ease}
+    .chat-fab-creator:hover{transform:translateY(-3px)}
+    .chat-fab-creator .badge-unread{position:absolute;top:-6px;right:-6px;background:#ef4444;color:#fff;border-radius:50%;padding:4px 6px;font-size:12px;animation:badge-pulse 1.8s infinite}
+    @keyframes badge-pulse{0%{transform:scale(1)}50%{transform:scale(1.08)}100%{transform:scale(1)}}
+  </style>
+
+  <div class="chatbar-creator" id="chatbar-creator" aria-hidden="true">
+    <header>
+      <div class="chat-head-left">
+        <div class="chat-avatar" id="chatAvatarCreator">{{ username[:1]|upper }}</div>
+        <div>
+          <div class="chat-title">Chat</div>
+          <div class="chat-sub" id="chatSubtitle"></div>
+        </div>
+      </div>
+      <select id="chatTargetCreator" aria-label="Select chat user">
+        {% for u in users %}
+          {% if u.username != username %}
+            <option value="{{ u.username }}" data-role="{{ u.role or '' }}">{{ u.username }}{% if u.role %} ({{ u.role }}){% endif %}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+      <div style="display:flex;gap:8px;align-items:center" class="chat-head-right">
+        <button id="chatRefreshCreator">Refresh</button>
+      </div>
+    </header>
+    <div class="messages" id="chatMessagesCreator" aria-live="polite"></div>
+    <form id="chatFormCreator" autocomplete="off">
+      <input type="text" id="chatInputCreator" placeholder="Type a message, press Enter to send" aria-label="Message input" required />
+      <button type="submit" class="send-btn" id="chatSendBtn">Send</button>
+    </form>
+  </div>
+  <button id="chatFabCreator" class="chat-fab-creator" aria-label="Open chat">💬</button>
+
+  <script>
+    (function(){
+      const me = "{{ username }}";
+      const targetSel = document.getElementById('chatTargetCreator');
+      const list = document.getElementById('chatMessagesCreator');
+      const input = document.getElementById('chatInputCreator');
+      const form = document.getElementById('chatFormCreator');
+      const refreshBtn = document.getElementById('chatRefreshCreator');
+      const chatbar = document.getElementById('chatbar-creator');
+      const chatFab = document.getElementById('chatFabCreator');
+      let pollTimer = null;
+      function other(){ return (targetSel && targetSel.value) || ''; }
+      function render(messages){
+        list.innerHTML = '';
+        messages.forEach(m => {
+          const div = document.createElement('div');
+          const isMe = (m.from_username === me);
+          div.className = 'msg ' + (isMe ? 'me' : 'other');
+
+          const avatar = document.createElement('div');
+          avatar.className = 'avatar';
+          avatar.textContent = (m.from_username || '?').slice(0,1).toUpperCase();
+
+          const bubble = document.createElement('div');
+          bubble.className = 'bubble';
+          const content = document.createElement('div');
+          content.className = 'bubble-content';
+          content.textContent = m.content;
+          function formatTimestamp(s){
+            if(!s) return '';
+            try{
+              // Accept both 'YYYY-MM-DD HH:MM:SS' and ISO strings
+              const iso = String(s).replace(' ', 'T');
+              const d = new Date(iso);
+              if(isNaN(d)) return String(s).slice(0,16).replace('T',' ');
+              const dd = String(d.getDate()).padStart(2,'0');
+              const months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+              const mon = months[d.getMonth()] || '';
+              const yy = String(d.getFullYear() % 100).padStart(2,'0');
+              const hh = String(d.getHours()).padStart(2,'0');
+              const mm = String(d.getMinutes()).padStart(2,'0');
+              return `${dd} ${mon} ${yy} ${hh}:${mm}`;
+            }catch(e){ return String(s).slice(0,16).replace('T',' '); }
+          }
+          const when = formatTimestamp(m.sent_at || '');
+          const meta = document.createElement('div');
+          meta.className = 'bubble-meta';
+          meta.textContent = when;
+
+          bubble.appendChild(content);
+          if(when) bubble.appendChild(meta);
+
+          // Append bubble and avatar directly to the message row.
+          // For 'me' messages we append bubble first then avatar so the row
+          // is right-aligned; for others we append avatar then bubble.
+          if(isMe){
+            div.appendChild(bubble);
+            div.appendChild(avatar);
+            div.classList.add('me');
+          } else {
+            div.appendChild(avatar);
+            div.appendChild(bubble);
+            div.classList.add('other');
+          }
+
+          list.appendChild(div);
+        });
+        // keep the view scrolled to bottom
+        list.scrollTop = list.scrollHeight;
+      }
+      async function fetchMessages(){
+        const o = other(); if(!o) { list.innerHTML = '<div class="muted">No user selected</div>'; return; }
+        try{
+          const res = await fetch(`/api/chat/messages?with=${encodeURIComponent(o)}&limit=200`);
+          const data = await res.json();
+          if(data && Array.isArray(data.messages)) render(data.messages);
+        }catch(e){ console.warn('chat fetch failed', e); }
+      }
+      async function sendMessage(text){
+        const o = other(); if(!o) return;
+        try{
+          await fetch('/api/chat/send', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ to: o, content: text }) });
+          input.value = '';
+          chatSendBtn && (chatSendBtn.disabled = true);
+          fetchMessages();
+        }catch(e){ console.warn('chat send failed', e); }
+      }
+      form.addEventListener('submit', (ev)=>{ ev.preventDefault(); const t = input.value.trim(); if(t) sendMessage(t); });
+      // allow Enter to send (but not Shift+Enter)
+      const chatSendBtn = document.getElementById('chatSendBtn');
+      input.addEventListener('keydown', (e)=>{
+        if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); const t = input.value.trim(); if(t) sendMessage(t); }
+      });
+      // enable/disable send button based on input
+      function refreshSendState(){ if(chatSendBtn) chatSendBtn.disabled = !(input && input.value.trim()); }
+      input.addEventListener('input', refreshSendState);
+      refreshSendState();
+      refreshBtn.addEventListener('click', fetchMessages);
+      targetSel && targetSel.addEventListener('change', function(){ updateHeaderForSelection(); fetchMessages(); });
+      function updateHeaderForSelection(){
+        try{
+          const opt = targetSel && targetSel.selectedOptions && targetSel.selectedOptions[0];
+          if(!opt) return;
+          const role = opt.dataset.role || '';
+          const subtitleEl = document.getElementById('chatSubtitle');
+          if(subtitleEl){ subtitleEl.textContent = role ? role : ''; }
+          const avatarEl = document.getElementById('chatAvatarCreator');
+          if(avatarEl){ avatarEl.textContent = (opt.value || '').slice(0,1).toUpperCase(); }
+        }catch(e){ console.warn('updateHeaderForSelection failed', e); }
+      }
+      // initialize header for initial selection
+      updateHeaderForSelection();
+      function openChat(){
+        chatbar.classList.add('open');
+        chatbar.setAttribute('aria-hidden','false');
+        fetchMessages();
+        if (pollTimer) clearInterval(pollTimer);
+        pollTimer = setInterval(fetchMessages, 2500);
+        setTimeout(()=>input.focus(),10);
+      }
+      function closeChat(){
+        chatbar.classList.remove('open');
+        chatbar.setAttribute('aria-hidden','true');
+        if (pollTimer){ clearInterval(pollTimer); pollTimer = null; }
+      }
+      // Toggle chat when the FAB is clicked: open if closed, close if open
+      chatFab.addEventListener('click', function(){
+        if(chatbar.classList.contains('open')) closeChat(); else openChat();
+      });
+      // close should fully close the chat
+      chatClose.addEventListener('click', function(){ /* nothing extra to clear */ });
+      document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeChat(); });
+    })();
+  </script>
+  <script>
+    (function(){
+      // Simple filtering: search + status
+      const searchInput = document.getElementById('searchInput');
+      const statusFilter = document.getElementById('statusFilter');
+      const resetBtn = document.getElementById('resetFilters');
+      function applyFilters(){
+        const q = (searchInput && searchInput.value || '').toLowerCase().trim();
+        const status = (statusFilter && statusFilter.value || '').toLowerCase();
+        const rows = Array.from(document.querySelectorAll('tbody tr'));
+        rows.forEach(r => {
+          const matchesText = !q || r.dataset.researcher.includes(q) || r.dataset.market.includes(q);
+          const matchesStatus = !status || r.dataset.status === status;
+          r.style.display = (matchesText && matchesStatus) ? '' : 'none';
+        });
+      }
+      if (searchInput) searchInput.addEventListener('input', applyFilters);
+      if (statusFilter) statusFilter.addEventListener('change', applyFilters);
+      if (resetBtn) resetBtn.addEventListener('click', () => { if(searchInput) searchInput.value=''; if(statusFilter) statusFilter.value=''; applyFilters(); });
+
+      function renderSegments(raw){
+        let arr = [];
+        try { arr = JSON.parse(raw); } catch(e) { arr = []; }
+        const container = document.getElementById('aiSegmentsContainer');
+        container.innerHTML = '';
+        if (!Array.isArray(arr) || arr.length === 0) {
+          container.textContent = 'No AI segments available.';
+          return;
+        }
+        const ul = document.createElement('ul');
+        ul.className = 'segments-list';
+        arr.forEach(line => {
+          const text = String(line);
+          const m = text.match(/^(\d+(?:\.\d+)*)\.\s*(.*)$/);
+          const depth = m ? m[1].split('.').length : 1;
+          const li = document.createElement('li');
+          li.textContent = text;
+          li.style.marginLeft = ((depth - 1) * 16) + 'px';
+          ul.appendChild(li);
+        });
+        container.appendChild(ul);
+      }
+      function openModal(){ document.getElementById('aiSegmentsModal').classList.add('show'); }
+      function closeModal(){ document.getElementById('aiSegmentsModal').classList.remove('show'); }
+      document.getElementById('closeAiSegments').addEventListener('click', closeModal);
+      document.getElementById('aiSegmentsModal').addEventListener('click', function(e){ if(e.target.id==='aiSegmentsModal') closeModal(); });
+      Array.from(document.querySelectorAll('.ai-segments-link')).forEach(el => {
+        el.addEventListener('click', function(ev){
+          ev.preventDefault();
+          const raw = this.dataset.segments || '[]';
+          renderSegments(raw);
+          openModal();
+        });
+      });
+
+      // Segment changes: apply edits to AI segments and render updated list
+      function renderUpdatedSegments(changesRaw, segmentsRaw){
+        let segs = [];
+        try { segs = JSON.parse(segmentsRaw || '[]'); } catch(e) { segs = []; }
+        let changes = [];
+        try { changes = JSON.parse(changesRaw || '[]'); } catch(e) { changes = []; }
+        if (Array.isArray(changes)) {
+          changes.forEach(ch => {
+            if (ch && ch.type === 'edit' && ch.from && ch.to) {
+              const idx = segs.indexOf(ch.from);
+              if (idx !== -1) segs[idx] = ch.to;
+            } else if (ch && ch.type === 'delete' && ch.from) {
+              const idx = segs.indexOf(ch.from);
+              if (idx !== -1) segs.splice(idx, 1);
+            } else if (ch && ch.type === 'add' && ch.to) {
+              segs.push(ch.to);
+            }
+          });
+        }
+        const container = document.getElementById('segmentChangesContainer');
+        container.innerHTML = '';
+        if (!Array.isArray(segs) || segs.length === 0) {
+          container.textContent = 'No updated segments available.';
+          return;
+        }
+        const ul = document.createElement('ul');
+        ul.className = 'segments-list';
+        segs.forEach(line => {
+          const text = String(line);
+          const m = text.match(/^(\d+(?:\.\d+)*)\.\s*(.*)$/);
+          const depth = m ? m[1].split('.').length : 1;
+          const li = document.createElement('li');
+          li.textContent = text;
+          li.style.marginLeft = ((depth - 1) * 16) + 'px';
+          ul.appendChild(li);
+        });
+        container.appendChild(ul);
+      }
+      function openChanges(){ document.getElementById('segmentChangesModal').classList.add('show'); }
+      function closeChanges(){ document.getElementById('segmentChangesModal').classList.remove('show'); }
+      document.getElementById('closeSegmentChanges').addEventListener('click', closeChanges);
+      document.getElementById('segmentChangesModal').addEventListener('click', function(e){ if(e.target.id==='segmentChangesModal') closeChanges(); });
+      // Bind both legacy links and new open-changes buttons
+      Array.from(document.querySelectorAll('.segment-changes-link, .open-changes')).forEach(el => {
+        el.addEventListener('click', function(ev){
+          ev.preventDefault();
+          const changesRaw = this.dataset.changes || this.getAttribute('data-changes') || '[]';
+          const segmentsRaw = this.dataset.segments || this.getAttribute('data-segments') || '[]';
+          renderUpdatedSegments(changesRaw, segmentsRaw);
+          openChanges();
+        });
+      });
+      
+      // Chat unread badge and mark-downloaded handling
+      async function refreshUnreadBadge(){
+        try{
+          const res = await fetch('/api/chat/unread_count');
+          const data = await res.json();
+          const count = data && data.unread ? data.unread : 0;
+          // Update FAB badge if present
+          let fab = document.getElementById('chatFabCreator');
+          if(fab){
+            let existing = fab.querySelector('.badge-unread');
+            if(existing) existing.remove();
+            if(count > 0){
+              const b = document.createElement('span');
+              b.className = 'badge-unread';
+              b.textContent = count;
+              Object.assign(b.style, {position:'absolute',top:'-6px',right:'-6px',background:'#e11d48',color:'#fff',borderRadius:'50%',padding:'4px 6px',fontSize:'12px'});
+              fab.style.position = 'relative';
+              fab.appendChild(b);
+            }
+          }
+          // Update header notification badge
+          const headerBadge = document.getElementById('headerNotifBadge');
+          if(headerBadge){
+            if(count > 0){ headerBadge.style.display = 'inline-block'; headerBadge.textContent = count; }
+            else { headerBadge.style.display = 'none'; }
+          }
+        }catch(e){ console.warn('failed to fetch unread count', e); }
+      }
+
+      // Wire up mark-downloaded buttons
+      Array.from(document.querySelectorAll('.mark-downloaded')).forEach(btn => {
+        btn.addEventListener('click', async function(ev){
+          ev.preventDefault();
+          const id = this.dataset.id;
+          if(!id) return;
+          try{
+            const res = await fetch('/api/submission/mark_downloaded', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ submission_id: parseInt(id,10) }) });
+            const data = await res.json();
+            if(res.ok && data.status === 'ok'){
+              // Update UI: change status badge and remove button
+              const tr = this.closest('tr');
+              if(tr){
+                const statusCell = tr.querySelector('td:nth-child(6)');
+                if(statusCell){ statusCell.innerHTML = '<span class="badge badge-success">Downloaded</span>'; }
+                this.remove();
+              }
+            } else {
+              alert((data && data.error) || 'Failed to mark downloaded');
+            }
+          }catch(e){ console.warn(e); alert('Failed to mark downloaded'); }
+        });
+      });
+
+      // Initial refreshes
+      refreshUnreadBadge();
+      setInterval(refreshUnreadBadge, 5000);
+      
+      // --- Pagination support ---
+      const pageSizeSel = document.getElementById('pageSize');
+      let currentPage = 1;
+      function getFilteredRows(){
+        // rows that match current search/filter
+        return Array.from(document.querySelectorAll('tbody tr')).filter(r => r.dataset._matches !== 'false');
+      }
+
+      function renderPagination(){
+        const rows = getFilteredRows();
+        const pageSize = parseInt(pageSizeSel.value, 10) || 10;
+        const total = rows.length;
+        const totalPages = Math.max(1, Math.ceil(total / pageSize));
+        if (currentPage > totalPages) currentPage = totalPages;
+
+        // hide all rows, then show slice
+        Array.from(document.querySelectorAll('tbody tr')).forEach(r => r.style.display = 'none');
+        const start = (currentPage -1) * pageSize;
+        const pageRows = rows.slice(start, start + pageSize);
+        pageRows.forEach(r => r.style.display = '');
+
+        const pc = document.getElementById('paginationControls');
+        pc.innerHTML = '';
+
+        const btnPrev = document.createElement('button'); btnPrev.className='btn-ghost'; btnPrev.textContent='‹ Prev';
+        btnPrev.disabled = currentPage <= 1;
+        btnPrev.addEventListener('click', ()=>{ currentPage = Math.max(1, currentPage-1); renderPagination(); });
+        pc.appendChild(btnPrev);
+
+        // show up to 7 page buttons
+        const maxButtons = 7;
+        let startPage = Math.max(1, currentPage - Math.floor(maxButtons/2));
+        let endPage = startPage + maxButtons - 1;
+        if(endPage > totalPages){ endPage = totalPages; startPage = Math.max(1, endPage - maxButtons + 1); }
+        for(let p = startPage; p <= endPage; p++){
+          const b = document.createElement('button');
+          b.className = 'btn-ghost';
+          b.textContent = p;
+          if(p === currentPage){ b.style.fontWeight='700'; b.style.background='#f7f5ff'; }
+          b.addEventListener('click', ()=>{ currentPage = p; renderPagination(); });
+          pc.appendChild(b);
+        }
+
+        const btnNext = document.createElement('button'); btnNext.className='btn-ghost'; btnNext.textContent='Next ›';
+        btnNext.disabled = currentPage >= totalPages;
+        btnNext.addEventListener('click', ()=>{ currentPage = Math.min(totalPages, currentPage+1); renderPagination(); });
+        pc.appendChild(btnNext);
+
+        // small status
+        const status = document.createElement('div'); status.className='muted'; status.style.marginLeft='8px'; status.textContent = `${total} items — page ${currentPage}/${totalPages}`;
+        pc.appendChild(status);
+      }
+
+      function applyFilters(){
+        const q = (searchInput && searchInput.value || '').toLowerCase().trim();
+        const status = (statusFilter && statusFilter.value || '').toLowerCase();
+        const rows = Array.from(document.querySelectorAll('tbody tr'));
+        rows.forEach(r => {
+          const matchesText = !q || r.dataset.researcher.includes(q) || r.dataset.market.includes(q);
+          const matchesStatus = !status || r.dataset.status === status;
+          // mark dataset flag for pagination
+          r.dataset._matches = (matchesText && matchesStatus) ? 'true' : 'false';
+        });
+        currentPage = 1; // reset to first
+        renderPagination();
+      }
+
+      // wire pageSize change
+      if(pageSizeSel){ pageSizeSel.addEventListener('change', ()=>{ currentPage = 1; renderPagination(); }); }
+
+      // initialize matching flags before first render
+      Array.from(document.querySelectorAll('tbody tr')).forEach(r => r.dataset._matches = 'true');
+      renderPagination();
+      
+      // Export visible rows to CSV
+      const exportBtn = document.getElementById('exportCsv');
+      if(exportBtn){
+        exportBtn.addEventListener('click', function(){
+          const rows = Array.from(document.querySelectorAll('tbody tr')).filter(r => r.style.display !== 'none');
+          const csv = [['Researcher','Market','Submitted At','Status']];
+          rows.forEach(r => {
+            const cols = r.querySelectorAll('td');
+            const researcher = cols[0] ? cols[0].textContent.trim() : '';
+            const market = cols[1] ? cols[1].textContent.trim() : '';
+            const submitted = cols[4] ? cols[4].textContent.trim() : '';
+            const status = cols[5] ? cols[5].textContent.trim() : '';
+            csv.push([researcher, market, submitted, status]);
+          });
+          const csvText = csv.map(r => r.map(c => '"' + String(c).replace(/"/g,'""') + '"').join(',')).join('\n');
+          const blob = new Blob([csvText], {type: 'text/csv;charset=utf-8;'});
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a'); a.href = url; a.download = 'submissions.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+        });
+      }
+    })();
+  </script>
+{% endblock %}

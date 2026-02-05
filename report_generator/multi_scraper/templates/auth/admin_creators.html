@@ -1,0 +1,89 @@
+{% extends 'auth/base.html' %}
+{% block content %}
+  <style>
+    /* Make admin layout span full width and remove left padding so sidebar sits at extreme left */
+    .container{max-width:100%;margin:0;padding-left:24px}
+    :root{--primary:#6C5CE7;--border:#e6e9f0;--card:#ffffff;--text:#1f2430;--muted:#7a8aa0}
+    .admin-layout{display:grid;grid-template-columns:250px 1fr;gap:18px;margin-top:12px}
+    .sidebar{background:var(--card);border-radius:14px;box-shadow:0 10px 30px rgba(31,36,48,0.08);padding:18px;min-height:70vh}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--text);margin-bottom:14px}
+    .brand .logo{width:28px;height:28px;border-radius:8px;border:2px solid var(--primary);display:flex;align-items:center;justify-content:center;color:var(--primary)}
+    .nav{display:flex;flex-direction:column;gap:8px}
+    .nav a{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:10px;color:#394150;text-decoration:none;border:1px solid var(--border)}
+    .nav a:hover{background:#f7f7fb}
+    .nav a.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+    .card{background:var(--card);border-radius:14px;box-shadow:0 10px 30px rgba(31,36,48,0.08);padding:16px}
+    .table-pro{width:100%;border-collapse:separate;border-spacing:0}
+    .table-pro thead th{background:#f7f7fb;color:#394150;font-weight:600;padding:12px;border-bottom:1px solid var(--border)}
+    .table-pro tbody td{padding:12px;border-bottom:1px solid #f0f2f6;color:#2f3443}
+    .table-pro tbody tr:hover{background:#fafbff}
+    .btn-primary{background:#6014FA;color:#fff;border:1px solid #6014FA;padding:8px 12px;border-radius:8px;text-decoration:none}
+  </style>
+  <div class="admin-layout">
+    <aside class="sidebar" aria-label="Admin navigation">
+      <div class="brand"><div class="logo">⬢</div> Dashboard <span class="muted">v0.1</span></div>
+      <nav class="nav" id="adminNav">
+        <a href="/auth/admin">Dashboard</a>
+        <a href="/auth/admin/submissions">Submissions</a>
+        <a href="/auth/admin/researchers">Researchers</a>
+        <a href="/auth/admin/creators" class="active">Creators</a>
+        <a href="/auth/admin/toc">TOC</a>
+        <a href="/tool">Research Tool</a>
+        <a href="/auth/logout">Logout</a>
+      </nav>
+    </aside>
+    <main>
+      <div class="card" style="display:flex;align-items:center;justify-content:space-between">
+        <h3 style="margin:0">All Creators</h3>
+        <a class="btn-primary" href="/auth/admin/create_user">+ Create New User</a>
+      </div>
+      <div class="card">
+        <table class="table-pro" id="creatorsTable">
+          <thead>
+            <tr><th>Username</th><th>Role</th><th>Created By</th><th>Created At</th><th>Last Login</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            {% for u in users %}
+              <tr>
+                <td style="font-weight:600">{{ u.username }}</td>
+                <td>{{ u.role }}</td>
+                <td>{{ u.created_by or '—' }}</td>
+                <td>{{ u.created_at or '—' }}</td>
+                <td>{{ u.last_login or '—' }}</td>
+                <td>
+                  <button class="btn-primary" data-username="{{ u.username }}" style="background:#e24d4d;border-color:#e24d4d">Delete</button>
+                </td>
+              </tr>
+            {% endfor %}
+            {% if not users %}
+              <tr><td colspan="6" class="muted">No creators found</td></tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+  <script>
+    (function(){
+      const table = document.getElementById('creatorsTable');
+      if(!table) return;
+      table.addEventListener('click', async (e)=>{
+        const btn = e.target.closest('button[data-username]');
+        if(!btn) return;
+        const username = btn.getAttribute('data-username');
+        if(!username) return;
+        if(!confirm(`Delete user "${username}"? This will remove their messages and submissions.`)) return;
+        try{
+          const res = await fetch('/auth/admin/delete_user', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username }) });
+          const data = await res.json();
+          if(res.ok){
+            const row = btn.closest('tr');
+            if(row) row.remove();
+          }else{
+            alert(data.error || 'Delete failed');
+          }
+        }catch(err){ alert('Delete request failed'); }
+      });
+    })();
+  </script>
+{% endblock %}

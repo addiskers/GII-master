@@ -1,0 +1,80 @@
+{% extends 'auth/base.html' %}
+{% block content %}
+  <style>
+    .container{max-width:100%;margin:0;padding-left:24px}
+    :root{--primary:#6C5CE7;--bg:#f5f6fa;--text:#1f2430;--muted:#7a8aa0;--border:#e6e9f0;--card:#ffffff}
+    .page-chrome{position:relative}
+    .page-chrome:before,.page-chrome:after{content:"";position:fixed;left:0;right:0;height:10px;background:var(--primary);z-index:0}
+    .page-chrome:before{top:0}.page-chrome:after{bottom:0}
+    .admin-layout{display:grid;grid-template-columns:250px 1fr;gap:18px;margin-top:12px}
+    .sidebar{background:var(--card);border-radius:14px;box-shadow:0 10px 30px rgba(31,36,48,0.08);padding:18px;min-height:70vh}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--text);margin-bottom:14px}
+    .brand .logo{width:28px;height:28px;border-radius:8px;border:2px solid var(--primary);display:flex;align-items:center;justify-content:center;color:var(--primary)}
+    .nav{display:flex;flex-direction:column;gap:8px}
+    .nav a{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:10px;color:#394150;text-decoration:none;border:1px solid var(--border)}
+    .nav a:hover{background:#f7f7fb}
+    .nav a.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+    .main{display:flex;flex-direction:column;gap:14px}
+    .card{background:var(--card);border-radius:14px;box-shadow:0 10px 30px rgba(31,36,48,0.08);padding:16px}
+    .muted{color:#7a8aa0}
+    .notif-item{display:flex;align-items:flex-start;gap:10px;padding:10px;border-bottom:1px solid #eef1f4}
+    .notif-item .icon{width:36px;height:36px;border-radius:10px;background:#f7f7fb;display:flex;align-items:center;justify-content:center;color:#6C5CE7}
+    .notif-item .content{flex:1}
+    .notif-item .when{color:#7a8aa0;font-size:12px}
+  </style>
+
+  <div class="page-chrome">
+    <div class="admin-layout">
+      <aside class="sidebar" aria-label="Researcher navigation">
+        <div class="brand"><div class="logo">⬢</div> Dashboard <span class="muted">v0.1</span></div>
+        <nav class="nav" id="researcherNav">
+          <a href="{{ url_for('researcher_dashboard') }}">Dashboard</a>
+          <a href="{{ url_for('tool') }}">Research Tool</a>
+          <a href="{{ url_for('researcher_notifications') }}" class="active">Notifications</a>
+          <a href="{{ url_for('profile') }}">Profile</a>
+          <a href="{{ url_for('logout') }}">Logout</a>
+        </nav>
+      </aside>
+
+      <main class="main">
+        <div class="card" style="display:flex;align-items:center;justify-content:space-between">
+          <h3 style="margin:0">Notifications</h3>
+          <div class="muted">Messages</div>
+        </div>
+
+        <div class="card">
+          {% if messages %}
+            {% for m in messages %}
+              <div class="notif-item">
+                <div class="icon">🔔</div>
+                <div class="content">
+                  <div style="font-weight:600;color:#1f2430">{{ m.content }}</div>
+                  <div class="when"><span class="ts">{{ m.sent_at }}</span></div>
+                </div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="muted">No notifications</div>
+          {% endif %}
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      function formatIsoToDisplay(iso){
+        if(!iso) return '';
+        const m = String(iso).match(/^(\d{4})-(\d{2})-(\d{2})[T\s](\d{2}):(\d{2})/);
+        if(!m) return iso;
+        const y=m[1], mo=m[2], d=m[3], h=m[4], mi=m[5];
+        const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        const mon = months[parseInt(mo,10)-1] || mo;
+        return `${d} ${mon} ${y}, ${h}:${mi}`;
+      }
+      Array.from(document.querySelectorAll('span.ts')).forEach(el => {
+        el.textContent = formatIsoToDisplay(el.textContent.trim());
+      });
+    })();
+  </script>
+{% endblock %}

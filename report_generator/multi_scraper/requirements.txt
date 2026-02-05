@@ -1,0 +1,11 @@
+# requirements.txt
+fastapi==0.104.1
+uvicorn==0.24.0
+scrapy==2.11.0
+Flask>=2.3.0
+Flask-CORS>=4.0.0
+w3lib>=2.1.0
+parsel>=1.8.0
+openai>=1.0.0
+python-dotenv>=1.0.0
+scrapy-zyte-api

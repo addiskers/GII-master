@@ -1,0 +1,95 @@
+{% extends 'auth/base.html' %}
+{% block content %}
+  <style>
+    .container{max-width:100%;margin:0;padding-left:24px}
+    :root{--primary:#6C5CE7;--bg:#f5f6fa;--text:#1f2430;--muted:#7a8aa0;--border:#e6e9f0;--card:#ffffff}
+    .page-chrome{position:relative}
+    .page-chrome:before,.page-chrome:after{content:"";position:fixed;left:0;right:0;height:10px;background:var(--primary);z-index:0}
+    .page-chrome:before{top:0}.page-chrome:after{bottom:0}
+    .admin-layout{display:grid;grid-template-columns:250px 1fr;gap:18px;margin-top:12px}
+    .sidebar{background:var(--card);border-radius:14px;box-shadow:0 10px 30px rgba(31,36,48,0.08);padding:18px;min-height:70vh}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--text);margin-bottom:14px}
+    .brand .logo{width:28px;height:28px;border-radius:8px;border:2px solid var(--primary);display:flex;align-items:center;justify-content:center;color:var(--primary)}
+    .nav{display:flex;flex-direction:column;gap:8px}
+    .nav a{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:10px;color:#394150;text-decoration:none;border:1px solid var(--border)}
+    .nav a:hover{background:#f7f7fb}
+    .nav a.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+    .main{display:flex;flex-direction:column;gap:14px}
+    .card{background:var(--card);border-radius:14px;box-shadow:0 10px 30px rgba(31,36,48,0.08);padding:16px}
+    .muted{color:#7a8aa0}
+    .profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .item{background:#f7f7fb;border:1px solid #e6e9f0;border-radius:10px;padding:12px}
+    .item h5{margin:0 0 6px 0;color:#394150;font-size:12px;font-weight:600;text-transform:uppercase}
+    .item p{margin:0;color:#2f3443;font-weight:500}
+  </style>
+
+  <div class="page-chrome">
+    <div class="admin-layout">
+      <aside class="sidebar" aria-label="User navigation">
+        <div class="brand"><div class="logo">⬢</div> Dashboard <span class="muted">v0.1</span></div>
+        <nav class="nav" id="userNav">
+          {% if session.role == 'researcher' %}
+            <a href="{{ url_for('researcher_dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('tool') }}">Research Tool</a>
+            <a href="{{ url_for('researcher_notifications') }}">Notifications</a>
+          {% elif session.role == 'creator' %}
+            <a href="{{ url_for('creator_dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('tool') }}">Research Tool</a>
+            <a href="{{ url_for('creator_notifications') }}">Notifications</a>
+          {% endif %}
+          <a href="{{ url_for('profile') }}" class="active">Profile</a>
+          <a href="{{ url_for('logout') }}">Logout</a>
+        </nav>
+      </aside>
+
+      <main class="main">
+        <div class="card" style="display:flex;align-items:center;justify-content:space-between">
+          <h3 style="margin:0">Profile</h3>
+          <div class="muted">User Information</div>
+        </div>
+
+        <div class="card">
+          <div class="profile-grid">
+            <div class="item">
+              <h5>Username</h5>
+              <p>{{ user.username }}</p>
+            </div>
+            <div class="item">
+              <h5>Role</h5>
+              <p>{{ user.role|upper }}</p>
+            </div>
+            <div class="item">
+              <h5>Created By</h5>
+              <p>{{ user.created_by or '—' }}</p>
+            </div>
+            <div class="item">
+              <h5>Created At</h5>
+              <p class="ts">{{ user.created_at }}</p>
+            </div>
+            <div class="item">
+              <h5>Last Login</h5>
+              <p class="ts">{{ user.last_login or '—' }}</p>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      function formatIsoToDisplay(iso){
+        if(!iso || iso === '—') return iso;
+        const m = String(iso).match(/^(\d{4})-(\d{2})-(\d{2})[T\s](\d{2}):(\d{2})/);
+        if(!m) return iso;
+        const y=m[1], mo=m[2], d=m[3], h=m[4], mi=m[5];
+        const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        const mon = months[parseInt(mo,10)-1] || mo;
+        return `${d} ${mon} ${y}, ${h}:${mi}`;
+      }
+      Array.from(document.querySelectorAll('p.ts')).forEach(el => {
+        el.textContent = formatIsoToDisplay(el.textContent.trim());
+      });
+    })();
+  </script>
+{% endblock %}
