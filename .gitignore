@@ -47,11 +47,7 @@ env/
 .DS_Store
 Thumbs.db
 
-# Scraped/generated data
-report_generator/multi_scraper/scraped_json/
-report_generator/multi_scraper/saved_data/
-report_generator/multi_scraper/submitted_docs/
-report_generator/multi_scraper/dominating_region/
+
 *.json
 !package.json
 !package-lock.json
@@ -64,5 +60,4 @@ report_generator/multi_scraper/dominating_region/
 # Logs
 *.log
 
-# Website submission output
-website_submission/
+

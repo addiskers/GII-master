@@ -27,10 +27,5 @@ ENV/
 Thumbs.db
 
 # Application specific
-scraped_json/
-saved_data/
-website_submission/
-dominating_region/
-images/
-submitted_docs/
+
 *.bak
