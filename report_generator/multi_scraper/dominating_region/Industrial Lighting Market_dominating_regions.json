@@ -1,0 +1,60 @@
+{
+  "market_name": "Industrial Lighting Market",
+  "unit": "Billion",
+  "cagr": 8.4,
+  "value_2024": 10.08,
+  "value_2033": 20.83,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Type": [
+      "LED Lighting",
+      "HID Lighting",
+      "Fluorescent Lighting",
+      "Other Types"
+    ],
+    "Application": [
+      "Factory & Production",
+      "Warehouse & Cold Storage",
+      "Outer Premises",
+      "Parking Areas",
+      "Hazardous Locations"
+    ],
+    "Product": [
+      "Industrial Lighting",
+      "High/Low Bay",
+      "Flood/Area Lighting",
+      "Task and Spotlight",
+      "Explosion-proof",
+      "Others"
+    ],
+    "Offering": [
+      "Lamps & Luminaires",
+      "Control Systems & Sensors",
+      "Services"
+    ],
+    "Installation Type": [
+      "New Build",
+      "Retrofit",
+      "Replacement"
+    ],
+    "End-user Application": [
+      "Oil and Gas",
+      "Mining and Metals",
+      "Pharmaceutical",
+      "Manufacturing",
+      "Warehousing & Logistics",
+      "Food and Beverage",
+      "Chemical & Petrochemical",
+      "Other"
+    ]
+  }
+}

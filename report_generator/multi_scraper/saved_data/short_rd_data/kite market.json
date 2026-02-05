@@ -1,0 +1,171 @@
+{
+  "market_name": "kite market",
+  "segments": [
+    "1. Kite Typesda",
+    "1.1. Stunt Kites",
+    "1.1.1. Dual-Line Kites",
+    "1.1.1.1. Racing Stunt Kites",
+    "1.1.2. Quad-Line Kites",
+    "1.1.2.1. Freestyle Kites",
+    "1.2. Single-Line Kites",
+    "1.2.1. Delta Kites",
+    "1.2.2. Box Kites",
+    "2. Material Types",
+    "2.1. Fabric Kites",
+    "2.2. Paper Kites",
+    "2.3. Plastic Kites",
+    "3. Target Audience",
+    "3.1. Children",
+    "3.1.1. Educational Kits",
+    "3.1.2. Fun Designs",
+    "3.2. Adults",
+    "3.2.1. Hobbyist Kites",
+    "3.2.2. Competitive Kites",
+    "4. Price Range",
+    "4.1. Budget Kites",
+    "4.2. Mid-Range Kites",
+    "4.3. Premium Kites",
+    "5. Usage Environment",
+    "5.1. Open Fields",
+    "5.2. Beaches",
+    "5.3. Indoor Venues"
+  ],
+  "ai_gen_seg": [
+    {
+      "name": "Kite Types",
+      "subsegments": [
+        {
+          "name": "Stunt Kites",
+          "subsegments": [
+            {
+              "name": "Dual-Line Kites",
+              "subsegments": [
+                {
+                  "name": "Racing Stunt Kites",
+                  "subsegments": []
+                }
+              ]
+            },
+            {
+              "name": "Quad-Line Kites",
+              "subsegments": [
+                {
+                  "name": "Freestyle Kites",
+                  "subsegments": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Single-Line Kites",
+          "subsegments": [
+            {
+              "name": "Delta Kites",
+              "subsegments": []
+            },
+            {
+              "name": "Box Kites",
+              "subsegments": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Material Types",
+      "subsegments": [
+        {
+          "name": "Fabric Kites",
+          "subsegments": []
+        },
+        {
+          "name": "Paper Kites",
+          "subsegments": []
+        },
+        {
+          "name": "Plastic Kites",
+          "subsegments": []
+        }
+      ]
+    },
+    {
+      "name": "Target Audience",
+      "subsegments": [
+        {
+          "name": "Children",
+          "subsegments": [
+            {
+              "name": "Educational Kits",
+              "subsegments": []
+            },
+            {
+              "name": "Fun Designs",
+              "subsegments": []
+            }
+          ]
+        },
+        {
+          "name": "Adults",
+          "subsegments": [
+            {
+              "name": "Hobbyist Kites",
+              "subsegments": []
+            },
+            {
+              "name": "Competitive Kites",
+              "subsegments": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Price Range",
+      "subsegments": [
+        {
+          "name": "Budget Kites",
+          "subsegments": []
+        },
+        {
+          "name": "Mid-Range Kites",
+          "subsegments": []
+        },
+        {
+          "name": "Premium Kites",
+          "subsegments": []
+        }
+      ]
+    },
+    {
+      "name": "Usage Environment",
+      "subsegments": [
+        {
+          "name": "Open Fields",
+          "subsegments": []
+        },
+        {
+          "name": "Beaches",
+          "subsegments": []
+        },
+        {
+          "name": "Indoor Venues",
+          "subsegments": []
+        }
+      ]
+    }
+  ],
+  "timestamp": "2026-02-05T02:12:21.038034",
+  "savedBy": "admin",
+  "industryClassification": {},
+  "marketInputs": {
+    "unit": "Million",
+    "cagr": 5,
+    "marketSize2024": 3425,
+    "projectedSize2033": 5313.3
+  },
+  "companies": "Best Kiteboarding\nHQ Kites\nFlysurfer Kiteboarding\nOzone Kites\nNorth Kites\nSlingshot Sports\nLiquid Force\nAirush Kites\nNaish Kiteboarding\nCabrinha Kites\nMystic Boarding\nCore Kiteboarding\nOcean Rodeo\nF-One Kites\nPeter Lynn Kites\nAirdush Kites\nCrazyFly Kites\nTakoon Kites\nBWSurf Kites",
+  "value_2024": 3425.0,
+  "currency": "Million",
+  "cagr": 5.0
+}

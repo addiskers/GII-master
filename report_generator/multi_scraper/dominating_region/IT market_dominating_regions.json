@@ -1,0 +1,39 @@
+{
+  "market_name": "IT market",
+  "unit": "Billion",
+  "cagr": 121,
+  "value_2024": 12,
+  "value_2033": 15090.78,
+  "REGIONAL_RANKING": {
+    "first": "North America",
+    "second": "Asia Pacific",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Software Solutions": [
+      "Enterprise Software",
+      "Mobile Applications"
+    ],
+    "Hardware Devices": [
+      "Computers and Laptops",
+      "Networking Devices"
+    ],
+    "IT Services": [
+      "Consulting Services",
+      "Managed Services"
+    ],
+    "Cybersecurity Solutions": [
+      "Endpoint Security",
+      "Network Security"
+    ],
+    "Data Services": [
+      "Data Analytics",
+      "Database Management"
+    ]
+  }
+}

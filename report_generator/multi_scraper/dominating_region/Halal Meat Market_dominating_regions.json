@@ -1,0 +1,34 @@
+{
+  "market_name": "Halal Meat Market",
+  "unit": "Billion",
+  "cagr": 5.4,
+  "value_2024": 732.1,
+  "value_2033": 1175.27,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "Europe",
+    "third": "North America"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "emerging",
+    "United Kingdom": "fastest_growing",
+    "France": "dominant"
+  },
+  "SEGMENTS": {
+    "Meat Type": [
+      "Poultry",
+      "Beef",
+      "Mutton",
+      "Others"
+    ],
+    "Form": [
+      "Fresh/Chilled",
+      "Frozen",
+      "Processed"
+    ],
+    "Distribution Channel": [
+      "HoReCa",
+      "Retail"
+    ]
+  }
+}

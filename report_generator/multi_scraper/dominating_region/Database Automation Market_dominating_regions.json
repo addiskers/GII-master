@@ -1,0 +1,36 @@
+{
+  "market_name": "Database Automation Market",
+  "unit": "Million",
+  "cagr": 26.9,
+  "value_2024": 1934,
+  "value_2033": 16504.83,
+  "REGIONAL_RANKING": {
+    "first": "North America",
+    "second": "Europe",
+    "third": "Asia Pacific"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "dominant",
+    "France": "fastest_growing"
+  },
+  "SEGMENTS": {
+    "Components": [
+      "Solutions",
+      "Services"
+    ],
+    "Applications": [
+      "Backup",
+      "Security and Compliance"
+    ],
+    "End Users": [
+      "Government",
+      "BFSI",
+      "Healthcare",
+      "IT and Telecom",
+      "Retail",
+      "Manufacturing",
+      "Others"
+    ]
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "market_name": "Pregnancy, Ovulation, and Fertility Testing Kits Market",
+  "unit": "Billion",
+  "cagr": 5.4,
+  "value_2024": 732.1,
+  "value_2033": 1175.27,
+  "REGIONAL_RANKING": {
+    "first": "North America",
+    "second": "Europe",
+    "third": "Asia Pacific"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Testing Kit Type": [
+      "Pregnancy Tests",
+      "Ovulation Tests",
+      "Fertility Tests"
+    ],
+    "Age Group": [
+      "Below 18 Years",
+      "18-24 Years",
+      "25-34 Years",
+      "Above 34 Years"
+    ],
+    "Price Range": [
+      "Economy Range",
+      "Mid-Range",
+      "Premium Range"
+    ],
+    "End User": [
+      "Home Users",
+      "Clinics & Hospitals",
+      "Fertility Specialists"
+    ],
+    "Distribution Channel": [
+      "Online Sales",
+      "Retail Sales"
+    ]
+  }
+}

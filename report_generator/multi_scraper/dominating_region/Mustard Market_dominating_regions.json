@@ -1,0 +1,35 @@
+{
+  "market_name": "Mustard Market",
+  "unit": "Billion",
+  "cagr": 5.4,
+  "value_2024": 732.1,
+  "value_2033": 1175.27,
+  "REGIONAL_RANKING": {
+    "first": "Europe",
+    "second": "North America",
+    "third": "Asia Pacific"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Product": [
+      "Form"
+    ],
+    "Nature": [
+      "Conventional",
+      "Organic"
+    ],
+    "Packaging Type": [
+      "Bottles and Jars",
+      "Sachets/Pouches",
+      "Others"
+    ],
+    "Distribution Channel": [
+      "Retail",
+      "Foodservice"
+    ]
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "market_name": "Ginger Market",
+  "unit": "Billion",
+  "cagr": 20.1,
+  "value_2024": 2.8,
+  "value_2033": 14.56,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Product Type": [
+      "Fresh Ginger",
+      "Dried Ginger",
+      "Ginger Powder",
+      "Ginger Oil"
+    ],
+    "Nature": [
+      "Convectional",
+      "Organic"
+    ],
+    "End User": [
+      "Food Industry",
+      "Pharmaceuticals",
+      "Cosmetics",
+      "Others"
+    ],
+    "Distribution Channel": [
+      "Online Retail",
+      "Offline Retail"
+    ]
+  }
+}

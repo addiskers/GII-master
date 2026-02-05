@@ -1,0 +1,49 @@
+{
+  "market_name": "Berry Market",
+  "unit": "Billion",
+  "cagr": 20.1,
+  "value_2024": 2.8,
+  "value_2033": 14.56,
+  "REGIONAL_RANKING": {
+    "first": "North America",
+    "second": "Europe",
+    "third": "Asia Pacific"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Types of Berries": [
+      "Strawberries",
+      "Blueberries",
+      "Raspberries",
+      "Blackberries",
+      "Cranberries",
+      "Goji Berries",
+      "Acai Berries",
+      "Others"
+    ],
+    "Production Method": [
+      "Conventional",
+      "Organic"
+    ],
+    "Packaging": [
+      "Pouches",
+      "Cartons",
+      "Jars",
+      "Tubs",
+      "Others"
+    ],
+    "Application": [
+      "Fresh Consumption",
+      "Frozen",
+      "Processed"
+    ],
+    "Distribution Channel": [
+      "B2B",
+      "B2C"
+    ]
+  }
+}

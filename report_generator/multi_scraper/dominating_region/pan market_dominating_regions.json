@@ -1,0 +1,40 @@
+{
+  "market_name": "pan market",
+  "unit": "Million",
+  "cagr": 13,
+  "value_2024": 312,
+  "value_2033": 937.26,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Material Typewq": [
+      "Non-stick Pans",
+      "Stainless Steel Pans",
+      "Cast Iron Pans"
+    ],
+    "Usage Type": [
+      "Home Cooking",
+      "Professional Cooking"
+    ],
+    "Pan Style": [
+      "Frying Pans",
+      "Sauce Pans"
+    ],
+    "Brand Type": [
+      "Premium Brands",
+      "Budget Brands"
+    ],
+    "Size": [
+      "Small Pans",
+      "Large Pans"
+    ]
+  }
+}

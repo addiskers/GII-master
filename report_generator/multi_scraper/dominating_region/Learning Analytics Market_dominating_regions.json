@@ -1,0 +1,57 @@
+{
+  "market_name": "Learning Analytics Market",
+  "unit": "Billion",
+  "cagr": 20.5,
+  "value_2024": 8.8,
+  "value_2033": 47.14,
+  "REGIONAL_RANKING": {
+    "first": "North America",
+    "second": "Europe",
+    "third": "Asia Pacific"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "fastest_growing",
+    "United Kingdom": "dominant",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Components by type": [
+      "Software",
+      "Services"
+    ],
+    "Analytics Type": [
+      "Descriptive Analytics",
+      "Predictive Analytics",
+      "Prescriptive Analytics",
+      "Diagnostic Analytics"
+    ],
+    "Technology Type": [
+      "Data Mining",
+      "Big Data Analytic",
+      "Machine Learning",
+      "Artificial Intelligence",
+      "Other Technology"
+    ],
+    "Deployment Modes": [
+      "Cloud",
+      "On Premise",
+      "Hybrid"
+    ],
+    "Applications": [
+      "Academic Institutions",
+      "Corporate Training",
+      "Government Training Programs",
+      "Online Learning Platforms",
+      "Other Applications"
+    ],
+    "End User": [
+      "K-12 Schools",
+      "Higher Education Institutions",
+      "Corporate / Enterprise L&D",
+      "Government & Public Sector",
+      "Training & Skill Development Providers",
+      "E-learning Platforms",
+      "Other End Users"
+    ]
+  }
+}

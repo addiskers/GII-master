@@ -1,0 +1,35 @@
+{
+  "market_name": "Waxing Market",
+  "unit": "Million",
+  "cagr": 2.5,
+  "value_2024": 145,
+  "value_2033": 181.09,
+  "REGIONAL_RANKING": {
+    "first": "North America",
+    "second": "Europe",
+    "third": "Asia Pacific"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Personal Waxing Mart": [
+      "Home Usage Kits",
+      "Salons & Spas"
+    ],
+    "Professional Waxing": [
+      "Commercial Salons",
+      "Beauty Clinics"
+    ],
+    "Waxing Products": [
+      "Wax Types",
+      "Accessories"
+    ],
+    "Emerging Trends": [
+      "Organic Waxing",
+      "Technological Innovations"
+    ]
+  }
+}

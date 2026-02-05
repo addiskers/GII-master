@@ -1,0 +1,37 @@
+{
+  "market_name": "Wax Market",
+  "unit": "Billion",
+  "cagr": 234,
+  "value_2024": 34,
+  "value_2033": 1758721.68,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Type of Wax": [
+      "Paraffin Wax",
+      "Beeswax",
+      "Soy Wax"
+    ],
+    "Application": [
+      "Candles",
+      "Cosmetics"
+    ],
+    "End-User Industry": [
+      "Food Industry",
+      "Personal Care",
+      "Packaging"
+    ],
+    "Physical State": [
+      "Solid Wax",
+      "Liquid Wax"
+    ]
+  }
+}

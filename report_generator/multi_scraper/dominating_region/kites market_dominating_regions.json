@@ -1,0 +1,35 @@
+{
+  "market_name": "kites market",
+  "unit": "Million",
+  "cagr": 12,
+  "value_2024": 21,
+  "value_2033": 58.23,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "fastest_growing",
+    "United Kingdom": "emerging",
+    "France": "dominant"
+  },
+  "SEGMENTS": {
+    "Kite Types h": [
+      "Single Line Kites",
+      "Stunt Kites"
+    ],
+    "Material Types": [
+      "Fabric Kites",
+      "Plastic Kites"
+    ],
+    "Target Audience": [
+      "Children",
+      "Adults"
+    ],
+    "Distribution Channels": [
+      "Online Retail",
+      "Physical Retail"
+    ]
+  }
+}
