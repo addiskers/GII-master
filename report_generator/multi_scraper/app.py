@@ -16,6 +16,7 @@ from dotenv import load_dotenv
 import re
 import tempfile
 import secrets
+import pandas as pd
 
 app = Flask(__name__, template_folder='templates', static_folder='templates', static_url_path='/templates')
 
@@ -630,13 +631,18 @@ def admin_dashboard():
     users = list_users()
     db = get_db()
     
-    # Get all RD submissions
+    # Get total count of all submissions for metrics
+    count_cur = db.execute('SELECT COUNT(*) as total FROM rd_submissions')
+    total_submissions = count_cur.fetchone()['total']
+    
+    # Get only recent 5 RD submissions for dashboard
     cur = db.execute('''
         SELECT id, market_name, researcher_username, json_path, file_path,
                submitted_at, cagr, value_unit, market_size_2024, 
                segments, companies, downloaded, last_downloaded_at
         FROM rd_submissions
         ORDER BY submitted_at DESC
+        LIMIT 5
     ''')
     submissions_raw = cur.fetchall()
     submissions = []
@@ -657,8 +663,10 @@ def admin_dashboard():
             sub['value_2024'] = 0
         submissions.append(sub)
 
-    # Aggregate metrics
-    total_submissions = len(submissions)
+    # Active researchers count (we need to check all submissions, not just the 5 displayed)
+    # Get all submissions for active researcher calculation
+    all_cur = db.execute('SELECT researcher_username, submitted_at FROM rd_submissions')
+    all_submissions = [dict(row) for row in all_cur.fetchall()]
     
     # Active researchers count
     from datetime import datetime, timedelta
@@ -674,14 +682,22 @@ def admin_dashboard():
     
     now = datetime.now(IST).replace(tzinfo=None)
     cutoff = now - timedelta(days=1)
-    active_researchers_today = len({s['researcher_username'] for s in submissions
+    active_researchers_today = len({s['researcher_username'] for s in all_submissions
                                     if (parse_iso(s.get('submitted_at')) or now - timedelta(days=365)) >= cutoff})
 
-    # Markets per researcher
+    # Markets per researcher (use all submissions)
     markets_by_researcher = {}
-    for s in submissions:
+    for s in all_submissions:
         r = s['researcher_username']
-        m = (s.get('market_name') or '').strip()
+        # Get market name from full submission if needed
+        if r not in markets_by_researcher:
+            markets_by_researcher[r] = set()
+    
+    # Get market names for all submissions
+    markets_cur = db.execute('SELECT researcher_username, market_name FROM rd_submissions')
+    for row in markets_cur.fetchall():
+        r = row['researcher_username']
+        m = (row['market_name'] or '').strip()
         if r not in markets_by_researcher:
             markets_by_researcher[r] = set()
         if m:
@@ -698,6 +714,97 @@ def admin_dashboard():
         researchers_count=researchers_count,
         active_researchers_today=active_researchers_today,
         markets_by_researcher={k: sorted(list(v)) for k, v in markets_by_researcher.items()}
+    )
+
+@app.route('/auth/admin/download_excel')
+@login_required(role='admin')
+def download_submissions_excel():
+    """Download all submissions as Excel file"""
+    db = get_db()
+    
+    # Get all RD submissions with full details
+    cur = db.execute('''
+        SELECT id, market_name, researcher_username, submitted_at, 
+               sector, industry_group, industry, sub_industry,
+               cagr, value_unit, market_size_2024, projected_size_2033,
+               segments, companies, downloaded
+        FROM rd_submissions
+        ORDER BY submitted_at DESC
+    ''')
+    submissions_raw = cur.fetchall()
+    
+    # Prepare data for Excel
+    excel_data = []
+    for row in submissions_raw:
+        # Parse segments and companies
+        try:
+            segments_list = json.loads(row['segments']) if row['segments'] else []
+            companies_list = json.loads(row['companies']) if row['companies'] else []
+            segment_count = len(segments_list)
+            company_count = len(companies_list)
+            
+            # Format segments as comma-separated string
+            segments_str = ', '.join([seg if isinstance(seg, str) else str(seg) for seg in segments_list])
+            # Format companies as comma-separated string
+            companies_str = ', '.join([comp if isinstance(comp, str) else str(comp) for comp in companies_list])
+        except Exception:
+            segment_count = 0
+            company_count = 0
+            segments_str = ''
+            companies_str = ''
+        
+        # Determine status based on downloaded field
+        # If downloaded = 1, show "Uploaded", otherwise show status based on value
+        if row['downloaded'] == 1:
+            status = 'Uploaded'
+        else:
+            status = 'Pending'
+        
+        # Format size 2033 with unit
+        size_2033 = f"{row['projected_size_2033'] or 0} {row['value_unit'] or 'USD Million'}"
+        
+        excel_data.append({
+            'Market': row['market_name'] or '',
+            'Researcher': row['researcher_username'] or '',
+            'Submitted': row['submitted_at'] or '',
+            'Sector': row['sector'] or '',
+            'Industry': row['industry'] or '',
+            'CAGR': f"{row['cagr'] or 0}%",
+            'Size 2024': f"{row['market_size_2024'] or 0} {row['value_unit'] or 'USD Million'}",
+            'Size 2033': size_2033,
+            'Segments': f"{segment_count} segments: {segments_str}",
+            'Companies': f"{company_count} companies: {companies_str}",
+            'Status': status
+        })
+    
+    # Create DataFrame
+    df = pd.DataFrame(excel_data)
+    
+    # Generate Excel file
+    output = io.BytesIO()
+    with pd.ExcelWriter(output, engine='openpyxl') as writer:
+        df.to_excel(writer, sheet_name='Submissions', index=False)
+        
+        # Auto-adjust column widths
+        worksheet = writer.sheets['Submissions']
+        for idx, col in enumerate(df.columns):
+            max_length = max(
+                df[col].astype(str).apply(len).max(),
+                len(col)
+            )
+            worksheet.column_dimensions[chr(65 + idx)].width = min(max_length + 2, 50)
+    
+    output.seek(0)
+    
+    # Generate filename with timestamp
+    timestamp = datetime.now(IST).strftime('%Y%m%d_%H%M%S')
+    filename = f'submissions_{timestamp}.xlsx'
+    
+    return send_file(
+        output,
+        mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        as_attachment=True,
+        download_name=filename
     )
 
 @app.route('/auth/admin/create_user', methods=['GET', 'POST'])

@@ -1,0 +1,36 @@
+{
+  "market_name": "1, 3-Propanediol (PDO)",
+  "unit": "Million",
+  "cagr": 32,
+  "value_2024": 32,
+  "value_2033": 389.33,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "emerging",
+    "France": "fastest_growing"
+  },
+  "SEGMENTS": {
+    "Applications": [
+      "Personal Care",
+      "Food Industry",
+      "Industrial Applications"
+    ],
+    "End Users": [
+      "Manufacturers",
+      "Distributors"
+    ],
+    "Chemical Properties": [
+      "Purity Levels",
+      "Production Methods"
+    ],
+    "Sales Channels": [
+      "Online Sales",
+      "Offline Sales"
+    ]
+  }
+}

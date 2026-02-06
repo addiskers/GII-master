@@ -77,7 +77,12 @@
         <div class="card">
           <div class="table-toolbar">
             <div style="font-size:14px;font-weight:600;color:var(--muted)">{{ submissions|length }} Total Submissions</div>
-            <div class="search"><span class="muted">🔍</span><input id="searchBox" type="text" placeholder="Search market name..." /></div>
+            <div style="display:flex;align-items:center;gap:12px">
+              <a href="/auth/admin/download_excel" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:var(--primary);color:#fff;border-radius:10px;text-decoration:none;font-size:14px;font-weight:600">
+                📥 Download Excel
+              </a>
+              <div class="search"><span class="muted">🔍</span><input id="searchBox" type="text" placeholder="Search market name..." /></div>
+            </div>
           </div>
 
           <table class="table-pro">
@@ -117,7 +122,9 @@
                 <td>{{ s.segments|length }}</td>
                 <td>{{ s.companies|length }}</td>
                 <td>
-                  {% if s.downloaded %}
+                  {% if s.downloaded == 1 %}
+                    <span class="badge badge-success">Uploaded</span>
+                  {% elif s.downloaded %}
                     <span class="badge badge-success">Downloaded</span>
                   {% else %}
                     <span class="badge badge-warning">Pending</span>

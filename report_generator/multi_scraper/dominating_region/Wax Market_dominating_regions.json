@@ -1,9 +1,9 @@
 {
   "market_name": "Wax Market",
   "unit": "Billion",
-  "cagr": 234,
-  "value_2024": 34,
-  "value_2033": 1758721.68,
+  "cagr": 5.3,
+  "value_2024": 87,
+  "value_2033": 138.48,
   "REGIONAL_RANKING": {
     "first": "Asia Pacific",
     "second": "North America",
@@ -16,22 +16,20 @@
   },
   "SEGMENTS": {
     "Type of Wax": [
-      "Paraffin Wax",
-      "Beeswax",
-      "Soy Wax"
+      "Natural Wax",
+      "Synthetic Wax"
     ],
     "Application": [
-      "Candles",
-      "Cosmetics"
+      "Cosmetics",
+      "Industrial"
     ],
-    "End-User Industry": [
-      "Food Industry",
-      "Personal Care",
-      "Packaging"
-    ],
-    "Physical State": [
+    "Formulation": [
       "Solid Wax",
       "Liquid Wax"
+    ],
+    "End-user": [
+      "Personal Care",
+      "Food Industry"
     ]
   }
 }

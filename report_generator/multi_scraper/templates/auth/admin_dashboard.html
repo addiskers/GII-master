@@ -157,13 +157,18 @@
         </div>
 
         <div class="card table-card" id="submissionsSection">
-          <h4>All Submissions</h4>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+            <h4 style="margin:0">Recent Submissions</h4>
+            <a href="/auth/admin/submissions" style="color:var(--primary);text-decoration:none;font-size:14px;font-weight:600">View All →</a>
+          </div>
           <div class="table-toolbar">
             <div class="search"><span class="muted">🔍</span><input id="adminSearch" type="text" placeholder="Search" /></div>
-            <div class="sort"><span class="muted">Sort by :</span>
+            <div class="sort">
+              <span class="muted">Sort by :</span>
               <select id="adminStatus">
                 <option value="">Newest</option>
                 <option value="pending">Pending</option>
+                <option value="uploaded">Uploaded</option>
                 <option value="downloaded">Downloaded</option>
               </select>
             </div>
@@ -183,7 +188,7 @@
             </thead>
             <tbody>
               {% for s in submissions %}
-                <tr data-r="{{ s.researcher_username|lower }}" data-m="{{ (s.market_name or '')|lower }}" data-status="{% if s.downloaded %}downloaded{% else %}pending{% endif %}">
+                <tr data-r="{{ s.researcher_username|lower }}" data-m="{{ (s.market_name or '')|lower }}" data-status="{% if s.downloaded == 1 %}uploaded{% elif s.downloaded %}downloaded{% else %}pending{% endif %}">
                   <td style="font-weight:600">{{ s.researcher_username }}</td>
                   <td>{{ s.market_name or '—' }}</td>
                   <td>{{ s.submitted_at|fmt_ts }}</td>
@@ -192,7 +197,9 @@
                   <td>{{ s.segment_count or 0 }}</td>
                   <td>{{ s.company_count or 0 }}</td>
                   <td>
-                    {% if s.downloaded %}
+                    {% if s.downloaded == 1 %}
+                      <span class="badge badge-success">Uploaded</span>
+                    {% elif s.downloaded %}
                       <span class="badge badge-success">Downloaded</span>
                     {% else %}
                       <span class="badge badge-warning">Pending</span>

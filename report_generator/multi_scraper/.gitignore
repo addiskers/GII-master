@@ -29,3 +29,11 @@ Thumbs.db
 # Application specific
 
 *.bak
+auth_users.db
+saved_data/
+images/
+dominating_regions/
+logs/
+submission_files/
+website_submission/
+submitted_files/

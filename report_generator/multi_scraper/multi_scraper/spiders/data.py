@@ -5012,6 +5012,30 @@ def get_random_meta_title(market_name):
     selected_template = random.choice(meta_title_templates)
     return selected_template.format(market_name)
 
+def clean_slug(text):
+    """Clean and format text for use as a URL slug
+    
+    Replace special characters, commas, parentheses with hyphens or remove them.
+    Convert to lowercase and remove consecutive hyphens.
+    """
+    # Replace parentheses with spaces (keeping content inside)
+    text = text.replace('(', ' ').replace(')', ' ')
+    # Replace commas with hyphens
+    text = text.replace(',', '-')
+    # Replace special characters (keep only alphanumeric, spaces, and hyphens)
+    text = re.sub(r'[^a-zA-Z0-9\s-]', '-', text)
+    # Replace spaces with hyphens
+    text = text.replace(' ', '-')
+    # Convert to lowercase
+    text = text.lower()
+    # Remove consecutive hyphens
+    text = re.sub(r'-+', '-', text)
+    # Remove leading/trailing hyphens
+    text = text.strip('-')
+    # Print the cleaned slug
+    print(f"Report Slug: {text}")
+    return text
+
 def generate_docx_from_data(data, output_path=None, doc=None):
     market_name = data.get("title", "Aortic Endografts Market")
     
@@ -5043,7 +5067,6 @@ def generate_docx_from_data(data, output_path=None, doc=None):
         for it in subitems[:6]:
             data_tuples.append((it, 1))
     
-    # Update rd_meta with market_name - SPECIAL HANDLING FOR REPORT SLUG AND META TITLE
     rd_meta = []
     
     # Add industry classification data FIRST (right after Image)
@@ -5064,7 +5087,7 @@ def generate_docx_from_data(data, output_path=None, doc=None):
                 elif '{}' in v:
                     formatted_value = v.format(market_name)
                     if k == "Report Slug":
-                        formatted_value = formatted_value.replace(" ", "-").lower()
+                        formatted_value = clean_slug(formatted_value)
                     rd_meta.append((k, formatted_value))
                 else:
                     rd_meta.append((k, v))
@@ -5084,7 +5107,7 @@ def generate_docx_from_data(data, output_path=None, doc=None):
             elif '{}' in v:
                 formatted_value = v.format(market_name)
                 if k == "Report Slug":
-                    formatted_value = formatted_value.replace(" ", "-").lower()
+                    formatted_value = clean_slug(formatted_value)
                 rd_meta.append((k, formatted_value))
             else:
                 rd_meta.append((k, v))
@@ -5097,9 +5120,9 @@ def generate_docx_from_data(data, output_path=None, doc=None):
                 rd_meta.append((k, formatted_value))
             elif '{}' in v:
                 formatted_value = v.format(market_name)
-                # Special case for Report Slug - replace spaces with hyphens and convert to lowercase
+                # Special case for Report Slug - clean special characters, commas, and parentheses
                 if k == "Report Slug":
-                    formatted_value = formatted_value.replace(" ", "-").lower()
+                    formatted_value = clean_slug(formatted_value)
                 rd_meta.append((k, formatted_value))
             else:
                 rd_meta.append((k, v))
@@ -5169,6 +5192,13 @@ def generate_docx_from_data(data, output_path=None, doc=None):
         cagr=cagr_use,
     )
     rd_meta = [(k, meta_desc if k == "Meta Description" else v) for k, v in rd_meta]
+    
+    # Print all metadata being saved (including industry classification)
+    print("\n=== Metadata being saved to document ===")
+    for key, value in rd_meta:
+        if key in ["Sector", "Industry Group", "Industry", "Sub-Industry", "Report Slug"]:
+            print(f"{key}: {value}")
+    print("========================================\n")
     
     # Get companies from data, not the global variable
     companies_list = data.get("companies", [])
