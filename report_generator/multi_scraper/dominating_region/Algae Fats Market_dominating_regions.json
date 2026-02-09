@@ -1,0 +1,43 @@
+{
+  "market_name": "Algae Fats Market",
+  "unit": "Billion",
+  "cagr": 7.3,
+  "value_2024": 6.6,
+  "value_2033": 12.44,
+  "REGIONAL_RANKING": {
+    "first": "North America",
+    "second": "Europe",
+    "third": "Asia Pacific"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Product Form": [
+      "Oil",
+      "Powder",
+      "Capsules",
+      "Tablets",
+      "Encapsulated Emulsion"
+    ],
+    "Fat Type": [
+      "Omega-3 Fatty Acids",
+      "Omega-6 Fatty Acids",
+      "Omega-9 Fatty Acids"
+    ],
+    "Source": [
+      "Microalgae",
+      "Macroalgae"
+    ],
+    "Application": [
+      "Dietary Supplements",
+      "Food and Beverages",
+      "Pharmaceuticals",
+      "Cosmetics",
+      "Biofuels",
+      "Animal Feed"
+    ]
+  }
+}

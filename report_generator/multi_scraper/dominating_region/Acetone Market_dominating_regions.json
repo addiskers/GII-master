@@ -1,0 +1,50 @@
+{
+  "market_name": "Acetone Market",
+  "unit": "Billion",
+  "cagr": 6.3,
+  "value_2024": 17.5,
+  "value_2033": 30.33,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Grade": [
+      "Technical Grade",
+      "Pharmaceutical Grade",
+      "Reagent/Analytical Grade"
+    ],
+    "Production Process": [
+      "Cumene Process",
+      "Isopropanol Oxidation",
+      "Direct Propylene Oxidation",
+      "Bio-based Fermentation"
+    ],
+    "Application": [
+      "Methyl Methacrylate (MMA)",
+      "Bisphenol A (BPA)",
+      "Solvents",
+      "Methyl Isobutyl Ketone (MIBK)",
+      "Other Applications"
+    ],
+    "End-Use Industry": [
+      "Cosmetics and Personal Care",
+      "Electronics",
+      "Automotive",
+      "Pharmaceutical",
+      "Paints, Coatings and Adhesives",
+      "Textile",
+      "Other End-user Industry"
+    ],
+    "Distribution Channel": [
+      "Direct",
+      "Indirect"
+    ]
+  }
+}
