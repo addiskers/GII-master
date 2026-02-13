@@ -1244,8 +1244,26 @@ class MarketResearchSpider(scrapy.Spider):
                     },
                     dont_filter=True
                 )  
-
- 
+            elif "verifiedmarketreports.com" in url:
+                yield scrapy.Request(
+                    url,
+                    callback=self.parse_verified_reports,
+                    meta={
+                        "zyte_api": {
+                            "browserHtml": True
+                        }
+                    }
+                )
+            elif "gminsights.com" in url:
+                yield scrapy.Request(
+                    url,
+                    callback=self.parse_global_market,
+                    meta={
+                        "zyte_api": {
+                            "browserHtml": True
+                        }
+                    }
+                )
 
             else:
                 self.logger.warning(f"Unsupported domain in URL: {url}")
@@ -3494,7 +3512,6 @@ class MarketResearchSpider(scrapy.Spider):
         for elem in response.css("div.toc-content > *"):
             tag = elem.root.tag
             text = elem.xpath("string(.)").get().strip()
- 
             # ---------- SEGMENTS ----------
             if tag == "h2":
                 if " By " in text:
@@ -3507,20 +3524,18 @@ class MarketResearchSpider(scrapy.Spider):
                     table_of_contents.append(f"{segment_index}. {segment}")
  
                 elif "Company Profiles" in text:
-                    # Enter company profiles section
                     current_segment = None
                     in_company_section = True
  
                 else:
-                    # Any other h2 resets both
                     current_segment = None
                     in_company_section = False
  
             # ---------- SUB-SEGMENTS ----------
             elif tag == "p":
-                # 1️⃣ Collect sub-segments under current segment
+                # Collect sub-segments under current segment
                 if current_segment and re.match(r"^\d+\.\d+\.\d+\.?\s+", text):
-                    # Remove the numbering (with optional dot) and any leading spaces
+                    # Remove numbering
                     sub_name = re.sub(r"^\d+\.\d+\.\d+\.?\s*", "", text).strip().upper()
                     # Skip noisy entries
                     if any(
@@ -3535,27 +3550,79 @@ class MarketResearchSpider(scrapy.Spider):
                         ]
                     ):
                         continue
+ 
                     sub_index += 1
                     table_of_contents.append(f"{current_segment}.{sub_index}. {sub_name}")
+                # Fallback: single <p> containing multiple subsegments
+                elif current_segment and not re.match(r"^\d+\.\d+\.\d+\.?\s+", text):
+                    all_matches = re.findall(
+                        r"\d+\.\d+\.\d+\.\s*([A-Za-z &\-\(\)]+?)(?=\d+\.\d+\.|\Z)",
+                        text
+                    )
+                    if len(all_matches) > 1:
+                        for sub_name in all_matches:
+                            sub_name = sub_name.strip().upper()
+                            if not sub_name or sub_name == ".":
+                                continue
+                            if any(
+                                bad in sub_name
+                                for bad in [
+                                    "MARKET REVENUE",
+                                    "FORECAST",
+                                    "BY ",
+                                    "PRODUCT OFFERINGS",
+                                    "FINANCIAL",
+                                    "RECENT INITIATIVES",
+                                ]
+                            ):
+                                continue
+                            sub_index += 1
+                            table_of_contents.append(
+                                f"{current_segment}.{sub_index}. {sub_name}"
+                            )
  
-                # 2️⃣ Collect company names (top-level like 13.1. or 13.1)
-                elif in_company_section and re.match(r"^\d+\.\d+\.?\s+", text):
-                    # Exclude deeper levels like 13.1.1 or 13.1.1.
-                    if re.match(r"^\d+\.\d+\.\d+\.?", text):
-                        continue
+                # Collect company names
+                elif in_company_section:
+                    # Detect how many company-level patterns exist
+                    company_number_matches = re.findall(r"\b\d+\.\d+\.", text)
  
-                    company_name = re.sub(r"^\d+\.\d+\.?\s*", "", text).strip()
-                    # Remove any inner HTML tags
-                    company_name = re.sub(r"<.*?>", "", company_name)
-                    if company_name:
-                        company_profiles.append(company_name)
-       
+                    # ---------------- COMPACT STRUCTURE ----------------
+                    if len(company_number_matches) > 1:
+                        cleaned_text = re.sub(
+                            r"\d+\.\d+\.\d+\.\s*[A-Za-z &]+",
+                            "",
+                            text
+                        )
+                        # Extract only company-level (2-level)
+                        matches = re.findall(
+                            r"\b\d+\.\d+\.\s*([A-Za-z0-9 &\-\.,()]+)",
+                            cleaned_text
+                        )
+                        for company_block in matches:
+                            # Insert separator before next numbering
+                            company_block = re.sub(r"(\d+\.\d+\.)", r"|\1", company_block)
+                            split_companies = company_block.split("|")
+                            for company_name in split_companies:
+                                company_name = re.sub(r"^\d+\.\d+\.\s*", "", company_name).strip()
+                                if company_name:
+                                    company_profiles.append(company_name)
+                    # ---------------- NORMAL STRUCTURE ----------------
+                    elif re.match(r"^\d+\.\d+\.?\s+", text):
+                        # Skip deeper levels like 10.1.1.
+                        if re.match(r"^\d+\.\d+\.\d+\.?", text):
+                            continue
+                        company_name = re.sub(r"^\d+\.\d+\.?\s*", "", text).strip()
+                        company_name = re.sub(r"<.*?>", "", company_name)
+                        if company_name:
+                            company_profiles.append(company_name)
+ 
         result_data = {
             "title": response.meta["title"],
             "url": response.meta["url"],
             "table_of_contents": table_of_contents,
             "company_profiles": company_profiles
         }
+ 
         self.save_to_json(result_data, response.meta["url"])
 
 #===================== Varified Market Research =====================
@@ -3765,6 +3832,7 @@ class MarketResearchSpider(scrapy.Spider):
                     continue
                 # ---------- INSIDE COMPANY SECTION ----------
                 if in_company_section:
+ 
                     if re.match(rf"^(?!{company_section_no}(\.|$))\d+(\.|$|\s)", text):
                         in_company_section = False
                         company_section_no = None
@@ -3773,15 +3841,17 @@ class MarketResearchSpider(scrapy.Spider):
                     if re.match(rf"^{company_section_no}\.\d+\.\d+", text):
                         continue
  
-                    if re.match(rf"^{company_section_no}\.\d+\s+", text):
+                    if re.match(rf"^{company_section_no}\.\d+\.?\s+", text):
                         clean_company = re.sub(
                             rf"^{company_section_no}\.\d+\s*", "", text
                         ).strip()
+                        clean_company = re.sub(r"^\.\s*", "", clean_company)
                         if clean_company:
                             company_profiles.append(clean_company)
                         continue
  
                     bullet_clean = text.strip()
+ 
                     if re.match(r"^\d+(\.|$|\s)", bullet_clean):
                         continue
  
@@ -3793,18 +3863,26 @@ class MarketResearchSpider(scrapy.Spider):
  
                     if len(bullet_clean.split()) > 6:
                         continue
+ 
                     company_profiles.append(bullet_clean)
                     continue
  
                 # ---------- FALLBACK SEGMENTS ----------
-                if " BY " in text_upper and "BY GEOGRAPHY" not in text_upper:
+                segment_match = re.match(
+                    r"^(\d+)\.?\s+.*?\s*,?\s+BY\s+(.+)",
+                    text_upper
+                )
+                if segment_match:
+                    segment_name = segment_match.group(2).strip()
+                    # Stop geography section
+                    if "GEOGRAPHY" in segment_name:
+                        current_segment = None
+                        continue
                     segment_counter += 1
                     sub_counter = 0
                     current_segment = segment_counter
-                    segment_name = text_upper.split(" BY ", 1)[1].strip()
                     table_of_contents.append(f"{segment_counter}. {segment_name}")
                     continue
- 
                 if " BY GEOGRAPHY" in text_upper:
                     current_segment = None
                     continue
@@ -3818,7 +3896,9 @@ class MarketResearchSpider(scrapy.Spider):
                         continue
  
                     clean_text = re.sub(r"^\d+(\.\d+)*\s*", "", text_upper)
+                    clean_text = re.sub(r"^\.\s*", "", clean_text)
                     clean_text = re.sub(r"^[•·\u2022\u00B7]\s*", "", clean_text)
+ 
                     if len(clean_text.split()) > 8:
                         continue
  
@@ -3826,13 +3906,307 @@ class MarketResearchSpider(scrapy.Spider):
                     table_of_contents.append(
                         f"{current_segment}.{sub_counter}. {clean_text}"
                     )
- 
+                   
         return {
             "table_of_contents": table_of_contents,
             "company_profiles": company_profiles
         }
+    
+    #===================== Verified Market Reports =====================
+    def parse_verified_reports(self, response):
+        segments = self.extract_segments(response).get("table_of_contents", [])
+        company_profiles = self.extract_top_companies(response).get("company_profiles", [])
+        result_data = {
+            "title": self.clean_title(response.css('title::text').get()),
+            "url": response.url,
+            "table_of_contents": segments,
+            "company_profiles": company_profiles
+        }
+        self.save_to_json(result_data, response.url)
+ 
+    def extract_segments(self, response):
+        table_of_contents = []
+        segment_counter = 0
+        # -------- PRIMARY METHOD (inside container) --------
+        segmentation_h2 = response.xpath(
+            '//div[contains(@class,"container")]'
+            '//h2[contains(translate(.,"ABCDEFGHIJKLMNOPQRSTUVWXYZ","abcdefghijklmnopqrstuvwxyz"),"market segmentation")]'
+        )
+        # -------- FALLBACK METHOD (global search) --------
+        if not segmentation_h2:
+            print("Fallback triggered for Market Segmentation")
+            segmentation_h2 = response.xpath(
+                '//h2[contains(translate(.,"ABCDEFGHIJKLMNOPQRSTUVWXYZ","abcdefghijklmnopqrstuvwxyz"),"market segmentation")]'
+            )
+        if not segmentation_h2:
+            return {"table_of_contents": table_of_contents}
+        # Get all h3 after segmentation h2
+        h3_segments = segmentation_h2.xpath("following::h3")
+        for h3 in h3_segments:
+            heading = h3.xpath("normalize-space(.)").get()
+            if not heading:
+                continue
+            heading_lower = heading.lower()
+            # STOP condition
+            if "by geography" in heading_lower:
+                break
+            # Only process headings containing "by"
+            if re.search(r"\bby\b", heading, re.IGNORECASE):
+                segment_counter += 1
+                segment_title = re.sub(
+                    r".*\bby\b", "", heading,
+                    flags=re.IGNORECASE
+                ).strip().upper()
+                table_of_contents.append(
+                    f"{segment_counter}. {segment_title}"
+                )
+                # Get first ul after this h3
+                sub_items = h3.xpath("following-sibling::ul[1]/li")
+                sub_counter = 0
+                for li in sub_items:
+                    sub_text = li.xpath("normalize-space(.)").get()
+                    if not sub_text:
+                        continue
+ 
+                    sub_counter += 1
+                    table_of_contents.append(
+                        f"{segment_counter}.{sub_counter}. {sub_text.upper()}"
+                    )
+ 
+        return {"table_of_contents": table_of_contents}
+ 
+    def extract_top_companies(self, response):
+        companies = []
+        container = response.xpath('//div[contains(@class,"container")]')
+        # Find h2 that contains "Top" and "Companies" inside container
+        heading = container.xpath(
+            './/h2[contains(translate(.,"ABCDEFGHIJKLMNOPQRSTUVWXYZ","abcdefghijklmnopqrstuvwxyz"),"top") '
+            'and contains(translate(.,"ABCDEFGHIJKLMNOPQRSTUVWXYZ","abcdefghijklmnopqrstuvwxyz"),"companies")]'
+        )
+        # -------- FALLBACK (global search if not found inside container) --------
+        if not heading:
+            print("Company fallback triggered")
+            heading = response.xpath(
+                '//h2[contains(translate(.,"ABCDEFGHIJKLMNOPQRSTUVWXYZ","abcdefghijklmnopqrstuvwxyz"),"top") '
+                'and contains(translate(.,"ABCDEFGHIJKLMNOPQRSTUVWXYZ","abcdefghijklmnopqrstuvwxyz"),"companies")]'
+            )
+        if heading:
+            # Get first ul after that h2 (ignores the p tags automatically)
+            company_list = heading.xpath('following::ul[1]/li')
+            for li in company_list:
+                name = li.xpath('normalize-space(.)').get()
+                if name:
+                    companies.append(name.strip())
+        return {"company_profiles": companies}
 
-    # ==================== COMMON HELPER FUNCTIONS ====================
+# ==================== Global Mraket Insights ====================
+    def parse_global_market(self, response):
+        segments = self.extract_segment_toc(response).get("table_of_contents", [])
+        company = self.extract_company_profiles(response).get("company_profiles", [])
+        result_data = {
+            "title": self.clean_title(response.css('title::text').get()),
+            "url": response.url,
+            "table_of_contents": segments,
+            "company_profiles": company
+        }
+        self.save_to_json(result_data, response.url)
+ 
+    def extract_segment_toc(self, response):
+        table_of_contents = []
+        segment_counter = 0
+        main_div = response.css("div.tab-content")
+ 
+        for h4 in main_div.css("h4"):
+            heading = " ".join(h4.css("::text").getall()).strip()
+            if not heading:
+                continue
+ 
+            # Only headings that contain "by"
+            if re.search(r"\bby\b", heading, re.IGNORECASE):
+                segment_counter += 1
+                cleaned_heading = re.split(r"\bby\b", heading, flags=re.IGNORECASE)[-1]
+                cleaned_heading = cleaned_heading.strip(" ,:-").strip().upper()
+ 
+                toc_entry = f"{segment_counter}. {cleaned_heading}"
+                table_of_contents.append(toc_entry)
+ 
+                ul = h4.xpath("following::ul[1]")
+                if not ul:
+                    continue
+ 
+                sub_counter = 0
+ 
+                for li in ul.xpath("./li"):
+                    sub_text = "".join(li.xpath("./text()").getall()).strip()
+                    if not sub_text:
+                        continue
+ 
+                    sub_counter += 1
+                    sub_entry = f"{segment_counter}.{sub_counter}. {sub_text.upper()}"
+                    table_of_contents.append(sub_entry)
+ 
+                    nested_ul = li.xpath("./ul")
+                    if nested_ul:
+                        sub_sub_counter = 0
+ 
+                        for sub_li in nested_ul.xpath("./li"):
+                            sub_sub_text = "".join(
+                                sub_li.xpath("./text()").getall()
+                            ).strip()
+ 
+                            if not sub_sub_text:
+                                continue
+ 
+                            sub_sub_counter += 1
+                            sub_sub_entry = (
+                                f"{segment_counter}.{sub_counter}.{sub_sub_counter}. "
+                                f"{sub_sub_text.upper()}"
+                            )
+                            table_of_contents.append(sub_sub_entry)
+ 
+                            # ---------------- NEW: SUB-SUB-SUB ----------------
+                            nested_ul_3 = sub_li.xpath("./ul")
+                            if nested_ul_3:
+                                sub_sub_sub_counter = 0
+ 
+                                for sub_sub_li in nested_ul_3.xpath("./li"):
+                                    sub_sub_sub_text = "".join(
+                                        sub_sub_li.xpath(".//text()").getall()
+                                    ).strip()
+ 
+                                    if not sub_sub_sub_text:
+                                        continue
+ 
+                                    sub_sub_sub_counter += 1
+                                    sub_sub_sub_entry = (
+                                        f"{segment_counter}.{sub_counter}."
+                                        f"{sub_sub_counter}.{sub_sub_sub_counter}. "
+                                        f"{sub_sub_sub_text.upper()}"
+                                    )
+ 
+                                    table_of_contents.append(sub_sub_sub_entry)
+ 
+        # ---------------- FALLBACK: P > STRONG ----------------
+        if not table_of_contents:
+            for tag in main_div.css("p strong"):
+                heading = " ".join(tag.css("::text").getall()).strip()
+                if not heading:
+                    continue
+                if re.search(r"\bby\b", heading, re.IGNORECASE):
+                    segment_counter += 1
+                    cleaned_heading = re.split(r"\bby\b", heading, flags=re.IGNORECASE)[-1]
+                    cleaned_heading = cleaned_heading.strip(" ,:-").strip().upper()
+                    toc_entry = f"{segment_counter}. {cleaned_heading}"
+                    table_of_contents.append(toc_entry)
+                    ul = tag.xpath("following::ul[1]")
+                    if not ul:
+                        continue
+ 
+                    sub_counter = 0
+                    for li in ul.xpath("./li"):
+                        sub_text = "".join(li.xpath("./text()").getall()).strip()
+                        if not sub_text:
+                            continue
+ 
+                        sub_counter += 1
+                        sub_entry = f"{segment_counter}.{sub_counter}. {sub_text.upper()}"
+                        table_of_contents.append(sub_entry)
+                        nested_ul = li.xpath("./ul")
+                        if nested_ul:
+                            sub_sub_counter = 0
+                            for sub_li in nested_ul.xpath("./li"):
+                                sub_sub_text = "".join(
+                                    sub_li.xpath(".//text()").getall()
+                                ).strip()
+ 
+                                if not sub_sub_text:
+                                    continue
+ 
+                                sub_sub_counter += 1
+                                sub_sub_entry = (
+                                    f"{segment_counter}.{sub_counter}.{sub_sub_counter}. "
+                                    f"{sub_sub_text.upper()}"
+                                )
+                                table_of_contents.append(sub_sub_entry)
+ 
+        return {"table_of_contents": table_of_contents}
+ 
+    def extract_company_profiles(self, response):
+        company_profiles = []
+        main_div = response.css("div.tab-content")
+ 
+        # ---------------- PRIMARY: H3 ----------------
+        for h3 in main_div.css("h3"):
+            heading = " ".join(h3.css("::text").getall()).strip()
+            if not heading:
+                continue
+            if "companies" in heading.lower() or "company" in heading.lower():
+                ul = h3.xpath("following::ul[1]")
+                if not ul:
+                    continue
+ 
+                for li in ul.xpath(".//li"):
+                    company = "".join(
+                        li.xpath(".//text()").getall()
+                    ).replace("\xa0", " ").strip()
+ 
+                    if not company:
+                        continue
+ 
+                    # Word count filter
+                    if len(company.split()) <= 8:
+                        company_profiles.append(company)
+ 
+        # ---------------- FALLBACK 1: H2 ----------------
+        if not company_profiles:
+            for h2 in main_div.css("h2"):
+                heading = " ".join(h2.css("::text").getall()).strip()
+                if not heading:
+                    continue
+ 
+                if "companies" in heading.lower() or "company" in heading.lower():
+                    ul = h2.xpath("following::ul[1]")
+                    if not ul:
+                        continue
+ 
+                    for li in ul.xpath(".//li"):
+                        company = "".join(
+                            li.xpath(".//text()").getall()
+                        ).replace("\xa0", " ").strip()
+                        if not company:
+                            continue
+ 
+                        if len(company.split()) <= 8:
+                            company_profiles.append(company)
+ 
+        # ---------------- FALLBACK 2: P TEXT ----------------
+        if not company_profiles:
+            for p in main_div.css("p"):
+                paragraph_text = " ".join(p.css("::text").getall()).strip()
+ 
+                if not paragraph_text:
+                    continue
+ 
+                if re.search(r"\b(major players|major companies|key players)\b",
+                            paragraph_text,
+                            re.IGNORECASE):
+                    ul = p.xpath("following::ul[1]")
+                    if not ul:
+                        continue
+ 
+                    for li in ul.xpath(".//li"):
+                        company = "".join(
+                            li.xpath(".//text()").getall()
+                        ).replace("\xa0", " ").strip()
+ 
+                        if company and len(company.split()) <= 8:
+                            company_profiles.append(company)
+ 
+                    break  # stop after first valid paragraph section                
+        # Remove duplicates
+        company_profiles = list(dict.fromkeys(company_profiles))
+        return {"company_profiles": company_profiles}
+    # ==================== COMMON HELPER FUNCTIONS ==================== #
     def is_likely_company_name(self, text):
         """Check if text is likely a company name"""
         if not text or len(text) < 2:
