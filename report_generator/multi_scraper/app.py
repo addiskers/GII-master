@@ -2745,6 +2745,6 @@ def submit_to_skyquest():
         return jsonify({'error': f'Failed to submit to SkyQuest: {str(e)}'}), 500
 
 if __name__ == '__main__':
-    port = int(os.getenv('PORT', '5002'))
+    port = int(os.getenv('PORT', '5001'))
     # Use stat reloader instead of watchdog to avoid Windows socket errors
     app.run(host='0.0.0.0', port=port, debug=True, use_reloader=True, reloader_type='stat')
