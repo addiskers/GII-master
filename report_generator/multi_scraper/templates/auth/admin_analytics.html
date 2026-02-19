@@ -1,0 +1,561 @@
+{% extends 'auth/base.html' %}
+{% block content %}
+<style>
+  .filter-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .filter-btn{padding:6px 16px;border-radius:999px;border:1.5px solid var(--border);background:#fff;font-size:13px;cursor:pointer;color:#394150;transition:all .15s}
+  .filter-btn:hover{border-color:var(--primary);color:var(--primary)}
+  .filter-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);font-weight:600}
+  .custom-range{display:none;align-items:center;gap:6px;font-size:13px}
+  .custom-range.visible{display:flex}
+  .custom-range input[type=date]{padding:5px 8px;border:1.5px solid var(--border);border-radius:8px;font-size:12px}
+  .summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .summary-card{background:var(--card);border-radius:14px;box-shadow:0 4px 16px rgba(31,36,48,.07);padding:16px;border-top:3px solid var(--primary)}
+  .summary-card h4{margin:0 0 4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)}
+  .summary-card .val{font-size:26px;font-weight:800;color:var(--text)}
+  .summary-card .sub{font-size:11px;color:var(--muted);margin-top:3px}
+  .researcher-block{margin-bottom:0}
+  .researcher-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px}
+  .researcher-name{font-size:17px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px}
+  .avg-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#6C5CE7,#a29bfe);color:#fff;border-radius:999px;padding:5px 14px;font-size:13px;font-weight:600}
+  .no-data-badge{background:#f0f2f6;color:var(--muted);border-radius:999px;padding:5px 14px;font-size:12px}
+  .toggle-btn{background:#f0f2f6;border:none;border-radius:8px;padding:5px 10px;font-size:12px;cursor:pointer;color:#394150}
+  .toggle-btn:hover{background:#e6e9f0}
+  .title-list{display:none;margin-top:8px}
+  .title-list.open{display:block}
+  .time-bar-wrap{display:flex;align-items:center;gap:10px;margin-bottom:5px}
+  .time-bar-label{width:200px;font-size:12px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0}
+  .time-bar-track{flex:1;height:9px;background:#f0f2f6;border-radius:999px;overflow:hidden}
+  .time-bar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#6C5CE7,#a29bfe);transition:width .5s}
+  .time-val{width:64px;font-size:12px;color:var(--muted);text-align:right;flex-shrink:0}
+  .seg-pill{display:inline-flex;align-items:center;border-radius:8px;padding:2px 8px;font-size:11px;font-weight:600;white-space:nowrap}
+  .seg-high{background:#d1fae5;color:#065f46}
+  .seg-mid{background:#fef3c7;color:#92400e}
+  .seg-low{background:#fee2e2;color:#991b1b}
+  .seg-na{background:#f0f2f6;color:#7a8aa0}
+  .vc-btn{background:#f0f2f6;border:none;border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;color:#394150;transition:all .2s;white-space:nowrap}
+  .vc-btn:hover{background:#e6e9f0}
+  .vc-btn.open{background:#d1fae5;color:#065f46;font-weight:600}
+  .diff-row td{padding:0 12px 12px!important}
+  .diff-panel{border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+  .diff-section{padding:10px 14px}
+  .diff-section+.diff-section{border-top:1px solid var(--border)}
+  .diff-ttl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+  .diff-added .diff-ttl{color:#059669}
+  .diff-removed .diff-ttl{color:#dc2626}
+  .diff-same .diff-ttl{color:#6C5CE7}
+  .diff-list{display:flex;flex-wrap:wrap;gap:5px;margin:0;padding:0;list-style:none}
+  .diff-added .diff-list li{background:#d1fae5;color:#065f46;border-radius:6px;padding:3px 9px;font-size:12px}
+  .diff-removed .diff-list li{background:#fee2e2;color:#991b1b;border-radius:6px;padding:3px 9px;font-size:12px}
+  .diff-same .diff-list li{background:#ede9fe;color:#5b21b6;border-radius:6px;padding:3px 9px;font-size:12px}
+  .diff-empty{font-size:12px;color:var(--muted);font-style:italic}
+  .empty-state{text-align:center;padding:48px;color:var(--muted)}
+  .hidden-row{display:none}
+  .vs-btn{background:#ede9fe;border:none;border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;color:#5b21b6;transition:all .2s;white-space:nowrap;margin-top:4px}
+  .vs-btn:hover{background:#ddd6fe}
+  .seg-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center}
+  .seg-modal-overlay.open{display:flex}
+  .seg-modal{background:#fff;border-radius:16px;padding:22px 24px;width:820px;max-width:95vw;max-height:88vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,0.25)}
+  .seg-modal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .seg-modal-ttl{font-size:15px;font-weight:700;color:var(--text)}
+  .seg-modal-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted);line-height:1;padding:0}
+  .seg-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .seg-col-hd{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:6px 10px;border-radius:8px;margin-bottom:8px}
+  .seg-col-ai .seg-col-hd{background:#fee2e2;color:#991b1b}
+  .seg-col-final .seg-col-hd{background:#d1fae5;color:#065f46}
+  .seg-item{padding:5px 10px;border-radius:6px;font-size:12px;margin-bottom:4px;line-height:1.5}
+  .seg-kept{background:#f0f2f6;color:#394150}
+  .seg-removed{background:#fee2e2;color:#991b1b;text-decoration:line-through}
+  .seg-added{background:#d1fae5;color:#065f46;font-weight:600}
+</style>
+
+<div class="app-layout">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><div class="logo-icon">SQ</div> Admin</div>
+    <nav class="sidebar-nav">
+      <a href="/auth/admin"><span class="nav-icon">🏠</span> Dashboard</a>
+      <a href="/auth/admin/researchers"><span class="nav-icon">👥</span> Researchers</a>
+      <a href="/auth/admin/submissions"><span class="nav-icon">📋</span> Submissions</a>
+      <a href="/auth/admin/analytics" class="active"><span class="nav-icon">📊</span> Analytics</a>
+      <a href="/tool"><span class="nav-icon">🔬</span> Research Tool</a>
+      <hr class="sidebar-divider">
+      <a href="/auth/profile"><span class="nav-icon">👤</span> Profile</a>
+      <a href="/auth/logout"><span class="nav-icon">🚪</span> Logout</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <div class="hero-card" style="margin-bottom:0">
+      <h3>Researcher Analytics</h3>
+      <p>Active working time + segment edit analysis per market title.</p>
+    </div>
+
+    <!-- Date filter -->
+    <div class="card" style="padding:12px 16px">
+      <div class="filter-bar">
+        <span style="font-size:13px;font-weight:600;color:var(--muted)">Show:</span>
+        <button class="filter-btn active" data-days="7">Last 7 days</button>
+        <button class="filter-btn" data-days="14">Last 14 days</button>
+        <button class="filter-btn" data-days="30">Last month</button>
+        <button class="filter-btn" data-days="0">All time</button>
+        <button class="filter-btn" data-days="custom">Custom</button>
+        <div class="custom-range" id="customRange">
+          From <input type="date" id="dateFrom"> To <input type="date" id="dateTo">
+          <button class="filter-btn active" id="applyCustom" style="border-radius:8px;padding:5px 12px">Apply</button>
+        </div>
+      </div>
+    </div>
+
+    {% if researcher_stats %}
+    <!-- Summary cards (populated by JS after filter) -->
+    <div class="summary-grid">
+      <div class="summary-card">
+        <h4>Visible Titles</h4>
+        <div class="val" id="sumTitles">—</div>
+        <div class="sub">After date filter</div>
+      </div>
+      <div class="summary-card">
+        <h4>Avg Time / Title</h4>
+        <div class="val" id="sumAvgTime">—</div>
+        <div class="sub">Active working time</div>
+      </div>
+      <div class="summary-card">
+        <h4>Avg Similarity</h4>
+        <div class="val" id="sumAvgSim">—</div>
+        <div class="sub">AI segments kept</div>
+      </div>
+      <div class="summary-card">
+        <h4>Avg Added / Title</h4>
+        <div class="val" id="sumAvgAdded">—</div>
+        <div class="sub">New segments per save</div>
+      </div>
+    </div>
+
+    <!-- Overview charts (updated by date filter) -->
+    <div class="card" style="padding:16px">
+      <div style="font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px">📊 Overview — selected period</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px">
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:8px">Avg Active Time per Researcher</div>
+          <canvas id="chartTime"></canvas>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:8px">Avg Segment Changes per Researcher</div>
+          <canvas id="chartChanges"></canvas>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:8px">Avg Similarity % per Researcher</div>
+          <canvas id="chartSim"></canvas>
+        </div>
+      </div>
+    </div>
+
+    {% for r in researcher_stats %}
+    {% set timed = r.titles | selectattr('active_seconds') | list %}
+    {% set max_s = (timed | map(attribute='active_seconds') | list | max) if timed else 1 %}
+    <div class="card researcher-block" data-username="{{ r.username }}">
+      <div class="researcher-header">
+        <div class="researcher-name">
+          👤 {{ r.username }}
+          <span class="muted" style="font-size:13px;font-weight:400">
+            (<span class="r-count">{{ r.titles|length }}</span> titles)
+          </span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          {% if r.avg_active_seconds %}
+            <span class="avg-badge">⏱ Avg <span class="ts-sec" data-sec="{{ r.avg_active_seconds }}">{{ r.avg_active_seconds }}s</span></span>
+          {% else %}
+            <span class="no-data-badge">No time data yet</span>
+          {% endif %}
+          <button class="toggle-btn" onclick="toggleList(this)">Show titles ▾</button>
+        </div>
+      </div>
+
+      {% if timed %}
+      <div class="time-bars-wrap" style="margin-bottom:12px">
+        {% for t in r.titles if t.active_seconds %}
+        <div class="time-bar-wrap bar-item" data-date="{{ t.submitted_at or '' }}">
+          <div class="time-bar-label" title="{{ t.market_name }}">{{ t.market_name }}</div>
+          <div class="time-bar-track"><div class="time-bar-fill" style="width:{{ ((t.active_seconds/(max_s or 1))*100)|int }}%"></div></div>
+          <div class="time-val ts-sec" data-sec="{{ t.active_seconds }}">{{ t.active_seconds }}s</div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <div class="title-list">
+        <table class="table-pro" style="margin-top:4px">
+          <thead>
+            <tr>
+              <th>Market Title</th><th>Saved At</th><th>Active Time</th>
+              <th>Similarity</th><th>Added</th><th>Removed</th><th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for t in r.titles %}
+            <tr class="title-row"
+                data-date="{{ t.submitted_at or '' }}"
+                data-sec="{{ t.active_seconds or '' }}"
+                data-pct="{{ t.pct_same if t.pct_same is not none else '' }}"
+                data-added="{{ t.added_count }}"
+                data-removed="{{ t.removed_count }}">
+              <td style="font-weight:600;max-width:240px">{{ t.market_name }}</td>
+              <td><span class="ts">{{ t.submitted_at or '—' }}</span></td>
+              <td>{% if t.active_seconds %}<span class="ts-sec" data-sec="{{ t.active_seconds }}">{{ t.active_seconds }}s</span>{% else %}<span class="muted">—</span>{% endif %}</td>
+              <td>
+                {% if t.pct_same is not none %}
+                  <span class="seg-pill {% if t.pct_same>=80 %}seg-high{% elif t.pct_same>=50 %}seg-mid{% else %}seg-low{% endif %}">
+                    {{ t.pct_same }}%
+                  </span>
+                  <span style="font-size:11px;color:var(--muted)"> {{ t.same_count }}/{{ t.total_ai }}</span>
+                {% else %}<span class="seg-pill seg-na">—</span>{% endif %}
+              </td>
+              <td>{% if t.added_count>0 %}<span style="color:#059669;font-weight:700">+{{ t.added_count }}</span>{% else %}<span class="muted">0</span>{% endif %}</td>
+              <td>{% if t.removed_count>0 %}<span style="color:#dc2626;font-weight:700">−{{ t.removed_count }}</span>{% else %}<span class="muted">0</span>{% endif %}</td>
+              <td>
+                {% if t.total_ai>0 %}
+                <div style="display:flex;flex-direction:column;gap:4px">
+                  <button class="vc-btn" onclick="toggleDiff(this)"
+                    data-added='{{ t.added_list|tojson }}'
+                    data-removed='{{ t.removed_list|tojson }}'
+                    data-same='{{ t.same_list|tojson }}'>View changes ▾</button>
+                  <button class="vs-btn" onclick="viewSegments(this)"
+                    data-title="{{ t.market_name }}"
+                    data-ai='{{ t.ai_display|tojson }}'
+                    data-fin='{{ t.fin_display|tojson }}'>View segments</button>
+                </div>
+                {% endif %}
+              </td>
+            </tr>
+            {% if t.total_ai>0 %}
+            <tr class="diff-row hidden-row" data-date="{{ t.submitted_at or '' }}">
+              <td colspan="7">
+                <div class="diff-panel">
+                  <div class="diff-section diff-added">
+                    <div class="diff-ttl">✚ Added by researcher ({{ t.added_count }})</div>
+                    {% if t.added_list %}<ul class="diff-list">{% for s in t.added_list %}<li>{{ s }}</li>{% endfor %}</ul>
+                    {% else %}<span class="diff-empty">Nothing added</span>{% endif %}
+                  </div>
+                  <div class="diff-section diff-removed">
+                    <div class="diff-ttl">✖ Removed from AI ({{ t.removed_count }})</div>
+                    {% if t.removed_list %}<ul class="diff-list">{% for s in t.removed_list %}<li>{{ s }}</li>{% endfor %}</ul>
+                    {% else %}<span class="diff-empty">All AI segments kept</span>{% endif %}
+                  </div>
+                  <div class="diff-section diff-same">
+                    <div class="diff-ttl">✔ Kept from AI ({{ t.same_count }})</div>
+                    {% if t.same_list %}<ul class="diff-list">{% for s in t.same_list %}<li>{{ s }}</li>{% endfor %}</ul>
+                    {% else %}<span class="diff-empty">None</span>{% endif %}
+                  </div>
+                </div>
+              </td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endfor %}
+
+    {% else %}
+    <div class="card empty-state">
+      <p style="font-size:40px;margin-bottom:8px">📊</p>
+      <h3>No submissions yet</h3>
+      <p>Activity appears here once researchers save their first title.</p>
+    </div>
+    {% endif %}
+  </main>
+
+  <!-- Segment Comparison Modal -->
+  <div class="seg-modal-overlay" id="segModalOverlay" onclick="if(event.target===this)closeSegModal()">
+    <div class="seg-modal">
+      <div class="seg-modal-hdr">
+        <div class="seg-modal-ttl" id="segModalTitle">Segment Comparison</div>
+        <button class="seg-modal-close" onclick="closeSegModal()">✕</button>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px">
+        <span style="display:inline-flex;align-items:center;gap:5px;margin-right:14px"><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#f0f2f6"></span>Kept</span>
+        <span style="display:inline-flex;align-items:center;gap:5px;margin-right:14px"><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#fee2e2"></span>Removed (struck)</span>
+        <span style="display:inline-flex;align-items:center;gap:5px"><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#d1fae5"></span>Added</span>
+      </div>
+      <div class="seg-cols">
+        <div class="seg-col-ai">
+          <div class="seg-col-hd">🤖 AI Generated</div>
+          <div id="segModalAI"></div>
+        </div>
+        <div class="seg-col-final">
+          <div class="seg-col-hd">✅ Final (Researcher)</div>
+          <div id="segModalFinal"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+let timeChart = null, changesChart = null, simChart = null;
+
+function renderCharts(perR) {
+  const labels = perR.map(r => r.label);
+  const timeVals = perR.map(r => +(r.avgTime / 60).toFixed(1));
+  const addedVals = perR.map(r => +r.avgAdded.toFixed(1));
+  const removedVals = perR.map(r => +r.avgRemoved.toFixed(1));
+
+  const ctxTime = document.getElementById('chartTime');
+  if (ctxTime) {
+    if (timeChart) timeChart.destroy();
+    timeChart = new Chart(ctxTime, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Avg Active Time',
+          data: timeVals,
+          backgroundColor: 'rgba(108,92,231,0.78)',
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: ctx => fmtSec(Math.round(ctx.raw * 60)) } }
+        },
+        scales: {
+          x: { grid: { display: false } },
+          y: { ticks: { callback: v => v + 'm' }, grid: { color: '#f0f2f6' }, beginAtZero: true }
+        }
+      }
+    });
+  }
+
+  const ctxCh = document.getElementById('chartChanges');
+  if (ctxCh) {
+    if (changesChart) changesChart.destroy();
+    changesChart = new Chart(ctxCh, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          { label: 'Avg Added', data: addedVals, backgroundColor: 'rgba(5,150,105,0.78)', borderRadius: 4, stack: 's' },
+          { label: 'Avg Removed', data: removedVals, backgroundColor: 'rgba(220,38,38,0.65)', borderRadius: 4, stack: 's' }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, boxWidth: 12 } } },
+        scales: {
+          x: { stacked: true, grid: { display: false } },
+          y: { stacked: true, grid: { color: '#f0f2f6' }, ticks: { stepSize: 1 }, beginAtZero: true }
+        }
+      }
+    });
+  }
+
+  const simVals = perR.map(r => r.avgSim !== null ? +r.avgSim.toFixed(1) : 0);
+  const ctxSim = document.getElementById('chartSim');
+  if (ctxSim) {
+    if (simChart) simChart.destroy();
+    simChart = new Chart(ctxSim, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Avg Similarity %',
+          data: simVals,
+          backgroundColor: simVals.map(v => v >= 80 ? 'rgba(5,150,105,0.78)' : v >= 50 ? 'rgba(234,179,8,0.78)' : 'rgba(220,38,38,0.65)'),
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.raw + '%' } } },
+        scales: {
+          x: { grid: { display: false } },
+          y: { min: 0, max: 100, ticks: { callback: v => v + '%' }, grid: { color: '#f0f2f6' } }
+        }
+      }
+    });
+  }
+}
+
+/* ── helpers ── */
+function fmtSec(s) {
+  s = parseInt(s, 10);
+  if (!s || s <= 0) return '—';
+  const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
+  if (h > 0) return h + 'h ' + m + 'm';
+  if (m > 0) return m + 'm ' + sec + 's';
+  return sec + 's';
+}
+document.querySelectorAll('.ts-sec').forEach(el => {
+  el.textContent = fmtSec(el.dataset.sec);
+});
+
+/* ── toggle researcher title list ── */
+function toggleList(btn) {
+  const list = btn.closest('.researcher-block').querySelector('.title-list');
+  const open = list.classList.toggle('open');
+  btn.textContent = open ? 'Hide titles ▴' : 'Show titles ▾';
+}
+
+/* ── View Changes: turns green when open ── */
+function toggleDiff(btn) {
+  const mainRow = btn.closest('tr');
+  const diffRow = mainRow.nextElementSibling;
+  if (!diffRow || !diffRow.classList.contains('diff-row')) return;
+  const isOpen = !diffRow.classList.contains('hidden-row');
+  if (isOpen) {
+    diffRow.classList.add('hidden-row');
+    btn.classList.remove('open');
+    btn.textContent = 'View changes ▾';
+  } else {
+    diffRow.classList.remove('hidden-row');
+    btn.classList.add('open');
+    btn.textContent = 'Hide changes ▴';
+  }
+}
+
+/* ── Date filter ── */
+function parseDateStr(s) {
+  if (!s) return null;
+  // handles "2026-01-15 10:30:00" or ISO strings
+  return new Date(s.replace(' ', 'T'));
+}
+
+function cutoff(days) {
+  if (!days) return null;
+  const d = new Date();
+  d.setDate(d.getDate() - days);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+function applyFilter(fromDate, toDate) {
+  let visibleTitles = 0;
+  const times = [], pcts = [], addeds = [];
+  const perR = [];
+
+  document.querySelectorAll('.researcher-block').forEach(block => {
+    let blockVisible = 0;
+    const rTimes = [], rAdded = [], rRemoved = [], rPcts = [];
+
+    block.querySelectorAll('tr.title-row').forEach(row => {
+      const d = parseDateStr(row.dataset.date);
+      const inRange = (!fromDate || !d || d >= fromDate) && (!toDate || !d || d <= toDate);
+      row.style.display = inRange ? '' : 'none';
+      const next = row.nextElementSibling;
+      if (next && next.classList.contains('diff-row')) {
+        if (!inRange) next.classList.add('hidden-row');
+        next.style.display = inRange ? '' : 'none';
+      }
+      if (inRange) {
+        blockVisible++;
+        const sec = parseInt(row.dataset.sec, 10);
+        const pct = row.dataset.pct !== '' ? parseInt(row.dataset.pct, 10) : null;
+        const added = parseInt(row.dataset.added, 10);
+        const removed = parseInt(row.dataset.removed, 10);
+        if (sec > 0) { times.push(sec); rTimes.push(sec); }
+        if (pct !== null && !isNaN(pct)) { pcts.push(pct); rPcts.push(pct); }
+        if (!isNaN(added)) { addeds.push(added); rAdded.push(added); }
+        if (!isNaN(removed)) rRemoved.push(removed);
+      }
+    });
+
+    block.querySelectorAll('.bar-item').forEach(bar => {
+      const d = parseDateStr(bar.dataset.date);
+      const inRange = (!fromDate || !d || d >= fromDate) && (!toDate || !d || d <= toDate);
+      bar.style.display = inRange ? '' : 'none';
+    });
+
+    visibleTitles += blockVisible;
+    const cnt = block.querySelector('.r-count');
+    if (cnt) cnt.textContent = blockVisible;
+    block.style.display = blockVisible === 0 ? 'none' : '';
+
+    if (blockVisible > 0) {
+      const avg = arr => arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : 0;
+      perR.push({
+        label: block.dataset.username,
+        avgTime:    avg(rTimes),
+        avgAdded:   avg(rAdded),
+        avgRemoved: avg(rRemoved),
+        avgSim:     rPcts.length ? avg(rPcts) : null
+      });
+    }
+  });
+
+  document.getElementById('sumTitles').textContent = visibleTitles || '0';
+  document.getElementById('sumAvgTime').textContent =
+    times.length ? fmtSec(Math.floor(times.reduce((a,b)=>a+b,0)/times.length)) : '—';
+  document.getElementById('sumAvgSim').textContent =
+    pcts.length ? Math.round(pcts.reduce((a,b)=>a+b,0)/pcts.length) + '%' : '—';
+  document.getElementById('sumAvgAdded').textContent =
+    addeds.length ? (addeds.reduce((a,b)=>a+b,0)/addeds.length).toFixed(1) : '—';
+
+  renderCharts(perR);
+}
+
+// Filter button click handling
+const filterBtns = document.querySelectorAll('.filter-btn[data-days]');
+const customRange = document.getElementById('customRange');
+const dateFrom = document.getElementById('dateFrom');
+const dateTo   = document.getElementById('dateTo');
+
+filterBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    filterBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const days = btn.dataset.days;
+    if (days === 'custom') {
+      customRange.classList.add('visible');
+      return;
+    }
+    customRange.classList.remove('visible');
+    const daysNum = parseInt(days, 10);
+    const from = daysNum > 0 ? cutoff(daysNum) : null;
+    applyFilter(from, null);
+  });
+});
+
+document.getElementById('applyCustom').addEventListener('click', () => {
+  const from = dateFrom.value ? new Date(dateFrom.value) : null;
+  const to   = dateTo.value   ? new Date(dateTo.value + 'T23:59:59') : null;
+  applyFilter(from, to);
+});
+
+/* ── View Segments Modal ── */
+function getLevel(s) {
+  const m = s.match(/^(\d+(?:\.\d+)*)\.\s*/);
+  if (!m) return 0;
+  return m[1].split('.').length - 1;
+}
+
+function renderSegItem(item) {
+  const lvl = getLevel(item.text);
+  const pad = 10 + lvl * 20;
+  const cls = item.type === 'kept' ? 'seg-kept' : item.type === 'removed' ? 'seg-removed' : 'seg-added';
+  return `<div class="seg-item ${cls}" style="padding-left:${pad}px" data-level="${lvl}">${item.text}</div>`;
+}
+
+function viewSegments(btn) {
+  const title   = btn.dataset.title || 'Segment Comparison';
+  const aiSegs  = JSON.parse(btn.dataset.ai  || '[]');
+  const finSegs = JSON.parse(btn.dataset.fin || '[]');
+  const empty   = '<div style="color:var(--muted);font-size:12px;font-style:italic;padding:8px">No segments</div>';
+
+  document.getElementById('segModalTitle').textContent = title;
+  document.getElementById('segModalAI').innerHTML    = aiSegs.length  ? aiSegs.map(renderSegItem).join('')  : empty;
+  document.getElementById('segModalFinal').innerHTML = finSegs.length ? finSegs.map(renderSegItem).join('') : empty;
+  document.getElementById('segModalOverlay').classList.add('open');
+}
+
+function closeSegModal() {
+  document.getElementById('segModalOverlay').classList.remove('open');
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSegModal(); });
+
+// Run default filter on page load (last 7 days)
+applyFilter(cutoff(7), null);
+</script>
+{% endblock %}

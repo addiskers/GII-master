@@ -1,0 +1,44 @@
+{
+  "market_name": "Equipment Monitoring Market",
+  "unit": "Billion",
+  "cagr": 6.0,
+  "value_2024": 5.3,
+  "value_2033": 8.95,
+  "REGIONAL_RANKING": {
+    "first": "North America",
+    "second": "Asia Pacific",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Monitoring Type": [
+      "Vibration Monitoring",
+      "Thermal Monitoring",
+      "Lubrication Monitoring",
+      "Corrosion Monitoring",
+      "Noise Monitoring",
+      "Motor Current Monitoring",
+      "GPS Tracking",
+      "Alarm Monitoring"
+    ],
+    "Deployment Type": [
+      "On-Premise",
+      "Cloud"
+    ],
+    "Industry": [
+      "Oil & Gas",
+      "Power Generation",
+      "Metals & Mining",
+      "Chemicals",
+      "Automotive",
+      "Aerospace & Defense",
+      "Food & Beverages",
+      "Marine",
+      "Others"
+    ]
+  }
+}

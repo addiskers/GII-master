@@ -1,100 +1,49 @@
 {% extends 'auth/base.html' %}
 {% block content %}
   <style>
-    /* Make admin layout span full width and remove left padding so sidebar sits at extreme left */
-    .container{max-width:100%;margin:0;padding-left:24px}
-    :root{
-      --primary:#6C5CE7; /* Soft purple close to screenshot */
-      --bg:#f5f6fa;
-      --text:#1f2430;
-      --muted:#7a8aa0;
-      --border:#e6e9f0;
-      --card:#ffffff;
-      --success-bg:#e9f7ef;
-      --success:#1e7d44;
-      --warning-bg:#fff7e6;
-      --warning:#b46900;
-    }
-    .page-chrome{position:relative}
-    .page-chrome:before,.page-chrome:after{content:"";position:fixed;left:0;right:0;height:10px;background:var(--primary);z-index:0}
-    .page-chrome:before{top:0}.page-chrome:after{bottom:0}
-    .admin-layout{display:grid;grid-template-columns:250px 1fr;gap:18px;margin-top:12px}
-    .sidebar{background:var(--card);border-radius:14px;box-shadow:0 10px 30px rgba(31,36,48,0.08);padding:18px;min-height:70vh}
-    .brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--text);margin-bottom:14px}
-    .brand .logo{width:28px;height:28px;border-radius:8px;border:2px solid var(--primary);display:flex;align-items:center;justify-content:center;color:var(--primary)}
-    .nav{display:flex;flex-direction:column;gap:8px}
-    .nav a{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:10px;color:#394150;text-decoration:none;border:1px solid var(--border)}
-    .nav a:hover{background:#f7f7fb}
-    .nav a.active{background:var(--primary);color:#fff;border-color:var(--primary)}
-    .main{display:flex;flex-direction:column;gap:14px}
-    .card{background:var(--card);border-radius:14px;box-shadow:0 10px 30px rgba(31,36,48,0.08);padding:16px}
-    .hero-card{background:linear-gradient(135deg,#ff8aa5 0%, #ff7a6e 40%, #ffb07a 100%);color:#fff;position:relative;overflow:hidden}
-    .hero-card:after{content:"";position:absolute;right:-40px;top:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,0.15)}
-    .header-row{display:flex;align-items:center;justify-content:space-between}
-    .greet{font-size:22px;font-weight:700;color:var(--text);margin:0}
-    .hero-card .greet{color:#fff}
-    .search-top{flex:0 0 280px;display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--border);border-radius:999px;padding:6px 12px}
-    .search-top input{border:none;outline:none;flex:1}
-    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-    .stat-card{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;border:1px solid rgba(108,92,231,0.08);transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1)}
-    .stat-card:hover{transform:translateY(-4px);box-shadow:0 16px 48px rgba(108,92,231,0.12);border-color:rgba(108,92,231,0.15)}
-    .stat-card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg, var(--stat-color) 0%, transparent 100%)}
-    .stat-card.submissions{--stat-color:#ff6b6b}
-    .stat-card.researchers{--stat-color:#6014FA}
-    .stat-card.active{--stat-color:#10b981}
+    .stats-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    .stat-card{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;border:1px solid rgba(108,92,231,0.08);transition:all 0.25s}
+    .stat-card:hover{transform:translateY(-3px);box-shadow:0 16px 40px rgba(108,92,231,0.12)}
+    .stat-card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--stat-color,var(--primary))}
+    .stat-card.s-red{--stat-color:#ff6b6b}.stat-card.s-amber{--stat-color:#f59e0b}.stat-card.s-purple{--stat-color:#6C5CE7}.stat-card.s-green{--stat-color:#10b981}
     .stat-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
-    .stat-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;background:rgba(96,20,250,0.08)}
-    .stat-title{color:var(--muted);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.4px;margin:0}
-    .stat-main{display:flex;align-items:baseline;gap:6px;margin-bottom:10px}
-    .stat-number{font-size:32px;font-weight:800;color:var(--text);line-height:1}
-    .stat-unit{color:var(--muted);font-size:13px;font-weight:500}
-    .stat-footer{display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid rgba(0,0,0,0.04)}
-    .stat-trend{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600}
-    .stat-trend.positive{color:#10b981}
-    .stat-trend.negative{color:#ef4444}
-    .stat-trend.neutral{color:var(--muted)}
-    .stat-context{font-size:11px;color:var(--muted);font-weight:500}
-    .stat-bar{height:3px;background:linear-gradient(90deg, rgba(96,20,250,0.1) 0%, rgba(96,20,250,0.05) 100%);border-radius:999px;overflow:hidden;margin-top:8px}
-    .stat-bar-fill{height:100%;background:var(--stat-color);border-radius:999px;transition:width 0.6s ease-out}
-    .table-card h4{margin:0 0 6px 0}
-    .table-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-    .search{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--border);border-radius:999px;padding:6px 12px}
-    .search input{border:none;outline:none;flex:1}
-    .sort{display:flex;align-items:center;gap:8px}
-    .sort select{padding:8px 10px;border:1px solid var(--border);border-radius:10px}
-    .table-pro{width:100%;border-collapse:separate;border-spacing:0}
-    .table-pro thead th{background:#f7f7fb;color:#394150;font-weight:600;padding:12px;border-bottom:1px solid var(--border)}
-    .table-pro tbody td{padding:12px;border-bottom:1px solid #f0f2f6;color:#2f3443}
-    .table-pro tbody tr:hover{background:#fafbff}
-    .badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:12px;font-weight:600}
-    .badge-success{background:var(--success-bg);color:var(--success);border:1px solid #cbead7}
-    .badge-warning{background:var(--warning-bg);color:var(--warning);border:1px solid #ffe0b2}
-    .muted{color:var(--muted)}
+    .stat-title{color:var(--muted);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:0}
+    .stat-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;background:#f7f7fb}
+    .stat-main{display:flex;align-items:baseline;gap:4px;margin-bottom:10px}
+    .stat-number{font-size:34px;font-weight:800;color:var(--text);line-height:1}
+    .stat-unit{color:var(--muted);font-size:13px;font-weight:500;margin-left:4px}
+    .stat-footer{display:flex;justify-content:space-between;align-items:center;padding-top:8px;border-top:1px solid rgba(0,0,0,0.05)}
+    .stat-trend{font-size:12px;font-weight:600;color:#10b981}
+    .stat-context{font-size:11px;color:var(--muted)}
+    .stat-bar{height:3px;background:#f0f2f6;border-radius:999px;overflow:hidden;margin-top:8px}
+    .stat-bar-fill{height:100%;background:var(--stat-color,var(--primary));border-radius:999px;transition:width 0.6s ease-out}
+    .sort-row{display:flex;align-items:center;gap:8px}
+    .sort-row select{padding:7px 10px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;background:#fff}
+    @media(max-width:900px){.stats-4{grid-template-columns:repeat(2,1fr)}}
   </style>
-  <div class="page-chrome">
-    <div class="admin-layout">
-      <aside class="sidebar" aria-label="Admin navigation">
-        <div class="brand"><div class="logo">⬢</div> Dashboard <span class="muted">v0.1</span></div>
-        <nav class="nav" id="adminNav">
-          <a href="/auth/admin">Dashboard</a>
-          <a href="/auth/admin/researchers">Researchers</a>
-          <a href="/auth/admin/submissions">Submissions</a>
-          <a href="/tool">Research Tool</a>
-          <a href="/auth/logout">Logout</a>
-        </nav>
-      </aside>
+<div class="app-layout">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><div class="logo-icon">SQ</div> Admin</div>
+    <nav class="sidebar-nav">
+      <a href="/auth/admin" class="active"><span class="nav-icon">🏠</span> Dashboard</a>
+      <a href="/auth/admin/researchers"><span class="nav-icon">👥</span> Researchers</a>
+      <a href="/auth/admin/submissions"><span class="nav-icon">📋</span> Submissions</a>
+      <a href="/auth/admin/analytics"><span class="nav-icon">📊</span> Analytics</a>
+      <a href="/tool"><span class="nav-icon">🔬</span> Research Tool</a>
+      <hr class="sidebar-divider">
+      <a href="/auth/profile"><span class="nav-icon">👤</span> Profile</a>
+      <a href="/auth/logout"><span class="nav-icon">🚪</span> Logout</a>
+    </nav>
+  </aside>
 
-      <main class="main">
-        <div class="card hero-card">
-          <div class="header-row">
-            <h3 class="greet">Hello {{ session.username }}, 👋</h3>
-            <div class="search-top"><span class="muted">🔍</span><input type="text" placeholder="Search" /></div>
-          </div>
-        </div>
+  <main class="main-content">
+    <div class="hero-card">
+      <h3>Hello, {{ session.username }} 👋</h3>
+      <p>Welcome to the admin dashboard. Manage researchers and submissions below.</p>
+    </div>
 
-        <div class="stats">
-          <!-- Total Submissions Card -->
-          <div class="card stat-card submissions">
+    <div class="stats-4">
+          <div class="card stat-card s-red">
             <div class="stat-header">
               <h4 class="stat-title">Total Submissions</h4>
               <div class="stat-icon">📋</div>
@@ -113,8 +62,27 @@
             </div>
           </div>
 
-          <!-- Researchers Card -->
-          <div class="card stat-card researchers">
+          <div class="card stat-card s-amber">
+            <div class="stat-header">
+              <h4 class="stat-title">Today's Submissions</h4>
+              <div class="stat-icon">📅</div>
+            </div>
+            <div class="stat-main">
+              <span class="stat-number">{{ today_submissions }}</span>
+              <span class="stat-unit">today</span>
+            </div>
+            <div class="stat-footer">
+              <div class="stat-trend neutral">
+                <span>📊 Daily</span>
+              </div>
+              <div class="stat-context">saved today</div>
+            </div>
+            <div class="stat-bar">
+              <div class="stat-bar-fill" style="width: {% if total_submissions > 0 %}{{ (today_submissions / total_submissions * 100)|int }}{% else %}0{% endif %}%"></div>
+            </div>
+          </div>
+
+          <div class="card stat-card s-purple">
             <div class="stat-header">
               <h4 class="stat-title">Researchers</h4>
               <div class="stat-icon">👥</div>
@@ -134,8 +102,7 @@
             </div>
           </div>
 
-          <!-- Active Now Card -->
-          <div class="card stat-card active">
+          <div class="card stat-card s-green">
             <div class="stat-header">
               <h4 class="stat-title">Active Now</h4>
               <div class="stat-icon">🔴</div>
@@ -154,25 +121,25 @@
               <div class="stat-bar-fill" style="width: 85%"></div>
             </div>
           </div>
-        </div>
+    </div>
 
-        <div class="card table-card" id="submissionsSection">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-            <h4 style="margin:0">Recent Submissions</h4>
-            <a href="/auth/admin/submissions" style="color:var(--primary);text-decoration:none;font-size:14px;font-weight:600">View All →</a>
-          </div>
-          <div class="table-toolbar">
-            <div class="search"><span class="muted">🔍</span><input id="adminSearch" type="text" placeholder="Search" /></div>
-            <div class="sort">
-              <span class="muted">Sort by :</span>
-              <select id="adminStatus">
-                <option value="">Newest</option>
-                <option value="pending">Pending</option>
-                <option value="uploaded">Uploaded</option>
-                <option value="downloaded">Downloaded</option>
-              </select>
-            </div>
-          </div>
+    <div class="card" id="submissionsSection">
+      <div class="card-header">
+        <h4 class="card-title">Recent Submissions</h4>
+        <a href="/auth/admin/submissions" class="btn btn-primary btn-sm">View All →</a>
+      </div>
+      <div class="table-toolbar">
+        <div class="search-box"><span class="muted">🔍</span><input id="adminSearch" type="text" placeholder="Search researcher or market…"></div>
+        <div class="sort-row">
+          <span class="muted text-sm">Filter:</span>
+          <select id="adminStatus">
+            <option value="">All</option>
+            <option value="pending">Pending</option>
+            <option value="uploaded">Uploaded</option>
+            <option value="downloaded">Downloaded</option>
+          </select>
+        </div>
+      </div>
           <table class="table-pro" id="adminTable">
             <thead>
               <tr>
@@ -212,34 +179,13 @@
               {% endif %}
             </tbody>
           </table>
-        </div>
+    </div>
 
-        
-
-        <script>
-          // Active tab highlighting based on current path
-          (function(){
-            const nav = document.getElementById('adminNav');
-            if(!nav) return;
-            const links = Array.from(nav.querySelectorAll('a'));
-            const path = window.location.pathname;
-            links.forEach(l => l.classList.remove('active'));
-            const map = {
-              '/auth/admin': 'Dashboard',
-              '/auth/admin/researchers': 'Researchers',
-              '/auth/admin/submissions': 'Submissions'
-            };
-            const label = map[path] || 'Dashboard';
-            const target = links.find(l => l.textContent.trim() === (label || 'Dashboard') || l.getAttribute('href') === path);
-            if(target) target.classList.add('active');
-          })();
-        </script>
-
-        <div class="card" id="marketsSection">
-          <div style="display:flex;align-items:center;justify-content:space-between">
-            <div class="muted">Users</div>
-            <a href="{{ url_for('admin_create_user') }}" class="muted" style="text-decoration:none">Create new user →</a>
-          </div>
+    <div class="card" id="marketsSection">
+      <div class="card-header">
+        <h4 class="card-title">Users</h4>
+        <a href="{{ url_for('admin_create_user') }}" class="btn btn-primary btn-sm">+ Create User</a>
+      </div>
           <table class="table-pro" style="margin-top:8px">
             <thead>
               <tr><th>Username</th><th>Role</th><th>Created By</th><th>Created At</th><th>Last Login</th><th>Actions</th></tr>
@@ -253,6 +199,7 @@
                   <td>{{ u['created_at']|fmt_ts }}</td>
                   <td>{{ u['last_login']|fmt_ts }}</td>
                   <td>
+                    <button class="btn-change-pwd" data-username="{{ u['username'] }}" style="background:#6C5CE7;color:#fff;border:none;border-radius:8px;padding:6px 10px;cursor:pointer;margin-right:6px">Password</button>
                     <button class="btn-delete-user" data-username="{{ u['username'] }}" data-role="{{ u['role'] }}" {% if u['role'] == 'admin' or u['username'] == session.username %}disabled title="Cannot delete admin or yourself"{% endif %} style="background:#e74c3c;color:#fff;border:none;border-radius:8px;padding:6px 10px;cursor:pointer">Delete</button>
                   </td>
                 </tr>
@@ -262,10 +209,9 @@
               {% endif %}
             </tbody>
           </table>
-        </div>
-      </main>
     </div>
-  </div>
+  </main>
+</div>
 
   <script>
     // Admin: Delete user client-side
@@ -452,6 +398,98 @@
       chatFab.addEventListener('click', openChat);
       chatClose.addEventListener('click', closeChat);
       document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeChat(); });
+    })();
+  </script>
+
+  <!-- Password Change Modal -->
+  <div id="pwdModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:2000;align-items:center;justify-content:center">
+    <div style="background:#fff;border-radius:14px;padding:24px;max-width:400px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3)">
+      <h3 style="margin:0 0 16px 0;color:#1f2430">Change Password</h3>
+      <p style="margin:0 0 16px 0;color:#7a8aa0;font-size:14px">Changing password for: <strong id="pwdUsername"></strong></p>
+      <form id="pwdForm">
+        <input type="hidden" id="pwdTargetUser" />
+        <div style="margin-bottom:16px">
+          <label style="display:block;font-size:12px;font-weight:600;color:#7a8aa0;margin-bottom:6px">New Password</label>
+          <input type="password" id="pwdNewPassword" required minlength="4" style="width:100%;padding:10px 12px;border:1px solid #e6e9f0;border-radius:8px;font-size:14px" placeholder="Enter new password" />
+        </div>
+        <div style="margin-bottom:16px">
+          <label style="display:block;font-size:12px;font-weight:600;color:#7a8aa0;margin-bottom:6px">Confirm Password</label>
+          <input type="password" id="pwdConfirmPassword" required minlength="4" style="width:100%;padding:10px 12px;border:1px solid #e6e9f0;border-radius:8px;font-size:14px" placeholder="Confirm new password" />
+        </div>
+        <div style="display:flex;gap:10px;justify-content:flex-end">
+          <button type="button" id="pwdCancel" style="background:#6c757d;color:#fff;border:none;border-radius:8px;padding:10px 16px;cursor:pointer">Cancel</button>
+          <button type="submit" style="background:#6C5CE7;color:#fff;border:none;border-radius:8px;padding:10px 16px;cursor:pointer;font-weight:600">Save Password</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Password Change Modal
+    (function(){
+      const modal = document.getElementById('pwdModal');
+      const form = document.getElementById('pwdForm');
+      const targetInput = document.getElementById('pwdTargetUser');
+      const usernameDisplay = document.getElementById('pwdUsername');
+      const newPwdInput = document.getElementById('pwdNewPassword');
+      const confirmPwdInput = document.getElementById('pwdConfirmPassword');
+      const cancelBtn = document.getElementById('pwdCancel');
+
+      function openModal(username){
+        targetInput.value = username;
+        usernameDisplay.textContent = username;
+        newPwdInput.value = '';
+        confirmPwdInput.value = '';
+        modal.style.display = 'flex';
+        setTimeout(() => newPwdInput.focus(), 100);
+      }
+
+      function closeModal(){
+        modal.style.display = 'none';
+      }
+
+      // Bind change password buttons
+      document.querySelectorAll('.btn-change-pwd').forEach(btn => {
+        btn.addEventListener('click', () => openModal(btn.dataset.username));
+      });
+
+      cancelBtn.addEventListener('click', closeModal);
+      modal.addEventListener('click', (e) => { if(e.target === modal) closeModal(); });
+      document.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeModal(); });
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const username = targetInput.value;
+        const newPassword = newPwdInput.value;
+        const confirmPassword = confirmPwdInput.value;
+
+        if(newPassword !== confirmPassword){
+          alert('Passwords do not match!');
+          return;
+        }
+
+        if(newPassword.length < 4){
+          alert('Password must be at least 4 characters!');
+          return;
+        }
+
+        try{
+          const res = await fetch('/auth/admin/change_password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, new_password: newPassword })
+          });
+          const data = await res.json();
+          if(res.ok && data.status === 'ok'){
+            alert('Password changed successfully!');
+            closeModal();
+          } else {
+            alert('Error: ' + (data.error || 'Failed to change password'));
+          }
+        } catch(err){
+          alert('Network error: ' + err.message);
+        }
+      });
     })();
   </script>
 {% endblock %}

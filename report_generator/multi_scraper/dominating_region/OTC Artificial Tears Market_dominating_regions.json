@@ -1,0 +1,52 @@
+{
+  "market_name": "OTC Artificial Tears Market",
+  "unit": "Billion",
+  "cagr": 5.0,
+  "value_2024": 5.5,
+  "value_2033": 8.53,
+  "REGIONAL_RANKING": {
+    "first": "North America",
+    "second": "Europe",
+    "third": "Asia Pacific"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Product Type": [
+      "Ointments",
+      "Emulsions",
+      "Gels",
+      "Spray Solutions",
+      "Suspensions"
+    ],
+    "Ingredient Type": [
+      "Cellulose Derived Tears",
+      "Glycerin Derived Tears",
+      "Oil-Based Emulsion Tears",
+      "Polyethylene Glycol"
+    ],
+    "Container Type": [
+      "Plastic Single-Dose",
+      "Plastic Multi-Dose",
+      "Others"
+    ],
+    "Formulation": [
+      "Preservative Based",
+      "Non-Preservative Based"
+    ],
+    "Applications": [
+      "Allergies",
+      "Infections",
+      "UV/Blue Light Protection",
+      "Contact Lens Moisture",
+      "Others"
+    ],
+    "Distribution Channel": [
+      "Drug Stores/Retail Pharmacies",
+      "Hospital Pharmacies"
+    ]
+  }
+}

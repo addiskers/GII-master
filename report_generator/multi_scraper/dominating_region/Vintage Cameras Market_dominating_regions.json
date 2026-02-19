@@ -1,0 +1,35 @@
+{
+  "market_name": "Vintage Cameras Market",
+  "unit": "Billion",
+  "cagr": 5.1,
+  "value_2024": 0.7,
+  "value_2033": 1.1,
+  "REGIONAL_RANKING": {
+    "first": "Europe",
+    "second": "North America",
+    "third": "Asia Pacific"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Camera Types": [
+      "Film Cameras",
+      "Instant Cameras"
+    ],
+    "Target Users": [
+      "Amateur Photographers",
+      "Professional Photographers"
+    ],
+    "Price Range": [
+      "Premium Segment",
+      "Budget Segment"
+    ],
+    "Accessories": [
+      "Lenses",
+      "Camera Cases"
+    ]
+  }
+}

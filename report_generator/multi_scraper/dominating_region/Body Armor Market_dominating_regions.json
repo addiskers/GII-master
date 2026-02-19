@@ -1,0 +1,45 @@
+{
+  "market_name": "Body Armor Market",
+  "unit": "Billion",
+  "cagr": 6.9,
+  "value_2024": 4.4,
+  "value_2033": 8.02,
+  "REGIONAL_RANKING": {
+    "first": "North America",
+    "second": "Europe",
+    "third": "Asia Pacific"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Type": [
+      "Vest",
+      "Helmet",
+      "Shield",
+      "Other"
+    ],
+    "Material": [
+      "Soft Armor",
+      "Hard Armor"
+    ],
+    "Style": [
+      "Covert",
+      "Overt"
+    ],
+    "Protection Level": [
+      "Level IIA",
+      "Level II",
+      "Level III",
+      "Level IIIA",
+      "Level IV"
+    ],
+    "Application": [
+      "Military",
+      "Law Enforcement",
+      "Private Security"
+    ]
+  }
+}

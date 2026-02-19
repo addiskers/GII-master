@@ -1,0 +1,47 @@
+{
+  "market_name": "Commercial Oven for Bakery Market",
+  "unit": "Trillion",
+  "cagr": 4.4,
+  "value_2024": 11.5,
+  "value_2033": 16.94,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "Europe",
+    "third": "North America"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "dominant"
+  },
+  "SEGMENTS": {
+    "Oven Type": [
+      "Deck Ovens",
+      "Convection Ovens",
+      "Revolving Rack Ovens",
+      "Pizza Ovens",
+      "Other Types"
+    ],
+    "Capacity": [
+      "Small Capacity",
+      "Medium Capacity",
+      "Large Capacity"
+    ],
+    "Fuel Type": [
+      "Electric",
+      "Gas",
+      "Other Fuels"
+    ],
+    "Automation Level": [
+      "Manual",
+      "Semi-Automatic",
+      "Fully-Automatic"
+    ],
+    "End Use": [
+      "Bakery Shops",
+      "Industrial Bakeries",
+      "Food Service",
+      "Other Uses"
+    ]
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "market_name": "Polyurethane Sealants Market",
+  "unit": "Billion",
+  "cagr": 4.3,
+  "value_2024": 3.1,
+  "value_2033": 4.53,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "emerging",
+    "France": "fastest_growing"
+  },
+  "SEGMENTS": {
+    "Sealant Type": [
+      "One-Component Sealants",
+      "Two-Component Sealants",
+      "Flexible Sealants",
+      "Rigid Sealants",
+      "Hybrid Sealants"
+    ],
+    "Curing Mechanism": [
+      "Moisture-Curing",
+      "Heat-Curing",
+      "UV-Curing"
+    ],
+    "Performance Characteristics": [
+      "Low-VOC Sealants",
+      "High-Elasticity Sealants",
+      "Temperature-Resistant Sealants"
+    ],
+    "Application Method": [
+      "Gun Application",
+      "Brush Application",
+      "Roller Application"
+    ],
+    "End-Use Industry": [
+      "Building & Construction",
+      "Automotive",
+      "Marine",
+      "Aerospace",
+      "Electronics",
+      "General Industrial",
+      "Other Industries"
+    ]
+  }
+}

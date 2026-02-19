@@ -1,0 +1,42 @@
+{
+  "market_name": "Automotive Evaporative Emission Control System Market",
+  "unit": "Billion",
+  "cagr": 4.6,
+  "value_2024": 2.5,
+  "value_2033": 3.75,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "Europe",
+    "third": "North America"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Fuel Type": [
+      "Gasoline",
+      "Diesel",
+      "Alternative Fuel",
+      "Hybrid"
+    ],
+    "Component Type": [
+      "Charcoal Canister",
+      "Fuel Tank Pressure Sensor",
+      "Purge Valve",
+      "Vent Valve"
+    ],
+    "Vehicle Type": [
+      "Passenger Vehicle",
+      "Commercial Vehicle",
+      "Motorcycle",
+      "Heavy-Duty Vehicle"
+    ],
+    "Sales Channel": [
+      "OEM",
+      "Aftermarket",
+      "Online Retail"
+    ]
+  }
+}

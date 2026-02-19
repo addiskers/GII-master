@@ -1,0 +1,34 @@
+{
+  "market_name": "Vanilla Market",
+  "unit": "Billion",
+  "cagr": 5.5,
+  "value_2024": 3.8,
+  "value_2033": 6.15,
+  "REGIONAL_RANKING": {
+    "first": "North America",
+    "second": "Europe",
+    "third": "Asia Pacific"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "emerging",
+    "United Kingdom": "fastest_growing",
+    "France": "dominant"
+  },
+  "SEGMENTS": {
+    "Form": [
+      "Liquid",
+      "Powder",
+      "Other Forms"
+    ],
+    "Ingredient Type": [
+      "Natural",
+      "Synthetic"
+    ],
+    "Application": [
+      "Food & Beverages",
+      "Personal Care",
+      "Pharmaceuticals",
+      "Others"
+    ]
+  }
+}

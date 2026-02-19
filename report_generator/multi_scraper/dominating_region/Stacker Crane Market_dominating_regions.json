@@ -1,0 +1,57 @@
+{
+  "market_name": "Stacker Crane Market",
+  "unit": "Billion",
+  "cagr": 8.2,
+  "value_2024": 1.5,
+  "value_2033": 3.05,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Stacker Crane Design": [
+      "Single-mast",
+      "Double-mast",
+      "Tri-mast",
+      "Others"
+    ],
+    "Load Capacity": [
+      "Light-duty",
+      "Medium-duty",
+      "Heavy-duty"
+    ],
+    "Lifting Height": [
+      "Low-lift",
+      "Medium-lift",
+      "High-lift"
+    ],
+    "Operation Mode": [
+      "Semi-automatic",
+      "Automatic",
+      "Manually Operated",
+      "Automated Guided Vehicle (AGV)"
+    ],
+    "Application": [
+      "Auto shops",
+      "Early Baggage Storage (EBS)",
+      "Sortation Systems",
+      "Robotized Order Preparation"
+    ],
+    "End Use": [
+      "Consumer Goods",
+      "E-commerce/Retail",
+      "Pharmaceutical",
+      "Automotive",
+      "Food and Beverage",
+      "Logistics and Warehousing",
+      "Metalworking",
+      "Others"
+    ]
+  }
+}

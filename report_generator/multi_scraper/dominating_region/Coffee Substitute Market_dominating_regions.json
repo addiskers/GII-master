@@ -1,0 +1,54 @@
+{
+  "market_name": "Coffee Substitute Market",
+  "unit": "Billion",
+  "cagr": 4.4,
+  "value_2024": 13.2,
+  "value_2033": 19.45,
+  "REGIONAL_RANKING": {
+    "first": "North America",
+    "second": "Europe",
+    "third": "Asia Pacific"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Form": [
+      "Powder",
+      "Liquid",
+      "Capsules"
+    ],
+    "Type": [
+      "Cereal-Based",
+      "Chicory-Based",
+      "Dandelion-Based",
+      "Grain-Based",
+      "Mushroom-Based",
+      "Herbal",
+      "Plant-Based"
+    ],
+    "Application": [
+      "Household",
+      "Food Service",
+      "Industrial"
+    ],
+    "Distribution Channel": [
+      "Supermarkets and Hypermarkets",
+      "Convenience Stores",
+      "Online Retailers",
+      "Health Food Stores",
+      "Cafes and Restaurants",
+      "Specialty Stores"
+    ],
+    "Packaging": [
+      "Pouches",
+      "Cans"
+    ],
+    "Nature": [
+      "Organic",
+      "Conventional"
+    ]
+  }
+}

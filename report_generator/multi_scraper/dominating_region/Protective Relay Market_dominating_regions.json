@@ -1,0 +1,47 @@
+{
+  "market_name": "Protective Relay Market",
+  "unit": "Billion",
+  "cagr": 8.6,
+  "value_2024": 5.5,
+  "value_2033": 11.56,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Relay Type": [
+      "Electromechanical",
+      "Static",
+      "Digital/IED"
+    ],
+    "Voltage": [
+      "Low Voltage",
+      "Medium Voltage",
+      "High Voltage",
+      "Extra-High Voltage"
+    ],
+    "Application": [
+      "Transmission",
+      "Distribution",
+      "Generation",
+      "Protection",
+      "Industrial Equipment"
+    ],
+    "End-User": [
+      "Utilities",
+      "Industrial",
+      "Transportation",
+      "Commercial & Infrastructure"
+    ],
+    "Installation Type": [
+      "New Build",
+      "Retrofit/Upgrade"
+    ]
+  }
+}

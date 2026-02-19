@@ -1,0 +1,53 @@
+{
+  "market_name": "Bag Market",
+  "unit": "Billion",
+  "cagr": 20.2,
+  "value_2024": 0.9,
+  "value_2033": 4.71,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Bag Type": [
+      "Travel Bags",
+      "Fashion Bags",
+      "Sports Bags",
+      "Laptop Bags",
+      "Backpacks",
+      "Others"
+    ],
+    "Gender": [
+      "Male",
+      "Female",
+      "Unisex"
+    ],
+    "Price": [
+      "Low",
+      "Medium",
+      "High"
+    ],
+    "Material": [
+      "Leather",
+      "Synthetic",
+      "Nylon",
+      "Canvas",
+      "Cotton",
+      "Others"
+    ],
+    "End Use": [
+      "Personal Use",
+      "Commercial Use",
+      "Educational Use",
+      "Corporate Use",
+      "Outdoor Activities",
+      "Others"
+    ]
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "market_name": "Vitamins Market",
+  "unit": "Billion",
+  "cagr": 6.3,
+  "value_2024": 5.8,
+  "value_2033": 10.05,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Source": [
+      "Natural",
+      "Synthetic"
+    ],
+    "Vitamin Type": [
+      "Vitamin A",
+      "Vitamin B",
+      "Vitamin C",
+      "Vitamin D",
+      "Vitamin E",
+      "Vitamin K"
+    ],
+    "Applications": [
+      "Health",
+      "Performance",
+      "Cosmetics",
+      "Others"
+    ],
+    "Product Type": [
+      "Food & Beverages",
+      "Healthcare Products",
+      "Animal Feed",
+      "Per1.\tSource"
+    ]
+  }
+}

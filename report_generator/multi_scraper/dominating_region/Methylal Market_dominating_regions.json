@@ -1,0 +1,41 @@
+{
+  "market_name": "Methylal Market",
+  "unit": "Billion",
+  "cagr": 4.0,
+  "value_2024": 4.8,
+  "value_2033": 6.83,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "emerging",
+    "France": "fastest_growing"
+  },
+  "SEGMENTS": {
+    "Form": [
+      "Liquid",
+      "Gas",
+      "Solid"
+    ],
+    "Purity": [
+      "5%",
+      "9%",
+      "99%"
+    ],
+    "Application": [
+      "Automotive",
+      "Construction",
+      "Electronics",
+      "Industrial",
+      "Medical"
+    ],
+    "Distribution Channel": [
+      "Direct Sales",
+      "Distribution",
+      "Retail"
+    ]
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "market_name": "Content Market",
+  "unit": "Billion",
+  "cagr": 8.3,
+  "value_2024": 12.6,
+  "value_2033": 25.82,
+  "REGIONAL_RANKING": {
+    "first": "North America",
+    "second": "Asia Pacific",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Content Type": [
+      "Textual Content",
+      "Visual Content"
+    ],
+    "Content Format": [
+      "Static Content",
+      "Interactive Content"
+    ],
+    "Target Audience": [
+      "B2B (Business)",
+      "B2C (Consumer)"
+    ],
+    "Distribution Channels": [
+      "Owned Media",
+      "Social Media"
+    ],
+    "End User": [
+      "Individuals",
+      "Brands and Companies",
+      "Government Organizations"
+    ]
+  }
+}

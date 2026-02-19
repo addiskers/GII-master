@@ -1,0 +1,35 @@
+{
+  "market_name": "Luneburg Lens Antenna Market",
+  "unit": "Million",
+  "cagr": 10.0,
+  "value_2024": 204.1,
+  "value_2033": 481.26,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Antenna Type": [
+      "Reflective Antennas",
+      "Refractive Antennas"
+    ],
+    "Frequency Band": [
+      "Microwave Band",
+      "Millimeter Wave"
+    ],
+    "Application": [
+      "Telecommunications",
+      "Defense"
+    ],
+    "End User": [
+      "Consumer Electronics",
+      "Industrial"
+    ]
+  }
+}

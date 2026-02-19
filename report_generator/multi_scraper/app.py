@@ -102,7 +102,6 @@ def fmt_ts(value):
     except Exception:
         return '—'
 
-# ==== Auth & User Management (merged from auth_app.py) ====
 DB_PATH = os.path.join(os.path.dirname(__file__), 'auth_users.db')
 
 def get_db():
@@ -170,9 +169,18 @@ def init_db():
         
         -- Download tracking
         downloaded INTEGER DEFAULT 0,
-        last_downloaded_at TEXT
+        last_downloaded_at TEXT,
+
+        -- Active working time tracking (seconds of real active time, excluding idle/tab-hidden)
+        active_seconds INTEGER DEFAULT NULL
     )
     ''')
+
+    # Migration: add active_seconds to existing DBs that predate this column
+    try:
+        db.execute('ALTER TABLE rd_submissions ADD COLUMN active_seconds INTEGER DEFAULT NULL')
+    except Exception:
+        pass
     
     # Clean up old creator users (migration)
     try:
@@ -580,8 +588,6 @@ def index():
             return redirect(url_for('admin_dashboard'))
         if role == 'researcher':
             return redirect(url_for('tool'))
-        if role == 'creator':
-            return redirect(url_for('creator_dashboard'))
     return redirect(url_for('login'))
 
 @app.route('/tool')
@@ -612,8 +618,6 @@ def login():
                 return redirect(url_for('admin_dashboard'))
             if user['role'] == 'researcher':
                 return redirect(url_for('tool'))
-            if user['role'] == 'creator':
-                return redirect(url_for('creator_dashboard'))
             return redirect(url_for('index'))
         else:
             flash('Invalid credentials', 'danger')
@@ -628,12 +632,18 @@ def logout():
 @app.route('/auth/admin')
 @login_required(role='admin')
 def admin_dashboard():
+    from datetime import datetime, timedelta
     users = list_users()
     db = get_db()
-    
+
     # Get total count of all submissions for metrics
     count_cur = db.execute('SELECT COUNT(*) as total FROM rd_submissions')
     total_submissions = count_cur.fetchone()['total']
+
+    # Get today's submission count (IST)
+    today_start = datetime.now(IST).replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=None).isoformat()
+    today_cur = db.execute('SELECT COUNT(*) as cnt FROM rd_submissions WHERE submitted_at >= ?', (today_start,))
+    today_submissions = today_cur.fetchone()['cnt']
     
     # Get only recent 5 RD submissions for dashboard
     cur = db.execute('''
@@ -669,7 +679,6 @@ def admin_dashboard():
     all_submissions = [dict(row) for row in all_cur.fetchall()]
     
     # Active researchers count
-    from datetime import datetime, timedelta
     def parse_iso(ts):
         try:
             dt = datetime.fromisoformat(ts) if ts else None
@@ -711,6 +720,7 @@ def admin_dashboard():
         users=users,
         submissions=submissions,
         total_submissions=total_submissions,
+        today_submissions=today_submissions,
         researchers_count=researchers_count,
         active_researchers_today=active_researchers_today,
         markets_by_researcher={k: sorted(list(v)) for k, v in markets_by_researcher.items()}
@@ -826,14 +836,6 @@ def admin_create_user():
             flash('User already exists', 'warning')
     return render_template('auth/create_user.html')
 
-# Removed: admin_submissions route (now uses rd_submissions table via admin_dashboard)
-
-# Removed: admin_researcher_detail route (now uses rd_submissions table)
-
-# Removed: admin_creators route (creator role removed)
-
-# Removed: admin_toc route (TOC tab removed from workflow)
-
 # Admin: list researchers
 @app.route('/auth/admin/researchers')
 @login_required(role='admin')
@@ -841,6 +843,116 @@ def admin_researchers():
     users = list_users()
     researchers = [u for u in users if u['role'] == 'researcher']
     return render_template('auth/admin_researchers.html', users=researchers)
+
+@app.route('/auth/admin/analytics')
+@login_required(role='admin')
+def admin_analytics():
+    """Analytics: per-researcher active time + segment similarity per title"""
+    import re
+    from collections import defaultdict
+
+    def strip_num(s):
+        """Remove leading outline numbers (1. / 1.1. / 1.1.1. etc.) and normalise."""
+        return re.sub(r'^\d+(\.\d+)*\.\s*', '', s).strip().lower()
+
+    db = get_db()
+    rows = db.execute('''
+        SELECT researcher_username, market_name, submitted_at, active_seconds,
+               segments, ai_gen_seg
+        FROM rd_submissions
+        ORDER BY researcher_username, submitted_at DESC
+    ''').fetchall()
+
+    stats = defaultdict(lambda: {'titles': [], 'total_active': 0, 'tracked_count': 0})
+    for r in rows:
+        username = r['researcher_username']
+
+        # ── Segment diff (ignore numbers + order) ──────────────────────
+        try:
+            ai_raw   = json.loads(r['ai_gen_seg'] or '[]')
+            fin_raw  = json.loads(r['segments']   or '[]')
+        except Exception:
+            ai_raw, fin_raw = [], []
+
+        ai_set  = {strip_num(s) for s in ai_raw  if s.strip()}
+        fin_set = {strip_num(s) for s in fin_raw if s.strip()}
+
+        same_set    = ai_set & fin_set
+        added_set   = fin_set - ai_set   # researcher added these
+        removed_set = ai_set - fin_set   # researcher removed these
+
+        total_ai  = len(ai_set)
+        pct_same  = round(len(same_set) / total_ai * 100) if total_ai else None
+
+        # Restore display names (original capitalisation, no number prefix)
+        def display_names(raw, keys):
+            out = []
+            for s in raw:
+                k = strip_num(s)
+                if k in keys:
+                    out.append(re.sub(r'^\d+(\.\d+)*\.\s*', '', s).strip())
+            return sorted(set(out))
+
+        # Ordered display lists WITH original numbering for the modal view
+        def build_ai_display(raw, s_set, r_set):
+            out, seen = [], set()
+            for s in raw:
+                s = s.strip()
+                if not s: continue
+                k = strip_num(s)
+                if k in seen: continue
+                seen.add(k)
+                if k in s_set:
+                    out.append({'text': s, 'type': 'kept'})
+                elif k in r_set:
+                    out.append({'text': s, 'type': 'removed'})
+            return out
+
+        def build_fin_display(raw, s_set, a_set):
+            out, seen = [], set()
+            for s in raw:
+                s = s.strip()
+                if not s: continue
+                k = strip_num(s)
+                if k in seen: continue
+                seen.add(k)
+                if k in s_set:
+                    out.append({'text': s, 'type': 'kept'})
+                elif k in a_set:
+                    out.append({'text': s, 'type': 'added'})
+            return out
+
+        entry = {
+            'market_name':   r['market_name'],
+            'submitted_at':  r['submitted_at'],
+            'active_seconds': r['active_seconds'],
+            'total_ai':      total_ai,
+            'total_final':   len(fin_set),
+            'same_count':    len(same_set),
+            'added_count':   len(added_set),
+            'removed_count': len(removed_set),
+            'pct_same':      pct_same,
+            'added_list':    display_names(fin_raw, added_set),
+            'removed_list':  display_names(ai_raw,  removed_set),
+            'same_list':     display_names(fin_raw, same_set),
+            'ai_display':    build_ai_display(ai_raw, same_set, removed_set),
+            'fin_display':   build_fin_display(fin_raw, same_set, added_set),
+        }
+        stats[username]['titles'].append(entry)
+        if r['active_seconds'] and r['active_seconds'] > 0:
+            stats[username]['total_active'] += r['active_seconds']
+            stats[username]['tracked_count'] += 1
+
+    for username, data in stats.items():
+        data['avg_active_seconds'] = (
+            data['total_active'] // data['tracked_count']
+            if data['tracked_count'] > 0 else None
+        )
+
+    researcher_stats = [
+        {'username': u, **d} for u, d in sorted(stats.items())
+    ]
+    return render_template('auth/admin_analytics.html', researcher_stats=researcher_stats)
 
 @app.route('/auth/admin/submissions')
 @login_required(role='admin')
@@ -907,20 +1019,17 @@ def researcher_dashboard():
             sub['value_2024'] = 0
         submissions.append(sub)
 
+    # Get today's submission count for this researcher (IST)
+    today_start = datetime.now(IST).replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=None).isoformat()
+    today_cur = db.execute('SELECT COUNT(*) as cnt FROM rd_submissions WHERE researcher_username = ? AND submitted_at >= ?', (username, today_start))
+    today_submissions = today_cur.fetchone()['cnt']
+
     metrics = {
         'total_submissions': len(submissions),
+        'today_submissions': today_submissions,
     }
 
     return render_template('auth/researcher_dashboard.html', username=username, submissions=submissions, metrics=metrics)
-
-@app.route('/auth/researcher/notifications')
-@login_required(role='researcher')
-def researcher_notifications():
-    """Notifications page for researchers - currently placeholder since chat is removed."""
-    me = session.get('username')
-    messages = []
-    unread_admin = 0
-    return render_template('auth/researcher_notifications.html', username=me, messages=messages, unread_admin=unread_admin)
 
 @app.route('/auth/researcher/submissions')
 @login_required(role='researcher')
@@ -955,8 +1064,6 @@ def researcher_submissions():
     return render_template('auth/researcher_submissions.html', username=username, submissions=submissions)
 
 
-# Removed: creator_notifications route (creator role removed)
-
 @app.route('/auth/profile')
 @login_required()
 def profile():
@@ -965,8 +1072,66 @@ def profile():
     user = dict(row) if row else {'username': session.get('username'), 'role': session.get('role')}
     return render_template('auth/profile.html', user=user)
 
-# Removed: Chat API routes (chat_messages, chat_send, chat_mark_read, chat_unread_count)
-# Removed: submission_mark_downloaded route (creator role removed)
+@app.route('/auth/change_password', methods=['POST'])
+@login_required()
+def change_password():
+    """Any logged-in user can change their own password."""
+    current_password = (request.form.get('current_password') or '').strip()
+    new_password = (request.form.get('new_password') or '').strip()
+    confirm_password = (request.form.get('confirm_password') or '').strip()
+    if not current_password or not new_password or not confirm_password:
+        flash('All fields are required', 'danger')
+        return redirect(url_for('profile'))
+    if new_password != confirm_password:
+        flash('New passwords do not match', 'danger')
+        return redirect(url_for('profile'))
+    if len(new_password) < 6:
+        flash('New password must be at least 6 characters', 'danger')
+        return redirect(url_for('profile'))
+    username = session.get('username')
+    user = get_user_by_username(username)
+    if not user or not check_password_hash(user['password_hash'], current_password):
+        flash('Current password is incorrect', 'danger')
+        return redirect(url_for('profile'))
+    db = get_db()
+    new_hash = generate_password_hash(new_password, method='pbkdf2:sha256', salt_length=16)
+    db.execute('UPDATE users SET password_hash = ? WHERE username = ?', (new_hash, username))
+    db.commit()
+    flash('Password changed successfully', 'success')
+    return redirect(url_for('profile'))
+
+
+@app.route('/auth/admin/change_password', methods=['POST'])
+@login_required(role='admin')
+def admin_change_password():
+    """Admin can change their own password or any user's password.
+    Body: {"username": "<user>", "new_password": "<password>"}
+    """
+    data = request.json or {}
+    target = (data.get('username') or '').strip()
+    new_password = (data.get('new_password') or '').strip()
+
+    if not target:
+        return jsonify({'error': 'Missing username'}), 400
+    if not new_password:
+        return jsonify({'error': 'Missing new_password'}), 400
+    if len(new_password) < 4:
+        return jsonify({'error': 'Password must be at least 4 characters'}), 400
+
+    db = get_db()
+    # Check if user exists
+    cur = db.execute('SELECT id FROM users WHERE username = ?', (target,))
+    row = cur.fetchone()
+    if not row:
+        return jsonify({'error': 'User not found'}), 404
+
+    # Update password
+    password_hash = generate_password_hash(new_password, method='pbkdf2:sha256', salt_length=16)
+    db.execute('UPDATE users SET password_hash = ? WHERE username = ?', (password_hash, target))
+    db.commit()
+
+    return jsonify({'status': 'ok', 'message': f'Password changed for {target}'})
+
 
 # ===== Admin: Delete User =====
 @app.route('/auth/admin/delete_user', methods=['POST'])
@@ -1002,8 +1167,6 @@ def admin_delete_user():
     db.commit()
     return jsonify({'status': 'ok', 'deleted': target})
 
-# Removed: creator_dashboard route (creator role removed)
-
 @app.route('/api/scrape', methods=['POST'])
 @login_required(role=('researcher','admin'))
 def scrape():
@@ -1036,12 +1199,6 @@ def scrape():
                 print(f"Error removing file {json_file}: {e}")
 
     return jsonify(results)
-
-# Removed: list_creators_api route (creator role removed)
-
-# Removed: submit_report route (creator role removed)
-
-# Removed: creator_download route (creator role removed)
 
 @app.route('/api/generate-report', methods=['POST'])
 @login_required(role=('researcher','admin'))
@@ -1185,6 +1342,108 @@ def analyze_ai_segments_endpoint():
         return jsonify(result), 500
 
     return jsonify(result)
+
+@app.route('/api/correct-segments', methods=['POST'])
+@login_required(role=('researcher','admin'))
+def correct_segments_endpoint():
+    """Correct AI-generated segments using the trained local model.
+    
+    Accepts:
+        market_name: str - name of the market
+        segments: list[str] - AI-generated segment strings (e.g. ["1. Type", "1.1. Foo", ...])
+        confidence: float (optional, default 0.5) - minimum confidence threshold
+    
+    Returns:
+        corrected_segments: list[str] - corrected segment strings
+        changes: list[dict] - list of changes with type, reason, confidence
+        similar_markets: list[dict] - top-3 similar markets from training data
+    """
+    try:
+        from segment_model.predict import get_corrector
+        
+        data = request.json or {}
+        market_name = (data.get('market_name') or '').strip()
+        segments = data.get('segments') or []
+        confidence = float(data.get('confidence', 0.5))
+        
+        if not market_name:
+            return jsonify({'error': 'market_name is required'}), 400
+        if not segments or not isinstance(segments, list):
+            return jsonify({'error': 'segments must be a non-empty list of strings'}), 400
+        
+        corrector = get_corrector()
+        result = corrector.correct(market_name, segments, confidence_threshold=confidence)
+        
+        return jsonify({
+            'success': True,
+            'corrected_segments': result['corrected_segments'],
+            'changes': result['changes'],
+            'similar_markets': result['similar_markets'],
+            'original_count': len(segments),
+            'corrected_count': len(result['corrected_segments']),
+        })
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': f'Segment correction failed: {str(e)}'}), 500
+
+@app.route('/api/generate-corrected-segments', methods=['POST'])
+@login_required(role=('researcher','admin'))
+def generate_corrected_segments_endpoint():
+    """One-step: market name → AI generate → correct → return.
+    
+    Accepts:
+        market_name: str - name of the market
+        confidence: float (optional, default 0.5)
+    
+    Returns:
+        corrected_segments: list[str] - final corrected segment strings
+        ai_raw_segments: list[str] - original AI-generated segments (before correction)
+        changes: list[dict] - corrections applied
+        similar_markets: list[dict] - top-3 similar markets
+    """
+    try:
+        from segment_model.generate import generate_segments
+        
+        data = request.json or {}
+        market_name = (data.get('market_name') or '').strip()
+        confidence = float(data.get('confidence', 0.5))
+        
+        if not market_name:
+            return jsonify({'error': 'market_name is required'}), 400
+        
+        result = generate_segments(market_name, confidence=confidence)
+        
+        if 'error' in result:
+            return jsonify(result), 500
+        
+        return jsonify({
+            'success': True,
+            'corrected_segments': result['corrected_segments'],
+            'ai_raw_segments': result['ai_raw_segments'],
+            'changes': result['changes'],
+            'similar_markets': result['similar_markets'],
+        })
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': f'Generation failed: {str(e)}'}), 500
+
+@app.route('/api/retrain-segment-model', methods=['POST'])
+@login_required(role='admin')
+def retrain_segment_model_endpoint():
+    """Retrain the segment correction model from latest DB data. Admin only."""
+    try:
+        from segment_model.train import train
+        train()
+        # Reset the cached corrector so it reloads the new model
+        from segment_model import predict as pred_mod
+        pred_mod._corrector_instance = None
+        return jsonify({'success': True, 'message': 'Model retrained successfully'})
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': f'Retrain failed: {str(e)}'}), 500
 
 @app.route('/api/generate-image', methods=['POST'])
 def generate_image_endpoint():
@@ -1458,15 +1717,14 @@ def save_data_endpoint():
             app.logger.exception('Error while logging saved ai_gen_seg')
 
         # Insert or Update rd_submissions table (upsert by market_name)
+        active_seconds_raw = data.get('active_seconds')
+        active_seconds = int(active_seconds_raw) if isinstance(active_seconds_raw, (int, float)) and active_seconds_raw > 0 else None
         try:
             db = get_db()
-            # Check if submission with same market_name exists
             existing = db.execute(
                 'SELECT id FROM rd_submissions WHERE market_name = ?', (title,)
             ).fetchone()
-            
             if existing:
-                # UPDATE existing record
                 db.execute('''
                     UPDATE rd_submissions SET
                         researcher_username = ?,
@@ -1486,7 +1744,8 @@ def save_data_endpoint():
                         ai_gen_seg = ?,
                         companies = ?,
                         created_by = ?,
-                        version = ?
+                        version = ?,
+                        active_seconds = COALESCE(?, active_seconds)
                     WHERE market_name = ?
                 ''', (
                     session.get('username', 'unknown'),
@@ -1507,19 +1766,19 @@ def save_data_endpoint():
                     json.dumps(companies),
                     save_data.get('createdBy'),
                     save_data.get('version'),
+                    active_seconds,
                     title
                 ))
                 db.commit()
                 app.logger.info(f'RD submission record UPDATED for {title}')
             else:
-                # INSERT new record
                 db.execute('''
                     INSERT INTO rd_submissions 
                     (market_name, researcher_username, json_path, submitted_at, timestamp,
                      sector, industry_group, industry, sub_industry,
                      value_unit, cagr, market_size_2024, market_size_2025, projected_size_2033,
-                     segments, ai_gen_seg, companies, created_by, version)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                     segments, ai_gen_seg, companies, created_by, version, active_seconds)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ''', (
                     title,
                     session.get('username', 'unknown'),
@@ -1539,7 +1798,8 @@ def save_data_endpoint():
                     json.dumps(ai_flat),
                     json.dumps(companies),
                     save_data.get('createdBy'),
-                    save_data.get('version')
+                    save_data.get('version'),
+                    active_seconds
                 ))
                 db.commit()
                 app.logger.info(f'RD submission record CREATED for {title}')
@@ -2093,8 +2353,9 @@ def generate_short_rd():
         rd_temp_file_name = f"RD_{market_name}_SkyQuest.docx"
         rd_temp_file_path = os.path.join(tempfile.gettempdir(), rd_temp_file_name)
         
+        word_toc_entries = [(t, l) for t, l in toc_entries if l <= 2]
         export_to_word(
-            data=toc_entries,
+            data=word_toc_entries,
             market_name=market_name,
             value_2024=value_2024,
             currency=currency,
@@ -2137,8 +2398,6 @@ def download_file():
         
         if not os.path.exists(file_path):
             return "Error: The file does not exist.", 404
-        
-        file_name = os.path.basename(file_path)
         
         file_name = os.path.basename(file_path)
         
@@ -2486,6 +2745,6 @@ def submit_to_skyquest():
         return jsonify({'error': f'Failed to submit to SkyQuest: {str(e)}'}), 500
 
 if __name__ == '__main__':
-    port = int(os.getenv('PORT', '5001'))
+    port = int(os.getenv('PORT', '5002'))
     # Use stat reloader instead of watchdog to avoid Windows socket errors
     app.run(host='0.0.0.0', port=port, debug=True, use_reloader=True, reloader_type='stat')

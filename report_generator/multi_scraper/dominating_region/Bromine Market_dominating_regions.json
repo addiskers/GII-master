@@ -1,0 +1,44 @@
+{
+  "market_name": "Bromine Market",
+  "unit": "Billion",
+  "cagr": 3.6,
+  "value_2024": 94.5,
+  "value_2033": 129.92,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "emerging",
+    "France": "fastest_growing"
+  },
+  "SEGMENTS": {
+    "Bromine Derivatives": [
+      "Elemental Bromine",
+      "Organobromines",
+      "Bromide Compounds",
+      "Clear Brine Fluids"
+    ],
+    "Applications": [
+      "Flame Retardants",
+      "Oil and Gas",
+      "Agriculture",
+      "Pharmaceuticals",
+      "Water Treatment and Biocides",
+      "Plasma Etching",
+      "Others"
+    ],
+    "End Users": [
+      "Oil & Gas",
+      "Automotive",
+      "Electrical & Electronics",
+      "Agriculture",
+      "Pharmaceuticals",
+      "Cosmetics",
+      "Textile",
+      "Others"
+    ]
+  }
+}

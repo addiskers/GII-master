@@ -1,0 +1,48 @@
+{
+  "market_name": "Industrial Lubricants Market",
+  "unit": "Billion",
+  "cagr": 3.0,
+  "value_2024": 66.7,
+  "value_2033": 87.03,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "Europe",
+    "third": "North America"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "emerging",
+    "France": "fastest_growing"
+  },
+  "SEGMENTS": {
+    "Base Oil Type": [
+      "Mineral Oil",
+      "Synthetic Oil",
+      "Bio-based Oil"
+    ],
+    "Product Type": [
+      "Hydraulic Fluid",
+      "Metalworking Fluid",
+      "Gear Oil",
+      "Grease",
+      "Other Products"
+    ],
+    "Application": [
+      "Mining",
+      "Power Generation",
+      "Food Processing",
+      "Chemical Manufacturing",
+      "Textile Manufacturing",
+      "Steel & Metals",
+      "Other Applications"
+    ],
+    "End-User Industry": [
+      "Construction",
+      "Metal & Mining Production",
+      "Cement Production",
+      "Automotive Manufacturing",
+      "Transport Equipment",
+      "Other Industries"
+    ]
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "market_name": "Carry Handle Tape Market",
+  "unit": "Million",
+  "cagr": 5.8,
+  "value_2024": 212.3,
+  "value_2033": 352.63,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Material Type": [
+      "Polyethylene",
+      "Polypropylene",
+      "Other Material Types"
+    ],
+    "Product": [
+      "Preformed",
+      "Roll Forms"
+    ],
+    "Type": [
+      "Acrylic",
+      "Rubber",
+      "Silicone",
+      "Ethylene Vinyl Acetate",
+      "Others"
+    ],
+    "Technology": [
+      "Water-based",
+      "Solvent-based",
+      "Hot Melt",
+      "Radiation-based",
+      "UV Cured",
+      "Electronic Beam Cured"
+    ],
+    "End User Industry": [
+      "Packaging",
+      "Food and Beverage",
+      "Consumer Goods",
+      "Textile and Apparel",
+      "Electronics",
+      "Construction",
+      "Medical"
+    ]
+  }
+}

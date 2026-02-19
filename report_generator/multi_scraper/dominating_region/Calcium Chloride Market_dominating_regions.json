@@ -1,0 +1,65 @@
+{
+  "market_name": "Calcium Chloride Market",
+  "unit": "Billion",
+  "cagr": 5.2,
+  "value_2024": 2.3,
+  "value_2033": 3.63,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Product Type": [
+      "Flakes",
+      "Pellets",
+      "Powder",
+      "Liquid",
+      "Others"
+    ],
+    "Form": [
+      "Liquid",
+      "Hydrated Solid",
+      "Others"
+    ],
+    "Grade": [
+      "Food Grade",
+      "Industrial Grade",
+      "Pharmaceutical Grade",
+      "Agriculture Grade",
+      "Others"
+    ],
+    "Application": [
+      "De-icing & Snow Removal",
+      "Dust Control",
+      "Construction",
+      "Food",
+      "Water Treatment",
+      "Chemical Manufacturing",
+      "Industrial Processing",
+      "Drilling Fluids",
+      "Concrete Acceleration",
+      "Others"
+    ],
+    "Raw Material": [
+      "Natural Brine",
+      "Limestone",
+      "HCl",
+      "Phosphate Rock",
+      "Natural Salt"
+    ],
+    "End-Use Industry": [
+      "Construction",
+      "Oil & Gas",
+      "Water Treatment",
+      "Chemical Manufacturing",
+      "Agriculture",
+      "Others"
+    ]
+  }
+}

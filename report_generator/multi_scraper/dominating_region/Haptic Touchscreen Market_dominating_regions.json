@@ -1,0 +1,60 @@
+{
+  "market_name": "Haptic Touchscreen Market",
+  "unit": "Billion",
+  "cagr": 13.6,
+  "value_2024": 18.4,
+  "value_2033": 57.97,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Haptic Technology Type": [
+      "Contact Haptic",
+      "Non-Contact Haptic"
+    ],
+    "Haptic Effect Type": [
+      "Vibration",
+      "Force Feedback",
+      "Texture Simulation",
+      "Thermal Feedback"
+    ],
+    "Type": [
+      "Capacitive",
+      "Piezoelectric",
+      "Electrostatic",
+      "Thermal"
+    ],
+    "Display Type": [
+      "Integrated",
+      "On-Cell",
+      "In-Cell",
+      "Suspended"
+    ],
+    "Applications": [
+      "Mobile Devices",
+      "Personal Computers",
+      "Video Games",
+      "Automated Teller Machines",
+      "Tele-Operators and Simulators",
+      "Arts and Handwriting",
+      "Holographic Interaction",
+      "Others"
+    ],
+    "End Users": [
+      "Corporate",
+      "Consumers",
+      "Educational Institutes",
+      "Security Departments",
+      "Retail",
+      "Healthcare",
+      "Robotics"
+    ]
+  }
+}

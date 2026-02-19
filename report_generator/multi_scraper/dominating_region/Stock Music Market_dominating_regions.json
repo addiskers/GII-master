@@ -1,0 +1,43 @@
+{
+  "market_name": "Stock Music Market",
+  "unit": "Billion",
+  "cagr": 8.2,
+  "value_2024": 1.5,
+  "value_2033": 3.05,
+  "REGIONAL_RANKING": {
+    "first": "North America",
+    "second": "Europe",
+    "third": "Asia Pacific"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "fastest_growing",
+    "United Kingdom": "dominant",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Stock Music Type": [
+      "Royalty-Free Music",
+      "Rights-Managed Music"
+    ],
+    "Usage Scenario": [
+      "Film Production",
+      "Video Content Creation",
+      "Advertising"
+    ],
+    "Customer Type": [
+      "Professional Creators",
+      "Amateur Creators",
+      "Businesses"
+    ],
+    "Distribution Channel": [
+      "Online Platforms",
+      "Direct Licensing"
+    ],
+    "Music Genre": [
+      "Classical",
+      "Pop",
+      "Jazz",
+      "Others"
+    ]
+  }
+}

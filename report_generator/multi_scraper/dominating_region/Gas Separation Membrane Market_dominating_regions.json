@@ -1,0 +1,51 @@
+{
+  "market_name": "Gas Separation Membrane Market",
+  "unit": "Billion",
+  "cagr": 4.8,
+  "value_2024": 78.4,
+  "value_2033": 119.55,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Product Type": [
+      "Polymeric Membranes",
+      "Metallic Membranes",
+      "Inorganic Membranes"
+    ],
+    "Material Type": [
+      "Polyimide",
+      "Polysulfone",
+      "Cellulose Acetate",
+      "Other Materials"
+    ],
+    "Module Type": [
+      "Hollow Fiber",
+      "Spiral Wound",
+      "Plate and Frame",
+      "Other Modules"
+    ],
+    "Application": [
+      "Gas Separation",
+      "Hydrogen Recovery",
+      "Natural Gas Treatment",
+      "Others"
+    ],
+    "End-Use Industries": [
+      "Chemicals",
+      "Power Generation",
+      "Petrochemicals",
+      "Pollution Control",
+      "Food & Beverage",
+      "Pharmaceuticals",
+      "Others"
+    ]
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "market_name": "Automotive Active Body Panel Market",
+  "unit": "Billion",
+  "cagr": 4.8,
+  "value_2024": 15.4,
+  "value_2033": 23.48,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "Europe",
+    "third": "North America"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Vehicle Type": [
+      "Passenger Cars",
+      "Light Commercial Vehicles",
+      "Heavy Commercial Vehicles",
+      "Electric Vehicles"
+    ],
+    "Functionality": [
+      "Active Aerodynamics",
+      "Crash Safety",
+      "Weight Optimization",
+      "Thermal Management"
+    ],
+    "Material Type": [
+      "Steel",
+      "Aluminum",
+      "Carbon Fiber",
+      "Plastic",
+      "Composite"
+    ],
+    "Application": [
+      "Hoods",
+      "Doors",
+      "Trunk Lids",
+      "Fenders",
+      "Bumpers"
+    ]
+  }
+}

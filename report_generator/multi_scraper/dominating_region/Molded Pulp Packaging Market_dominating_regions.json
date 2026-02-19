@@ -1,0 +1,57 @@
+{
+  "market_name": "Molded Pulp Packaging Market",
+  "unit": "Billion",
+  "cagr": 6.9,
+  "value_2024": 24.6,
+  "value_2033": 44.85,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "Europe",
+    "third": "North America"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Source": [
+      "Wood Pulp",
+      "Non-Wood Pulp"
+    ],
+    "Fiber Type": [
+      "Recycled Fiber",
+      "Virgin Fiber",
+      "Blended Fiber"
+    ],
+    "Molded Type": [
+      "Thick Wall",
+      "Transfer Molded",
+      "Thermoformed Fiber",
+      "Processed Pulp"
+    ],
+    "Product": [
+      "Trays",
+      "Bowls and Cups",
+      "Clamshells",
+      "Plates",
+      "Others"
+    ],
+    "Application": [
+      "Food Packaging",
+      "Food Service",
+      "Healthcare",
+      "Electronics",
+      "Industrial",
+      "Others"
+    ],
+    "End-User Industry": [
+      "Foodservice",
+      "Consumer Electronics",
+      "Healthcare and Medical Devices",
+      "Industrial Goods",
+      "Personal Care and Cosmetics",
+      "Other Industries"
+    ]
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "market_name": "Next-Generation Memory Market",
+  "unit": "Billion",
+  "cagr": 24.3,
+  "value_2024": 6.9,
+  "value_2033": 48.88,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "emerging",
+    "France": "fastest_growing"
+  },
+  "SEGMENTS": {
+    "Technology": [
+      "Non-Volatile Memory",
+      "Volatile Memory"
+    ],
+    "Wafer Size": [
+      "200 mm",
+      "300 mm",
+      "Others"
+    ],
+    "Application": [
+      "Consumer Electronics",
+      "Enterprise Storage",
+      "Automotive & Transportation",
+      "Military & Aerospace",
+      "Industrial",
+      "Healthcare",
+      "Telecommunications",
+      "Energy & Power",
+      "Agriculture",
+      "Retail"
+    ]
+  }
+}

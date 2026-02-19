@@ -1,0 +1,47 @@
+{
+  "market_name": "Compressor Oil Market",
+  "unit": "Trillion",
+  "cagr": 4.4,
+  "value_2024": 11.5,
+  "value_2033": 16.94,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "emerging",
+    "France": "fastest_growing"
+  },
+  "SEGMENTS": {
+    "Oil Types": [
+      "Mineral Oil",
+      "Synthetic Oil",
+      "Semi-Synthetic Oil",
+      "Bio-Based Oil"
+    ],
+    "Compressor Type": [
+      "Positive Displacement",
+      "Dynamic Compressor"
+    ],
+    "Application": [
+      "Air Compressor",
+      "Gas Compressor",
+      "HVAC-R",
+      "Refrigeration"
+    ],
+    "End-Use Industry": [
+      "Manufacturing",
+      "Transportation",
+      "Food & Beverage",
+      "Mining",
+      "Chemical & Petrochemical",
+      "Construction",
+      "Rubber & Plastic",
+      "Oil & Gas",
+      "Power Generation",
+      "Others"
+    ]
+  }
+}

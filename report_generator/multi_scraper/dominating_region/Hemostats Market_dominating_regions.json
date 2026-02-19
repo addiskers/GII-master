@@ -1,0 +1,48 @@
+{
+  "market_name": "Hemostats Market",
+  "unit": "Billion",
+  "cagr": 6.9,
+  "value_2024": 3.2,
+  "value_2033": 5.83,
+  "REGIONAL_RANKING": {
+    "first": "North America",
+    "second": "Europe",
+    "third": "Asia Pacific"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Type": [
+      "Active Hemostats",
+      "Passive Hemostats"
+    ],
+    "Formulation": [
+      "Matrix & Gel Hemostats",
+      "Sheet & Pad Hemostats",
+      "Sponge Hemostats",
+      "Powder Hemostats"
+    ],
+    "Application": [
+      "Orthopedic Surgery",
+      "General Surgery",
+      "Neurological Surgery",
+      "Cardiovascular Surgery",
+      "Reconstructive Surgery",
+      "Gynecological Surgery",
+      "Trauma Management",
+      "Plastic Surgery",
+      "Dental Treatments",
+      "Other Applications"
+    ],
+    "End User": [
+      "Hospitals",
+      "Ambulatory Surgical Centers",
+      "Specialty Clinics",
+      "Nursing Homes",
+      "Others"
+    ]
+  }
+}

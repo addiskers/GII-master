@@ -1,0 +1,46 @@
+{
+  "market_name": "Catalog Management Software Market",
+  "unit": "Billion",
+  "cagr": 11.5,
+  "value_2024": 1.1,
+  "value_2033": 2.93,
+  "REGIONAL_RANKING": {
+    "first": "North America",
+    "second": "Europe",
+    "third": "Asia Pacific"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Catalog Type": [
+      "Digital Catalogs",
+      "Print-Ready/Automated Layout",
+      "Interactive/Flipbook Catalogs"
+    ],
+    "Functionality": [
+      "Product Information Management (PIM)",
+      "Digital Asset Management (DAM)",
+      "Others"
+    ],
+    "Deployment Model": [
+      "Cloud-Based",
+      "On-Premise"
+    ],
+    "Pricing Model": [
+      "Subscription Based",
+      "One Time Purchase"
+    ],
+    "Business Model": [
+      "B2B (Business-to-Business)",
+      "B2C (Business-to-Consumer)",
+      "D2C (Direct-to-Consumer)"
+    ],
+    "Enterprise Size": [
+      "SMEs (Small to Medium Enterprises)",
+      "Large Enterprises"
+    ]
+  }
+}

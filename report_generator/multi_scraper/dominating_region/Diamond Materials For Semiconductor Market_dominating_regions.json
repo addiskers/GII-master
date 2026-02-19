@@ -1,0 +1,37 @@
+{
+  "market_name": "Diamond Materials For Semiconductor Market",
+  "unit": "Million",
+  "cagr": 22.5,
+  "value_2024": 101.2,
+  "value_2033": 628.64,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Material Type": [
+      "Natural Diamonds",
+      "Synthetic Diamonds"
+    ],
+    "Form Factor": [
+      "Bulk Diamond",
+      "Thin Films"
+    ],
+    "Application": [
+      "High-Power Devices",
+      "Optoelectronic Devices",
+      "Thermal Management"
+    ],
+    "End-User Industry": [
+      "Consumer Electronics",
+      "Automotive",
+      "Telecommunications"
+    ]
+  }
+}

@@ -1,46 +1,74 @@
 {
-  "market_name": "Wax Market",
+  "market_name": "wax market",
   "segments": [
     "1. Type of Wax",
-    "1.1. Natural Wax",
-    "1.1.1. Beeswax",
-    "1.1.1.1. Filtered Beeswax",
-    "1.1.1.2. Raw Beeswax",
-    "1.1.2. Plant Wax",
-    "1.1.2.1. Carnauba Wax",
-    "1.1.2.2. Candelilla Wax",
-    "1.2. Synthetic Wax",
-    "1.2.1. Microcrystalline Wax",
-    "1.2.2. Paraffin Wax",
+    "1.1. Paraffin Wax",
+    "1.2. Beeswax",
+    "1.3. Soy Wax",
     "2. Application",
-    "2.1. Cosmetics",
-    "2.1.1. Lip Products",
-    "2.1.2. Skin Care",
-    "2.2. Industrial",
-    "2.2.1. Packaging",
-    "2.2.2. Lubricants",
-    "3. Formulation",
-    "3.1. Solid Wax",
-    "3.1.1. Blocks",
-    "3.1.2. Pellets",
-    "3.2. Liquid Wax",
-    "3.2.1. Emulsions",
-    "3.2.2. Solutions",
-    "4. End-user",
-    "4.1. Personal Care",
-    "4.1.1. Hair Care",
-    "4.1.2. Body Care",
-    "4.2. Food Industry",
-    "4.2.1. Food Coatings",
-    "4.2.2. Candies and Sweets"
+    "2.1. Candle Making",
+    "2.2. Cosmetics",
+    "2.3. Industrial Uses",
+    "3. Formulation Type",
+    "3.1. Natural Wax",
+    "3.2. Synthetic Wax",
+    "4. Product Form",
+    "4.1. Bulk Waxaad",
+    "4.2. Pre-formed Wax"
   ],
   "ai_gen_seg": [],
-  "timestamp": "2026-02-05T19:20:04.120659",
+  "timestamp": "2026-02-19T17:59:55.087640",
   "savedBy": "admin",
   "industryClassification": {},
-  "marketInputs": {},
-  "companies": "",
-  "value_2024": 0.0,
-  "currency": "million",
-  "cagr": 0.0
+  "marketInputs": {
+    "unit": "Million",
+    "cagr": 21,
+    "marketSize2024": 21,
+    "projectedSize2033": 116.76
+  },
+  "companies": "Ceres Global Ag Corpsada\nSynthetech\nIGI Wax\nWaxie Sanitary Supply\nThe Wax Company\nCarnauba do Brasil\nJ. L. Clark\nTrefin Wax\nRobert McGaw Company\nT. M. K. Wax\nBCC Products\nParaffin Wax Company\nGellner Industrial\nThe Candle Factory\nSunoco Specialty Products\nShell Chemicals\nEslon Chemical\nT&T Wax\nKoster Keunen\nB. M. S. Wax Co.",
+  "value_2024": 21.0,
+  "currency": "Million",
+  "cagr": 21.0
+} },
+    {
+      "name": "Formulation Type",
+      "subsegments": [
+        {
+          "name": "Natural Wax",
+          "subsegments": []
+        },
+        {
+          "name": "Synthetic Wax",
+          "subsegments": []
+        }
+      ]
+    },
+    {
+      "name": "Product Form",
+      "subsegments": [
+        {
+          "name": "Bulk Wax",
+          "subsegments": []
+        },
+        {
+          "name": "Pre-formed Wax",
+          "subsegments": []
+        }
+      ]
+    }
+  ],
+  "timestamp": "2026-02-19T17:59:55.087640",
+  "savedBy": "admin",
+  "industryClassification": {},
+  "marketInputs": {
+    "unit": "Million",
+    "cagr": 21,
+    "marketSize2024": 21,
+    "projectedSize2033": 116.76
+  },
+  "companies": "Ceres Global Ag Corpsada\nSynthetech\nIGI Wax\nWaxie Sanitary Supply\nThe Wax Company\nCarnauba do Brasil\nJ. L. Clark\nTrefin Wax\nRobert McGaw Company\nT. M. K. Wax\nBCC Products\nParaffin Wax Company\nGellner Industrial\nThe Candle Factory\nSunoco Specialty Products\nShell Chemicals\nEslon Chemical\nT&T Wax\nKoster Keunen\nB. M. S. Wax Co.",
+  "value_2024": 21.0,
+  "currency": "Million",
+  "cagr": 21.0
 }

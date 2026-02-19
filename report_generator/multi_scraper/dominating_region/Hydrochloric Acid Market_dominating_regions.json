@@ -1,0 +1,55 @@
+{
+  "market_name": "Hydrochloric Acid Market",
+  "unit": "Billion",
+  "cagr": 6.9,
+  "value_2024": 3.1,
+  "value_2033": 5.65,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "emerging",
+    "France": "fastest_growing"
+  },
+  "SEGMENTS": {
+    "Purity Level": [
+      "Technical Grade",
+      "Industrial Grade",
+      "Reagent Grade",
+      "Ultra-high Purity",
+      "Concentrated",
+      "Synthetic",
+      "Others"
+    ],
+    "Distribution Channel": [
+      "Direct Sales",
+      "Distributors",
+      "Online Sales"
+    ],
+    "Form": [
+      "Solid",
+      "Liquid"
+    ],
+    "Application": [
+      "Metal Processing",
+      "Food Production",
+      "Water Treatment",
+      "Biodiesel Production",
+      "Oil Well Acidizing"
+    ],
+    "End-Use Industry": [
+      "Chemical",
+      "Oil and Gas",
+      "Food and Beverage",
+      "Pharmaceutical",
+      "Textile",
+      "Steel and Metallurgy",
+      "Agricultural",
+      "Laboratory",
+      "Other Industries"
+    ]
+  }
+}

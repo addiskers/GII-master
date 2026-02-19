@@ -1,0 +1,40 @@
+{
+  "market_name": "Dry Cell Battery Market",
+  "unit": "Billion",
+  "cagr": 3.8,
+  "value_2024": 27.5,
+  "value_2033": 38.47,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "emerging",
+    "France": "fastest_growing"
+  },
+  "SEGMENTS": {
+    "Battery Type": [
+      "Alkaline Batteries",
+      "Lithium Batteries",
+      "Nickel Cadmium Batteries",
+      "Nickel Metal Hydride Batteries"
+    ],
+    "Form Factor": [
+      "Cylindrical",
+      "Prismatic"
+    ],
+    "Application": [
+      "Consumer Electronics",
+      "Medical Devices",
+      "Automotive",
+      "Telecommunication"
+    ],
+    "Button Cells End Use": [
+      "Household",
+      "Commercial",
+      "Industrial"
+    ]
+  }
+}

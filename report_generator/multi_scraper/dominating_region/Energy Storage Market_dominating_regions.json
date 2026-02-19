@@ -1,0 +1,47 @@
+{
+  "market_name": "Energy Storage Market",
+  "unit": "Trillion",
+  "cagr": 24.3,
+  "value_2024": 39.5,
+  "value_2033": 279.79,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Technology": [
+      "Batteries",
+      "Mechanical Storage",
+      "Thermal Storage",
+      "Compressed Air Energy Storage",
+      "Emerging Technologies"
+    ],
+    "Connectivity": [
+      "On-Grid",
+      "Off-Grid"
+    ],
+    "Product": [
+      "Battery Energy Storage Systems",
+      "Utility-Scale Storage"
+    ],
+    "Application": [
+      "Grid Energy Storage",
+      "Renewable Energy Integration",
+      "Uninterruptible Power Supply"
+    ],
+    "End Use": [
+      "Residential",
+      "Commercial",
+      "Industrial",
+      "Utility",
+      "Transportation",
+      "Others"
+    ]
+  }
+}

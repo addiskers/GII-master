@@ -1,0 +1,49 @@
+{
+  "market_name": "Automotive Silicone Elastomers Market",
+  "unit": "Billion",
+  "cagr": 5.0,
+  "value_2024": 3.0,
+  "value_2033": 4.65,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "Europe",
+    "third": "North America"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Type": [
+      "Elastomers",
+      "Resins",
+      "Gels",
+      "Other Types"
+    ],
+    "Product Type": [
+      "High Consistency Silicone Rubber",
+      "Liquid Silicone Rubber",
+      "Room Temperature Vulcanized Rubber",
+      "Fluorosilicone Rubber"
+    ],
+    "Curing Mechanism": [
+      "Heat-Cured",
+      "Condensation-Cured",
+      "Peroxide-Cured",
+      "Platinum-Cured"
+    ],
+    "Application": [
+      "Automotive Components",
+      "Electrical Components"
+    ],
+    "End-Use Industry": [
+      "Automotive and Transportation",
+      "Construction",
+      "Electrical and Electronics",
+      "Medical",
+      "Food and Beverage",
+      "Consumer Products"
+    ]
+  }
+}

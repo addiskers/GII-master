@@ -1,0 +1,48 @@
+{
+  "market_name": "Polystyrene Market",
+  "unit": "Billion",
+  "cagr": 5.6,
+  "value_2024": 3.1,
+  "value_2033": 5.06,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "emerging",
+    "France": "fastest_growing"
+  },
+  "SEGMENTS": {
+    "Type": [
+      "General Purpose Polystyrene",
+      "High Impact Polystyrene",
+      "Expandable Polystyrene",
+      "Extruded Polystyrene",
+      "Others"
+    ],
+    "Application": [
+      "Packaging",
+      "Building & Construction",
+      "Automotive",
+      "Electrical & Electronic",
+      "Consumer Goods",
+      "Agriculture",
+      "Leisure & Sports",
+      "Others"
+    ],
+    "Form Type": [
+      "Foams",
+      "Films and Sheets",
+      "Injection Molding",
+      "Other Form Types"
+    ],
+    "End-Use Industry": [
+      "Electrical & Electronics",
+      "Consumer Goods",
+      "Building & Construction",
+      "Other Industries"
+    ]
+  }
+}

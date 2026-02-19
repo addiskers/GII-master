@@ -1,0 +1,51 @@
+{
+  "market_name": "Bovine Gelatin Market",
+  "unit": "Billion",
+  "cagr": 3.6,
+  "value_2024": 94.5,
+  "value_2033": 129.92,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Type": [
+      "Type A",
+      "Type B",
+      "Type C",
+      "Type D"
+    ],
+    "Source": [
+      "Bones",
+      "Skin",
+      "Others"
+    ],
+    "Form": [
+      "Powder",
+      "Capsule & Tablets",
+      "Liquid",
+      "Sheet",
+      "Pellet"
+    ],
+    "Nature": [
+      "Organic",
+      "Conventional"
+    ],
+    "End Use Industry": [
+      "Food & Beverage",
+      "Cosmetics & Personal Care",
+      "Pharmaceuticals",
+      "Others"
+    ],
+    "Distribution Channel": [
+      "Online",
+      "Offline"
+    ]
+  }
+}

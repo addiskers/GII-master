@@ -1,0 +1,41 @@
+{
+  "market_name": "Food Spray Drying Equipment Market",
+  "unit": "Billion",
+  "cagr": 5.0,
+  "value_2024": 6.4,
+  "value_2033": 9.93,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "emerging",
+    "France": "fastest_growing"
+  },
+  "SEGMENTS": {
+    "Spray Dryers Type": [
+      "Centrifugal Spray Dryers",
+      "Pneumatic Spray Dryers",
+      "Rotary Spray Dryers"
+    ],
+    "Technology": [
+      "Single-Stage Drying",
+      "Multi-Stage Drying",
+      "Hybrid Drying"
+    ],
+    "Application": [
+      "Dairy & Egg Products",
+      "Pharmaceuticals",
+      "Chemicals",
+      "Cosmetics & Personal Care",
+      "Others"
+    ],
+    "End-Use Industry": [
+      "Food & Beverage",
+      "Healthcare",
+      "Others"
+    ]
+  }
+}

@@ -1,288 +1,92 @@
 {% extends 'auth/base.html' %}
 {% block content %}
-  <style>
-    /* Mirror admin dashboard look and feel */
-    .container{max-width:100%;margin:0;padding-left:24px}
-    :root{
-      --primary:#6C5CE7; --bg:#f5f6fa; --text:#1f2430; --muted:#7a8aa0;
-      --border:#e6e9f0; --card:#ffffff; --success-bg:#e9f7ef; --success:#1e7d44;
-      --warning-bg:#fff7e6; --warning:#b46900;
-    }
-    .page-chrome{position:relative}
-    .page-chrome:before,.page-chrome:after{content:"";position:fixed;left:0;right:0;height:10px;background:var(--primary);z-index:0}
-    .page-chrome:before{top:0}.page-chrome:after{bottom:0}
-    .admin-layout{display:grid;grid-template-columns:250px 1fr;gap:18px;margin-top:12px}
-    .sidebar{background:var(--card);border-radius:14px;box-shadow:0 10px 30px rgba(31,36,48,0.08);padding:18px;min-height:70vh}
-    .brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--text);margin-bottom:14px}
-    .brand .logo{width:28px;height:28px;border-radius:8px;border:2px solid var(--primary);display:flex;align-items:center;justify-content:center;color:var(--primary)}
-    .nav{display:flex;flex-direction:column;gap:8px}
-    .nav a{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:10px;color:#394150;text-decoration:none;border:1px solid var(--border)}
-    .nav a:hover{background:#f7f7fb}
-    .nav a.active{background:var(--primary);color:#fff;border-color:var(--primary)}
-    .main{display:flex;flex-direction:column;gap:14px}
-    .card{background:var(--card);border-radius:14px;box-shadow:0 10px 30px rgba(31,36,48,0.08);padding:16px}
-    .hero-card{background:linear-gradient(135deg,#ff8aa5 0%, #ff7a6e 40%, #ffb07a 100%);color:#fff;position:relative;overflow:hidden}
-    .hero-card:after{content:"";position:absolute;right:-40px;top:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,0.15)}
-    .header-row{display:flex;align-items:center;justify-content:space-between}
-    .greet{font-size:22px;font-weight:700;color:var(--text);margin:0}
-    .hero-card .greet{color:#fff}
-    .search-top{flex:0 0 280px;display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--border);border-radius:999px;padding:6px 12px}
-    .search-top input{border:none;outline:none;flex:1}
-    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-    .stat-card{display:flex;align-items:center;gap:14px;position:relative;overflow:hidden}
-    .icon-pill{width:44px;height:44px;border-radius:12px;background:#f7f7fb;display:flex;align-items:center;justify-content:center;color:var(--primary);font-size:22px}
-    .stat-label{color:var(--muted);font-size:12px}
-    .stat-value{font-size:26px;font-weight:700;color:var(--text)}
-    .delta{font-size:12px;color:#1e7d44}
-    .table-card h4{margin:0 0 6px 0}
-    .table-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-    .search{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--border);border-radius:999px;padding:6px 12px}
-    .search input{border:none;outline:none;flex:1}
-    .sort{display:flex;align-items:center;gap:8px}
-    .sort select{padding:8px 10px;border:1px solid var(--border);border-radius:10px}
-    .table-pro{width:100%;border-collapse:separate;border-spacing:0}
-    .table-pro thead th{background:#f7f7fb;color:#394150;font-weight:600;padding:12px;border-bottom:1px solid var(--border)}
-    .table-pro tbody td{padding:12px;border-bottom:1px solid #f0f2f6;color:#2f3443}
-    .table-pro tbody tr:hover{background:#fafbff}
-    .badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:12px;font-weight:600}
-    .badge-success{background:var(--success-bg);color:var(--success);border:1px solid #cbead7}
-    .badge-warning{background:var(--warning-bg);color:var(--warning);border:1px solid #ffe0b2}
-    .muted{color:var(--muted)}
-  </style>
+<div class="app-layout">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><div class="logo-icon">SQ</div> Researcher</div>
+    <nav class="sidebar-nav">
+      <a href="{{ url_for('researcher_dashboard') }}" class="active"><span class="nav-icon">🏠</span> Dashboard</a>
+      <a href="{{ url_for('researcher_submissions') }}"><span class="nav-icon">📋</span> My Submissions</a>
+      <a href="{{ url_for('tool') }}"><span class="nav-icon">🔬</span> Research Tool</a>
+      <hr class="sidebar-divider">
+      <a href="{{ url_for('profile') }}"><span class="nav-icon">👤</span> Profile</a>
+      <a href="{{ url_for('logout') }}"><span class="nav-icon">🚪</span> Logout</a>
+    </nav>
+  </aside>
 
-  <div class="page-chrome">
-    <div class="admin-layout">
-      <aside class="sidebar" aria-label="Researcher navigation">
-        <div class="brand"><div class="logo">⬢</div> Dashboard <span class="muted">v0.1</span></div>
-        <nav class="nav" id="researcherNav">
-          <a href="{{ url_for('researcher_dashboard') }}" class="active">Dashboard</a>
-          <a href="{{ url_for('researcher_submissions') }}">My Submissions</a>
-          <a href="{{ url_for('tool') }}">Research Tool</a>
-          <a href="{{ url_for('researcher_notifications') }}">Notifications
-            {% if metrics.unread_admin and metrics.unread_admin > 0 %}
-              <span class="badge badge-warning" style="margin-left:8px">{{ metrics.unread_admin }}</span>
-            {% endif %}
-          </a>
-          <a href="{{ url_for('profile') }}">Profile</a>
-          <a href="{{ url_for('logout') }}">Logout</a>
-        </nav>
-      </aside>
-
-      <main class="main">
-        <div class="card hero-card">
-          <div class="header-row">
-            <h3 class="greet">Hello {{ username }}, 👋</h3>
-            <div class="search-top"><span class="muted">🔍</span><input type="text" placeholder="Search" /></div>
-          </div>
-        </div>
-
-        <div class="stats">
-          <div class="card stat-card">
-            <div class="icon-pill">📄</div>
-            <div>
-              <div class="stat-label">Total Generated</div>
-              <div class="stat-value">{{ metrics.total_submissions }}</div>
-            </div>
-          </div>
-          <div class="card stat-card">
-            <div class="icon-pill">🕒</div>
-            <div>
-              <div class="stat-label">Last Submitted</div>
-              <div class="stat-value" style="font-size:18px">
-                {% if submissions and submissions[0].submitted_at %}
-                  <span class="ts">{{ submissions[0].submitted_at }}</span>
-                {% else %}
-                  —
-                {% endif %}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card table-card">
-          <h4>Submissions</h4>
-          <div class="table-toolbar">
-            <div class="search"><span class="muted">🔍</span><input id="searchInput" type="text" placeholder="Search by market name" /></div>
-            <div class="sort"><button id="resetFilters" class="btn-link">Reset</button></div>
-          </div>
-          <table class="table-pro">
-            <thead>
-              <tr>
-                <th>Market Name</th>
-                <th>Submitted At</th>
-                <th>Market Value (2024)</th>
-                <th>CAGR</th>
-                <th>Segments</th>
-                <th>Companies</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for s in submissions %}
-              <tr data-market="{{ (s.market_name or '')|lower }}">
-                <td style="font-weight:600">{{ s.market_name or '—' }}</td>
-                <td>
-                  {% if s.submitted_at %}
-                    <span class="ts">{{ s.submitted_at }}</span>
-                  {% else %}
-                    —
-                  {% endif %}
-                </td>
-                <td>{{ s.value_2024 or '—' }} {{ s.currency or '' }}</td>
-                <td>{{ s.cagr or '—' }}%</td>
-                <td>{{ s.segment_count or 0 }}</td>
-                <td>{{ s.company_count or 0 }}</td>
-                <td>
-                  {% if s.downloaded %}
-                    <span class="badge badge-success">Downloaded</span>
-                  {% else %}
-                    <span class="badge badge-warning">Pending</span>
-                  {% endif %}
-                </td>
-              </tr>
-              {% endfor %}
-              {% if not submissions %}
-                <tr><td colspan="7" class="muted">No submissions yet</td></tr>
-              {% endif %}
-            </tbody>
-          </table>
-        </div>
-      </main>
+  <main class="main-content">
+    <div class="hero-card">
+      <h3>Hello, {{ username }} 👋</h3>
+      <p>Welcome back to your research dashboard.</p>
     </div>
-  </div>
 
-  
-
-  <script>
-    (function(){
-      const searchInput = document.getElementById('searchInput');
-      const resetBtn = document.getElementById('resetFilters');
-      function formatIsoToDisplay(iso){
-        if(!iso) return '';
-        const m = String(iso).match(/^(\d{4})-(\d{2})-(\d{2})[T\s](\d{2}):(\d{2})/);
-        if(!m) return iso; // fallback to raw if unexpected format
-        const y=m[1], mo=m[2], d=m[3], h=m[4], mi=m[5];
-        const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-        const mon = months[parseInt(mo,10)-1] || mo;
-        return `${d} ${mon} ${y}, ${h}:${mi}`;
-      }
-      // Format all timestamp spans
-      Array.from(document.querySelectorAll('span.ts')).forEach(el => {
-        el.textContent = formatIsoToDisplay(el.textContent.trim());
-      });
-      function applyFilters(){
-        const q = (searchInput && searchInput.value || '').toLowerCase().trim();
-        const rows = Array.from(document.querySelectorAll('tbody tr'));
-        rows.forEach(r => {
-          const matchesText = !q || r.dataset.market.includes(q);
-          r.style.display = matchesText ? '' : 'none';
-        });
-      }
-      if (searchInput) searchInput.addEventListener('input', applyFilters);
-      if (resetBtn) resetBtn.addEventListener('click', () => { if(searchInput) searchInput.value=''; applyFilters(); });
-    })();
-  </script>
-  
-  <!-- Chatbar: Researcher <-> Admin -->
-  <style>
-    .chatbar{position:fixed;right:18px;bottom:78px;width:340px;background:#fff;border:1px solid #e6e9f0;border-radius:14px;box-shadow:0 12px 32px rgba(31,36,48,0.14);display:none;flex-direction:column;overflow:hidden;z-index:1000}
-    .chatbar.open{display:flex}
-    .chatbar header{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:#6C5CE7;color:#fff}
-    .chatbar .messages{max-height:280px;overflow:auto;padding:10px;background:#f7f7fb}
-    .msg{display:flex;margin-bottom:8px}
-    .msg .bubble{padding:8px 10px;border-radius:12px;max-width:75%}
-    .msg.me{justify-content:flex-end}
-    .msg.me .bubble{background:#6C5CE7;color:#fff;border-top-right-radius:4px}
-    .msg.other .bubble{background:#fff;border:1px solid #e6e9f0;color:#1f2430;border-top-left-radius:4px}
-    .chatbar form{display:flex;gap:8px;padding:10px;background:#fff;border-top:1px solid #e6e9f0}
-    .chatbar input{flex:1;border:1px solid #e6e9f0;border-radius:10px;padding:8px 10px}
-    .chatbar button{background:#6C5CE7;color:#fff;border:none;border-radius:10px;padding:8px 12px;cursor:pointer}
-    .chatbar .close{background:transparent;color:#fff;border:none;font-size:18px;line-height:18px;padding:0 6px}
-    /* Floating action button */
-    .chat-fab{position:fixed;right:18px;bottom:18px;width:52px;height:52px;border-radius:50%;background:#6C5CE7;color:#fff;display:flex;align-items:center;justify-content:center;border:none;box-shadow:0 8px 20px rgba(108,92,231,0.35);cursor:pointer;z-index:1001;font-size:22px}
-    .chat-fab:hover{filter:brightness(1.05)}
-  </style>
-  <div class="chatbar" id="chatbar" aria-hidden="true">
-    <header>
-      <span>Chat with Admin</span>
-      <div style="display:flex;gap:8px;align-items:center">
-        <button id="chatRefresh" style="background:rgba(255,255,255,0.2);color:#fff;border:none;border-radius:8px;padding:4px 8px;cursor:pointer">Refresh</button>
-        <button id="chatClose" class="close" aria-label="Close">×</button>
+    <div class="stats-grid">
+      <div class="card stat-card">
+        <div class="stat-icon" style="background:#ede9fe;">📄</div>
+        <div class="stat-label">Total Generated</div>
+        <div class="stat-value">{{ metrics.total_submissions }}</div>
+        <div class="stat-meta">All time reports</div>
       </div>
-    </header>
-    <div class="messages" id="chatMessages" aria-live="polite"></div>
-    <form id="chatForm" autocomplete="off">
-      <input type="text" id="chatInput" placeholder="Type a message" required />
-      <button type="submit">Send</button>
-    </form>
-  </div>
-  <button id="chatFab" class="chat-fab" aria-label="Open chat">💬</button>
+      <div class="card stat-card">
+        <div class="stat-icon" style="background:#fff7e6;">📅</div>
+        <div class="stat-label">Today</div>
+        <div class="stat-value">{{ metrics.today_submissions }}</div>
+        <div class="stat-meta">Today's submissions</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-icon" style="background:#ecfdf5;">🕒</div>
+        <div class="stat-label">Last Submitted</div>
+        <div class="stat-value" style="font-size:18px;line-height:1.4">
+          {% if submissions and submissions[0].submitted_at %}
+            <span class="ts">{{ submissions[0].submitted_at }}</span>
+          {% else %}—{% endif %}
+        </div>
+      </div>
+    </div>
 
-  <script>
-    (function(){
-      const me = "{{ username }}";
-      const other = 'admin';
-      const list = document.getElementById('chatMessages');
-      const input = document.getElementById('chatInput');
-      const form = document.getElementById('chatForm');
-      const refreshBtn = document.getElementById('chatRefresh');
-      const chatbar = document.getElementById('chatbar');
-      const chatFab = document.getElementById('chatFab');
-      const chatClose = document.getElementById('chatClose');
-      let pollTimer = null;
+    <div class="card">
+      <div class="card-header">
+        <h4 class="card-title">Recent Submissions</h4>
+        <div class="search-box"><span class="muted">🔍</span><input id="searchInput" type="text" placeholder="Search market name…"></div>
+      </div>
+      <table class="table-pro">
+        <thead>
+          <tr>
+            <th>Market Name</th>
+            <th>Submitted At</th>
+            <th>Market Value (2024)</th>
+            <th>CAGR</th>
+            <th>Segments</th>
+            <th>Companies</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in submissions %}
+          <tr data-market="{{ (s.market_name or '')|lower }}">
+            <td class="fw-600">{{ s.market_name or '—' }}</td>
+            <td><span class="ts">{{ s.submitted_at or '—' }}</span></td>
+            <td>{{ s.value_2024 or '—' }} {{ s.currency or '' }}</td>
+            <td>{% if s.cagr %}{{ s.cagr }}%{% else %}—{% endif %}</td>
+            <td>{{ s.segment_count or 0 }}</td>
+            <td>{{ s.company_count or 0 }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="6" class="muted text-sm" style="padding:20px;text-align:center">No submissions yet</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
 
-      function render(messages){
-        list.innerHTML = '';
-        messages.forEach(m => {
-          const div = document.createElement('div');
-          div.className = 'msg ' + (m.from_username === me ? 'me' : 'other');
-          const bubble = document.createElement('div');
-          bubble.className = 'bubble';
-          const when = (m.sent_at || '').replace('T',' ').slice(0,16);
-          bubble.textContent = m.content + '  \u00b7 ' + when;
-          div.appendChild(bubble);
-          list.appendChild(div);
-        });
-        list.scrollTop = list.scrollHeight;
-      }
-
-      async function fetchMessages(){
-        try{
-          const res = await fetch(`/api/chat/messages?with=${encodeURIComponent(other)}&limit=200`);
-          const data = await res.json();
-          if(data && Array.isArray(data.messages)) render(data.messages);
-        }catch(e){ console.warn('chat fetch failed', e); }
-      }
-
-      async function sendMessage(text){
-        try{
-          await fetch('/api/chat/send', {
-            method:'POST', headers:{'Content-Type':'application/json'},
-            body: JSON.stringify({ to: other, content: text })
-          });
-          input.value = '';
-          fetchMessages();
-        }catch(e){ console.warn('chat send failed', e); }
-      }
-
-      form.addEventListener('submit', (ev)=>{ ev.preventDefault(); const t = input.value.trim(); if(t) sendMessage(t); });
-      refreshBtn.addEventListener('click', fetchMessages);
-      function openChat(){
-        chatbar.classList.add('open');
-        chatbar.setAttribute('aria-hidden','false');
-        fetchMessages();
-        if (pollTimer) clearInterval(pollTimer);
-        pollTimer = setInterval(fetchMessages, 2500);
-        setTimeout(()=>input.focus(),10);
-      }
-      function closeChat(){
-        chatbar.classList.remove('open');
-        chatbar.setAttribute('aria-hidden','true');
-        if (pollTimer){ clearInterval(pollTimer); pollTimer = null; }
-      }
-      chatFab.addEventListener('click', openChat);
-      chatClose.addEventListener('click', closeChat);
-      document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeChat(); });
-    })();
-  </script>
+<script>
+(function(){
+  const inp = document.getElementById('searchInput');
+  if(inp) inp.addEventListener('input', function(){
+    const q = this.value.toLowerCase().trim();
+    document.querySelectorAll('tbody tr').forEach(r => {
+      r.style.display = (!q || (r.dataset.market||'').includes(q)) ? '' : 'none';
+    });
+  });
+})();
+</script>
 {% endblock %}

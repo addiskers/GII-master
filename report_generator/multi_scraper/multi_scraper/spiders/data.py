@@ -13,7 +13,6 @@ from docx.shared import Pt, RGBColor, Cm
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT, WD_ALIGN_PARAGRAPH, WD_LINE_SPACING
 from openai import OpenAI
 from itertools import cycle
-import os
 from dotenv import load_dotenv
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -5157,7 +5156,8 @@ Rules:
     return capitalize_questions_in_text(raw_text)
 
 def load_company_profiles_from_data(data):
-    return data.get("company_profiles", [])
+    return data.get("company_profiles") or data.get("companies") or []
+
 def add_company_profiles(doc, market_name, data):
     # Company Profiles heading in Poppins, 12pt, bold (as paragraph, no heading)
     p_heading = doc.add_paragraph()
@@ -5168,25 +5168,27 @@ def add_company_profiles(doc, market_name, data):
     p_heading.alignment = WD_ALIGN_PARAGRAPH.LEFT
     # Load company profiles from data
     company_profiles = load_company_profiles_from_data(data)
- 
+
+    # Normalise: accept string (newline-separated) or list
+    if isinstance(company_profiles, str):
+        company_profiles = [c.strip() for c in company_profiles.splitlines() if c.strip()]
+
     # Loop through the company profiles and add them to the document
     for company in company_profiles:
-        p = doc.add_paragraph(company, style='List Paragraph')
+        p = doc.add_paragraph(style='Normal')
+        p.alignment = WD_ALIGN_PARAGRAPH.LEFT
         pPr = p._element.get_or_add_pPr()
         numPr = pPr.get_or_add_numPr()
-        numId = OxmlElement('w:numId')
-        numId.set(qn('w:val'), '1')
         ilvl = OxmlElement('w:ilvl')
         ilvl.set(qn('w:val'), '0')
+        numId = OxmlElement('w:numId')
+        numId.set(qn('w:val'), '1')
         numPr.append(ilvl)
         numPr.append(numId)
-        p.paragraph_format.left_indent = Pt(36)
-        p.paragraph_format.first_line_indent = Pt(-18)
-        p.alignment = WD_ALIGN_PARAGRAPH.LEFT
-        for run in p.runs:
-            run.font.name = "Poppins"
-            run.font.size = Pt(12)
-            run.bold = False
+        run = p.add_run(company.strip())
+        run.font.name = "Poppins"
+        run.font.size = Pt(12)
+        run.bold = False
 def build_recent_developments_prompt(market_name):
     return f"""
 Write ONLY plain text, no markdown, no titles.
@@ -5732,7 +5734,8 @@ def export_to_word_RD(data_dict, value_2024, value_2025, value_2033, currency, c
     toc_list = data_dict.get("table_of_contents", [])
     
     # Add companies to data_dict for add_company_profiles function
-    data_dict["company_profiles"] = companies
+    if companies:
+        data_dict["company_profiles"] = companies
     
     # Define market input variables from parameters (passed from generate_docx_from_data)
     value_2024_use = value_2024
@@ -5824,15 +5827,28 @@ def export_to_word_RD(data_dict, value_2024, value_2025, value_2033, currency, c
         run_sub_heading.font.color.rgb = RGBColor(0, 0, 0)
      
         # Format and add sub-segments only (exclude sub-sub-segments in brackets)
-        formatted_sub_segments = []
-        for sub_segment, sub_sub_segments in sub_segments.items():
-            formatted_sub_segments.append(sub_segment)
+        formatted_sub_segments = list(sub_segments.keys())
      
         # Add the formatted sub-segments
         p_formatted = doc.add_paragraph()
         p_formatted.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
         run_formatted = p_formatted.add_run(", ".join(formatted_sub_segments))
         set_poppins_style(run_formatted, size=12)
+
+        # Add "Sub-Segments-For-{name}" heading + children for each sub-segment with level-3 items
+        for sub_segment, sub_sub_segments in sub_segments.items():
+            if sub_sub_segments:
+                p_sub_sub_heading = doc.add_paragraph()
+                p_sub_sub_heading.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+                run_sub_sub_heading = p_sub_sub_heading.add_run(f"Sub-Segments-For-{sub_segment}")
+                set_poppins_style(run_sub_sub_heading, size=16)
+                p_sub_sub_heading.style = "Heading 2"
+                run_sub_sub_heading.font.color.rgb = RGBColor(0, 0, 0)
+
+                p_sub_sub = doc.add_paragraph()
+                p_sub_sub.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+                run_sub_sub = p_sub_sub.add_run(", ".join(sub_sub_segments))
+                set_poppins_style(run_sub_sub, size=12)
  
     # RD metadata block
     add_rd_metadata_section(doc, rd_meta)
@@ -6058,7 +6074,7 @@ def export_to_word_RD(data_dict, value_2024, value_2025, value_2033, currency, c
     segments_text_list = []
     for main_segment, sub_segments in segments_dict_filtered.items():
         if sub_segments:
-            segments_text_list.append(f"By {main_segment} (" + ", ".join(list(sub_segments.keys())) + ")")
+            segments_text_list.append(f"By {main_segment} (" + ", ".join(list(sub_segments.keys())[:2]) + ")")
         else:
             segments_text_list.append(f"By {main_segment}")
     
@@ -6068,7 +6084,7 @@ def export_to_word_RD(data_dict, value_2024, value_2025, value_2033, currency, c
     
     segments_text_list.append(region_text_full)
     segments_text = ", ".join(segments_text_list)
-    title_text = f"{data_dict['title']}, {segments_text} - Industry Forecast 2026-2033"
+    title_text = f"{data_dict['title']} {segments_text} - Industry Forecast 2026-2033"
     
     word_count = len(title_text.split())
     
@@ -6076,7 +6092,7 @@ def export_to_word_RD(data_dict, value_2024, value_2025, value_2033, currency, c
     if word_count > 40:
         segments_text_list[-1] = region_text_short
         segments_text = ", ".join(segments_text_list)
-        title_text = f"{data_dict['title']}, {segments_text} - Industry Forecast 2026-2033"
+        title_text = f"{data_dict['title']} {segments_text} - Industry Forecast 2026-2033"
         word_count = len(title_text.split())
     
     # STEP 2: If still exceeds 40 words, remove last segment's sub-items (before Region)
@@ -6090,7 +6106,7 @@ def export_to_word_RD(data_dict, value_2024, value_2025, value_2033, currency, c
                 break
         
         segments_text = ", ".join(segments_text_list)
-        title_text = f"{data_dict['title']}, {segments_text} - Industry Forecast 2026-2033"
+        title_text = f"{data_dict['title']} {segments_text} - Industry Forecast 2026-2033"
         word_count = len(title_text.split())
     
     # STEP 3: If still exceeds 40 words, keep only last segment with sub-items, remove others
@@ -6108,7 +6124,7 @@ def export_to_word_RD(data_dict, value_2024, value_2025, value_2033, currency, c
         
         simplified_list.append(segments_text_list[-1])  # Add Region back
         segments_text = ", ".join(simplified_list)
-        title_text = f"{data_dict['title']}, {segments_text} - Industry Forecast 2026-2033"
+        title_text = f"{data_dict['title']} {segments_text} - Industry Forecast 2026-2033"
     
     run_p = p.add_run(title_text)
     color = RGBColor(0, 0, 0)
@@ -6121,14 +6137,6 @@ def export_to_word_RD(data_dict, value_2024, value_2025, value_2033, currency, c
 #value_2024 = 100.0
 #cagr = 12.0
 # currency = "million"
-companies = """Medtronic plc
-Terumo Corporation
-W. L. Gore & Associates, Inc.
-Cook Group
-Endologix Inc.
-"""
-# ------------------ RD Metadata ------------------
-# ------------------ RD Metadata ------------------
 # Formatting: Headings will be Heading 1, bold, font size 16, Poppins
 # Text content will be size 12, normal, Poppins
 rd_metadata_pairs = [
@@ -6363,51 +6371,3 @@ def generate_docx_from_data(data, output_path=None, doc=None):
         output_path=output_path,
         doc=doc
     )
-from flask import Flask, request, jsonify, send_file
-import io
-import glob
-from scrapy.crawler import CrawlerProcess
-
-app = Flask(__name__)
-
-@app.route('/api/scrape', methods=['POST'])
-def scrape():
-    urls = request.json.get('urls', [])
-    if not urls:
-        return jsonify({'error': 'No URLs provided'}), 400
-    # Run the spider
-    process = CrawlerProcess(settings={
-        'LOG_LEVEL': 'ERROR',
-    })
-    process.crawl(MarketResearchSpider, urls=','.join(urls), no_docx=True)
-    process.start()
-    # Now collect the JSON files
-    output_dir = "scraped_json"
-    json_files = glob.glob(os.path.join(output_dir, '*.json'))
-    results = []
-    for f in json_files:
-        with open(f, 'r') as fd:
-            results.append(json.load(fd))
-    # Clean up JSON files
-    for f in json_files:
-        os.remove(f)
-    return jsonify(results)
-
-@app.route('/api/generate-report', methods=['POST'])
-def generate_report():
-    reports = request.json.get('reports', [])
-    if not reports:
-        return jsonify({'error': 'No reports provided'}), 400
-    # Generate a combined DOCX
-    doc = Document()
-    doc.add_heading("Market Research Comparison Report", level=0)
-    for report in reports:
-        doc.add_heading(report['title'], level=1)
-        generate_docx_from_data(report, doc=doc)
-    output = io.BytesIO()
-    doc.save(output)
-    output.seek(0)
-    return send_file(output, download_name='market_research_report.docx', as_attachment=True, mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
-
-if __name__ == '__main__':
-    app.run(debug=True)

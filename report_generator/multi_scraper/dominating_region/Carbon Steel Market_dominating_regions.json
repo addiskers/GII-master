@@ -1,0 +1,51 @@
+{
+  "market_name": "Carbon Steel Market",
+  "unit": "Billion",
+  "cagr": 5.5,
+  "value_2024": 185.3,
+  "value_2033": 300.02,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "Europe",
+    "third": "North America"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "emerging",
+    "France": "fastest_growing"
+  },
+  "SEGMENTS": {
+    "Carbon Steel Type": [
+      "Low Carbon Steel",
+      "Medium Carbon Steel",
+      "High Carbon Steel"
+    ],
+    "Product Type": [
+      "Carbon Steel Plate",
+      "Carbon Steel Pipe",
+      "Carbon Steel Bar",
+      "Others"
+    ],
+    "Application": [
+      "Building & Construction",
+      "Shipbuilding",
+      "Consumer Goods",
+      "Aerospace",
+      "Others"
+    ],
+    "Form": [
+      "Hot Rolled",
+      "Cold Rolled",
+      "Galvanized",
+      "Coated"
+    ],
+    "End Use": [
+      "Infrastructure",
+      "Transportation",
+      "Oil & Gas",
+      "Industrial Equipment",
+      "Consumer Appliances",
+      "Others"
+    ]
+  }
+}

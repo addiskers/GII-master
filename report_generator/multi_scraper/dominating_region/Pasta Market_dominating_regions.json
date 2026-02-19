@@ -1,0 +1,55 @@
+{
+  "market_name": "Pasta Market",
+  "unit": "Billion",
+  "cagr": 6.9,
+  "value_2024": 3.2,
+  "value_2033": 5.83,
+  "REGIONAL_RANKING": {
+    "first": "Europe",
+    "second": "North America",
+    "third": "Asia Pacific"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Pasta Types": [
+      "Dried Pasta",
+      "Fresh Pasta",
+      "Frozen Pasta",
+      "Stuffed Pasta",
+      "Canned Pasta"
+    ],
+    "Raw Materials": [
+      "Wheat",
+      "Rice",
+      "Legumes",
+      "Vegetable-Based"
+    ],
+    "Packaging Format": [
+      "Cardboard Box",
+      "Pouches",
+      "Cup/Bowl"
+    ],
+    "Category": [
+      "Conventional",
+      "Free-Form",
+      "Filling",
+      "Plain"
+    ],
+    "End Use": [
+      "Residential",
+      "Food Service",
+      "Catering"
+    ],
+    "Distribution Channel": [
+      "Supermarkets/Hypermarkets",
+      "Convenience Stores",
+      "Online Retail",
+      "Specialty Stores",
+      "Others"
+    ]
+  }
+}

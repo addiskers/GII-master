@@ -1,0 +1,47 @@
+{
+  "market_name": "Sensor Hub Market",
+  "unit": "Billion",
+  "cagr": 16.7,
+  "value_2024": 32.5,
+  "value_2033": 130.47,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Sensor Types": [
+      "Gyroscope Sensors",
+      "Hall Sensors",
+      "Proximity Sensors",
+      "Temperature Sensors",
+      "Magnetic Sensors"
+    ],
+    "Processor Types": [
+      "Application Sensor Processor",
+      "Discrete Sensor Processor",
+      "Integrated Microcontroller",
+      "Others"
+    ],
+    "Applications": [
+      "Positioning and Navigation",
+      "Health and Fitness",
+      "Augmented Reality",
+      "Others"
+    ],
+    "End Use": [
+      "Consumer Electronics",
+      "Automotive",
+      "Industrial",
+      "Military",
+      "Healthcare",
+      "Telecommunications",
+      "Others"
+    ]
+  }
+}

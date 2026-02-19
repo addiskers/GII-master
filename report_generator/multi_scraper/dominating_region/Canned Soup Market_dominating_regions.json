@@ -1,0 +1,46 @@
+{
+  "market_name": "Canned Soup Market",
+  "unit": "Billion",
+  "cagr": 4.5,
+  "value_2024": 8.5,
+  "value_2033": 12.63,
+  "REGIONAL_RANKING": {
+    "first": "North America",
+    "second": "Europe",
+    "third": "Asia Pacific"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "fastest_growing",
+    "United Kingdom": "dominant",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Soup Type": [
+      "Clear Soup",
+      "Cream Soup",
+      "Condensed Soup",
+      "Vegetable",
+      "Others"
+    ],
+    "Format": [
+      "Ready to Serve",
+      "Condensed",
+      "Dry"
+    ],
+    "Taste Profile": [
+      "Savory",
+      "Sweet",
+      "Spicy"
+    ],
+    "Packaging Size": [
+      "Small (8-16oz)",
+      "Medium (18-24oz)",
+      "Large (25oz or more)"
+    ],
+    "Distribution Channel": [
+      "Supermarkets & Hypermarkets",
+      "Convenience Stores",
+      "Online Retail"
+    ]
+  }
+}

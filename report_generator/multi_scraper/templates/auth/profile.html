@@ -1,95 +1,82 @@
 {% extends 'auth/base.html' %}
 {% block content %}
-  <style>
-    .container{max-width:100%;margin:0;padding-left:24px}
-    :root{--primary:#6C5CE7;--bg:#f5f6fa;--text:#1f2430;--muted:#7a8aa0;--border:#e6e9f0;--card:#ffffff}
-    .page-chrome{position:relative}
-    .page-chrome:before,.page-chrome:after{content:"";position:fixed;left:0;right:0;height:10px;background:var(--primary);z-index:0}
-    .page-chrome:before{top:0}.page-chrome:after{bottom:0}
-    .admin-layout{display:grid;grid-template-columns:250px 1fr;gap:18px;margin-top:12px}
-    .sidebar{background:var(--card);border-radius:14px;box-shadow:0 10px 30px rgba(31,36,48,0.08);padding:18px;min-height:70vh}
-    .brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--text);margin-bottom:14px}
-    .brand .logo{width:28px;height:28px;border-radius:8px;border:2px solid var(--primary);display:flex;align-items:center;justify-content:center;color:var(--primary)}
-    .nav{display:flex;flex-direction:column;gap:8px}
-    .nav a{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:10px;color:#394150;text-decoration:none;border:1px solid var(--border)}
-    .nav a:hover{background:#f7f7fb}
-    .nav a.active{background:var(--primary);color:#fff;border-color:var(--primary)}
-    .main{display:flex;flex-direction:column;gap:14px}
-    .card{background:var(--card);border-radius:14px;box-shadow:0 10px 30px rgba(31,36,48,0.08);padding:16px}
-    .muted{color:#7a8aa0}
-    .profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-    .item{background:#f7f7fb;border:1px solid #e6e9f0;border-radius:10px;padding:12px}
-    .item h5{margin:0 0 6px 0;color:#394150;font-size:12px;font-weight:600;text-transform:uppercase}
-    .item p{margin:0;color:#2f3443;font-weight:500}
-  </style>
-
-  <div class="page-chrome">
-    <div class="admin-layout">
-      <aside class="sidebar" aria-label="User navigation">
-        <div class="brand"><div class="logo">⬢</div> Dashboard <span class="muted">v0.1</span></div>
-        <nav class="nav" id="userNav">
-          {% if session.role == 'researcher' %}
-            <a href="{{ url_for('researcher_dashboard') }}">Dashboard</a>
-            <a href="{{ url_for('tool') }}">Research Tool</a>
-            <a href="{{ url_for('researcher_notifications') }}">Notifications</a>
-          {% elif session.role == 'creator' %}
-            <a href="{{ url_for('creator_dashboard') }}">Dashboard</a>
-            <a href="{{ url_for('tool') }}">Research Tool</a>
-            <a href="{{ url_for('creator_notifications') }}">Notifications</a>
-          {% endif %}
-          <a href="{{ url_for('profile') }}" class="active">Profile</a>
-          <a href="{{ url_for('logout') }}">Logout</a>
-        </nav>
-      </aside>
-
-      <main class="main">
-        <div class="card" style="display:flex;align-items:center;justify-content:space-between">
-          <h3 style="margin:0">Profile</h3>
-          <div class="muted">User Information</div>
-        </div>
-
-        <div class="card">
-          <div class="profile-grid">
-            <div class="item">
-              <h5>Username</h5>
-              <p>{{ user.username }}</p>
-            </div>
-            <div class="item">
-              <h5>Role</h5>
-              <p>{{ user.role|upper }}</p>
-            </div>
-            <div class="item">
-              <h5>Created By</h5>
-              <p>{{ user.created_by or '—' }}</p>
-            </div>
-            <div class="item">
-              <h5>Created At</h5>
-              <p class="ts">{{ user.created_at }}</p>
-            </div>
-            <div class="item">
-              <h5>Last Login</h5>
-              <p class="ts">{{ user.last_login or '—' }}</p>
-            </div>
-          </div>
-        </div>
-      </main>
+<div class="app-layout">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><div class="logo-icon">SQ</div>
+      {% if session.role == 'admin' %}Admin{% else %}Researcher{% endif %}
     </div>
-  </div>
+    <nav class="sidebar-nav">
+      {% if session.role == 'admin' %}
+        <a href="{{ url_for('admin_dashboard') }}"><span class="nav-icon">🏠</span> Dashboard</a>
+        <a href="{{ url_for('admin_submissions') }}"><span class="nav-icon">📋</span> Submissions</a>
+        <a href="{{ url_for('admin_researchers') }}"><span class="nav-icon">👥</span> Researchers</a>
+        <a href="{{ url_for('tool') }}"><span class="nav-icon">🔬</span> Research Tool</a>
+      {% else %}
+        <a href="{{ url_for('researcher_dashboard') }}"><span class="nav-icon">🏠</span> Dashboard</a>
+        <a href="{{ url_for('researcher_submissions') }}"><span class="nav-icon">📋</span> My Submissions</a>
+        <a href="{{ url_for('tool') }}"><span class="nav-icon">🔬</span> Research Tool</a>
+      {% endif %}
+      <hr class="sidebar-divider">
+      <a href="{{ url_for('profile') }}" class="active"><span class="nav-icon">👤</span> Profile</a>
+      <a href="{{ url_for('logout') }}"><span class="nav-icon">🚪</span> Logout</a>
+    </nav>
+  </aside>
 
-  <script>
-    (function(){
-      function formatIsoToDisplay(iso){
-        if(!iso || iso === '—') return iso;
-        const m = String(iso).match(/^(\d{4})-(\d{2})-(\d{2})[T\s](\d{2}):(\d{2})/);
-        if(!m) return iso;
-        const y=m[1], mo=m[2], d=m[3], h=m[4], mi=m[5];
-        const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-        const mon = months[parseInt(mo,10)-1] || mo;
-        return `${d} ${mon} ${y}, ${h}:${mi}`;
-      }
-      Array.from(document.querySelectorAll('p.ts')).forEach(el => {
-        el.textContent = formatIsoToDisplay(el.textContent.trim());
-      });
-    })();
-  </script>
+  <main class="main-content">
+    <div class="hero-card">
+      <h3>My Profile</h3>
+      <p>Manage your account information and security settings.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h4 class="card-title">Account Information</h4>
+        <span class="badge badge-info">{{ user.role|upper }}</span>
+      </div>
+      <div class="info-grid">
+        <div class="info-item">
+          <h5>Username</h5>
+          <p>{{ user.username }}</p>
+        </div>
+        <div class="info-item">
+          <h5>Role</h5>
+          <p>{{ user.role|upper }}</p>
+        </div>
+        <div class="info-item">
+          <h5>Created By</h5>
+          <p>{{ user.created_by or '—' }}</p>
+        </div>
+        <div class="info-item">
+          <h5>Created At</h5>
+          <p><span class="ts">{{ user.created_at or '—' }}</span></p>
+        </div>
+        <div class="info-item">
+          <h5>Last Login</h5>
+          <p><span class="ts">{{ user.last_login or '—' }}</span></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h4 class="card-title">Change Password</h4>
+      </div>
+      <form method="POST" action="{{ url_for('change_password') }}" style="max-width:420px">
+        <div class="form-group">
+          <label class="form-label">Current Password</label>
+          <input type="password" name="current_password" class="form-control" required placeholder="Enter current password">
+        </div>
+        <div class="form-group">
+          <label class="form-label">New Password</label>
+          <input type="password" name="new_password" class="form-control" required placeholder="At least 6 characters">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirm New Password</label>
+          <input type="password" name="confirm_password" class="form-control" required placeholder="Repeat new password">
+        </div>
+        <button type="submit" class="btn btn-primary">🔒 Update Password</button>
+      </form>
+    </div>
+  </main>
+</div>
 {% endblock %}

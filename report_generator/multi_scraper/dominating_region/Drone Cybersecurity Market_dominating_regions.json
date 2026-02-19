@@ -1,0 +1,55 @@
+{
+  "market_name": "Drone Cybersecurity Market",
+  "unit": "Billion",
+  "cagr": 14.7,
+  "value_2024": 2.8,
+  "value_2033": 9.62,
+  "REGIONAL_RANKING": {
+    "first": "North America",
+    "second": "Asia Pacific",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Components": [
+      "Software",
+      "Hardware",
+      "Services"
+    ],
+    "Drone Type": [
+      "Fixed-Wing Drones",
+      "Rotary-Wing Drones",
+      "Hybrid Drones",
+      "Nano Drones"
+    ],
+    "Cybersecurity Solutions": [
+      "Threat Detection and Response",
+      "Firewalls and Prevention Systems",
+      "Encryption Solutions",
+      "Identity and Access Management",
+      "Incident Response Services"
+    ],
+    "Application": [
+      "Military and Defense",
+      "Commercial and Civil",
+      "Law Enforcement",
+      "Agriculture",
+      "Infrastructure Inspection"
+    ],
+    "End User": [
+      "Government and Defense",
+      "Commercial Enterprises",
+      "Research Institutions",
+      "Non-Profit Organizations"
+    ],
+    "Deployment Mode": [
+      "Cloud-Based",
+      "On-Premises",
+      "Hybrid"
+    ]
+  }
+}

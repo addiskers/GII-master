@@ -1,0 +1,33 @@
+{
+  "market_name": "Protein Hydrolysates Market",
+  "unit": "Billion",
+  "cagr": 4.4,
+  "value_2024": 4.8,
+  "value_2033": 7.07,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "Europe",
+    "third": "North America"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "emerging",
+    "France": "fastest_growing"
+  },
+  "SEGMENTS": {
+    "Product Type": [
+      "Animal Protein Hydrolysates",
+      "Plant Protein Hydrolysates"
+    ],
+    "Form Type": [
+      "Powder",
+      "Liquid"
+    ],
+    "Application Type": [
+      "Infant Nutrition",
+      "Sports Nutrition",
+      "Clinical Nutrition",
+      "Other Applications"
+    ]
+  }
+}

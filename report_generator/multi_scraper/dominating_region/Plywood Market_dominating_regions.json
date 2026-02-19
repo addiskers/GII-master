@@ -1,0 +1,37 @@
+{
+  "market_name": "Plywood Market",
+  "unit": "Billion",
+  "cagr": 7.2,
+  "value_2024": 57.3,
+  "value_2033": 107.13,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Product Type": [
+      "Softwood Plywood",
+      "Hardwood Plywood",
+      "Birch Plywood"
+    ],
+    "End Use": [
+      "Construction",
+      "Furniture",
+      "Packaging"
+    ],
+    "Application": [
+      "Interior",
+      "Exterior"
+    ],
+    "Production Process": [
+      "Veneer-Based",
+      "Engineered Wood"
+    ]
+  }
+}

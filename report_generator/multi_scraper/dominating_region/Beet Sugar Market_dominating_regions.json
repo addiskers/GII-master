@@ -1,0 +1,44 @@
+{
+  "market_name": "Beet Sugar Market",
+  "unit": "Billion",
+  "cagr": 20.2,
+  "value_2024": 0.9,
+  "value_2033": 4.71,
+  "REGIONAL_RANKING": {
+    "first": "Europe",
+    "second": "North America",
+    "third": "Asia Pacific"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "fastest_growing",
+    "United Kingdom": "emerging",
+    "France": "dominant"
+  },
+  "SEGMENTS": {
+    "Product Type": [
+      "White Beet Sugar",
+      "Brown Beet Sugar"
+    ],
+    "Form": [
+      "Powdered Sugar",
+      "Liquid Sugar"
+    ],
+    "Packaging": [
+      "Bulk Bags",
+      "Sacks",
+      "Cartons",
+      "Drums"
+    ],
+    "Application": [
+      "Bakery Products",
+      "Beverages",
+      "Confectionery",
+      "Pharmaceutical",
+      "Industrial"
+    ],
+    "Distribution Channel": [
+      "Offline",
+      "Online"
+    ]
+  }
+}

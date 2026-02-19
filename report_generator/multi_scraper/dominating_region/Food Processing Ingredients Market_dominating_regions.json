@@ -1,0 +1,52 @@
+{
+  "market_name": "Food Processing Ingredients Market",
+  "unit": "Billion",
+  "cagr": 6.5,
+  "value_2024": 60.4,
+  "value_2033": 106.46,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Type": [
+      "Modified starch",
+      "Protein",
+      "Food stabilizers",
+      "Emulsifiers",
+      "Yeast",
+      "Enzymes",
+      "Others"
+    ],
+    "Source": [
+      "Natural/Organic",
+      "Synthetic"
+    ],
+    "Form": [
+      "Liquid",
+      "Powder",
+      "Solid"
+    ],
+    "Function": [
+      "Preservatives",
+      "Flavoring Agents",
+      "Coloring Agents",
+      "Texturizing Agents",
+      "Nutritional Additives"
+    ],
+    "Application": [
+      "Bakery and Confectionery",
+      "Dairy Products",
+      "Meat and Seafood",
+      "Cereal Products",
+      "Beverages",
+      "Others"
+    ]
+  }
+}

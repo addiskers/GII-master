@@ -1,0 +1,53 @@
+{
+  "market_name": "pH Sensor Market",
+  "unit": "Billion",
+  "cagr": 4.6,
+  "value_2024": 1.4,
+  "value_2033": 2.1,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "pH Sensors Type": [
+      "Combination Sensors",
+      "Differential Sensors",
+      "Laboratory Sensors",
+      "Process Sensors"
+    ],
+    "Component": [
+      "Hardware",
+      "Software"
+    ],
+    "System Type": [
+      "Benchtop",
+      "Portable"
+    ],
+    "Product Type": [
+      "Digital",
+      "Analog"
+    ],
+    "Application": [
+      "Agriculture",
+      "Food and Beverage",
+      "Water Treatment",
+      "Pharmaceuticals",
+      "Biotechnology Processes",
+      "Clinical Analysis"
+    ],
+    "End-Use Industries": [
+      "Water and Wastewater",
+      "Paper",
+      "Chemical",
+      "Oil and Gas",
+      "Medical and Pharmaceutical",
+      "Metal and Mining"
+    ]
+  }
+}

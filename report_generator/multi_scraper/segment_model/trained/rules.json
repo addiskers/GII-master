@@ -1,0 +1,270 @@
+{
+  "add_others": {
+    "description": "Add \"Others\" to parent groups with 2+ children and no catch-all",
+    "min_children": 2,
+    "confidence": 0.005877034358047016,
+    "total_opportunities": 2212,
+    "times_applied": 13
+  },
+  "remove_deep_specific": {
+    "description": "Remove level 3+ sub-segments that are overly specific",
+    "removed_names": [
+      {
+        "name": "Procedural Planning",
+        "level": 2,
+        "market": "AR and VR in Interventional Neuroradiology Market"
+      },
+      {
+        "name": "Friends & Colleagues",
+        "level": 3,
+        "market": "Cruise Tourism Market"
+      },
+      {
+        "name": "Woodworks",
+        "level": 3,
+        "market": "Handicraft Market"
+      },
+      {
+        "name": "Art Metalware",
+        "level": 2,
+        "market": "Handicraft Market"
+      },
+      {
+        "name": "Online Stores",
+        "level": 3,
+        "market": "Handicraft Market"
+      },
+      {
+        "name": "Personal Care & Cosmetics",
+        "level": 2,
+        "market": "Mints Market"
+      },
+      {
+        "name": "Type",
+        "level": 1,
+        "market": "Algae Fats Market"
+      },
+      {
+        "name": "Genetically Modified Microalgae",
+        "level": 3,
+        "market": "Algae Fats Market"
+      },
+      {
+        "name": "Other Services",
+        "level": 2,
+        "market": "Animal Genetics Market"
+      },
+      {
+        "name": "Online Pharmacies",
+        "level": 2,
+        "market": "OTC Artificial Tears Market"
+      },
+      {
+        "name": "Chronic Pulmonary Aspergillosis",
+        "level": 3,
+        "market": "Aspergillosis Treatment Market"
+      },
+      {
+        "name": "Nebulized / Targeted Delivery",
+        "level": 2,
+        "market": "Aspergillosis Treatment Market"
+      },
+      {
+        "name": "Gasification",
+        "level": 2,
+        "market": "Biomethane Market"
+      },
+      {
+        "name": "Other Methods",
+        "level": 3,
+        "market": "Biomethane Market"
+      },
+      {
+        "name": "Vehicle Fuel",
+        "level": 3,
+        "market": "Biomethane Market"
+      },
+      {
+        "name": "Industrial Use",
+        "level": 3,
+        "market": "Biomethane Market"
+      },
+      {
+        "name": "CHP Systems",
+        "level": 3,
+        "market": "Biomethane Market"
+      },
+      {
+        "name": "Injection into Natural Gas Grid",
+        "level": 3,
+        "market": "Biomethane Market"
+      },
+      {
+        "name": "Pharmaceuticals",
+        "level": 2,
+        "market": "Clay Market"
+      },
+      {
+        "name": "Clear Brine Fluid",
+        "level": 3,
+        "market": "Bromine Market"
+      },
+      {
+        "name": "Pesticides",
+        "level": 3,
+        "market": "Bromine Market"
+      },
+      {
+        "name": "Paper and Paperboard",
+        "level": 3,
+        "market": "Personal Care Packaging Market"
+      },
+      {
+        "name": "Bottles",
+        "level": 3,
+        "market": "Personal Care Packaging Market"
+      },
+      {
+        "name": "Cans",
+        "level": 3,
+        "market": "Personal Care Packaging Market"
+      },
+      {
+        "name": "Cartons",
+        "level": 3,
+        "market": "Personal Care Packaging Market"
+      },
+      {
+        "name": "Jars",
+        "level": 3,
+        "market": "Personal Care Packaging Market"
+      },
+      {
+        "name": "Pouches",
+        "level": 3,
+        "market": "Personal Care Packaging Market"
+      },
+      {
+        "name": "Sachets",
+        "level": 3,
+        "market": "Personal Care Packaging Market"
+      },
+      {
+        "name": "Sports",
+        "level": 2,
+        "market": "Utility Vehicle Market"
+      },
+      {
+        "name": "Entertainment",
+        "level": 2,
+        "market": "Utility Vehicle Market"
+      },
+      {
+        "name": "Universities",
+        "level": 2,
+        "market": "Utility Vehicle Market"
+      },
+      {
+        "name": "Form",
+        "level": 1,
+        "market": "Vitamins Market"
+      },
+      {
+        "name": "Tablets",
+        "level": 2,
+        "market": "Vitamins Market"
+      },
+      {
+        "name": "Capsules",
+        "level": 2,
+        "market": "Vitamins Market"
+      },
+      {
+        "name": "Distribution Channel",
+        "level": 1,
+        "market": "Vitamins Market"
+      },
+      {
+        "name": "B2B",
+        "level": 2,
+        "market": "Vitamins Market"
+      },
+      {
+        "name": "B2C",
+        "level": 2,
+        "market": "Vitamins Market"
+      },
+      {
+        "name": "Industrial",
+        "level": 2,
+        "market": "Contraband Detector Market"
+      },
+      {
+        "name": "Education",
+        "level": 2,
+        "market": "Document Camera Market"
+      },
+      {
+        "name": "Video Processing & Rendering",
+        "level": 3,
+        "market": "Hardware Acceleration Market"
+      },
+      {
+        "name": "Copper Alloys",
+        "level": 4,
+        "market": "5G EMI Materials Market"
+      },
+      {
+        "name": "Silver Coatings",
+        "level": 4,
+        "market": "5G EMI Materials Market"
+      },
+      {
+        "name": "Carbon-Based",
+        "level": 4,
+        "market": "5G EMI Materials Market"
+      },
+      {
+        "name": "Polymeric Composites",
+        "level": 4,
+        "market": "5G EMI Materials Market"
+      },
+      {
+        "name": "Thermal Plastics",
+        "level": 4,
+        "market": "5G EMI Materials Market"
+      },
+      {
+        "name": "Ceramics",
+        "level": 4,
+        "market": "5G EMI Materials Market"
+      },
+      {
+        "name": "Automotive",
+        "level": 2,
+        "market": "Micro-LED Market"
+      },
+      {
+        "name": "Wearables",
+        "level": 2,
+        "market": "Micro-LED Market"
+      },
+      {
+        "name": "Smartwatch",
+        "level": 3,
+        "market": "Micro-LED Market"
+      }
+    ],
+    "confidence": 0.0,
+    "level_distribution": {
+      "2": 19,
+      "3": 21,
+      "1": 3,
+      "4": 6
+    }
+  },
+  "consolidate_siblings": {
+    "description": "Merge similar sub-segments into broader categories",
+    "patterns": []
+  }
+}

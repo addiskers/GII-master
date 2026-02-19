@@ -1,0 +1,44 @@
+{
+  "market_name": "Frozen Potato Market",
+  "unit": "Billion",
+  "cagr": 62.0,
+  "value_2024": 10.6,
+  "value_2033": 814.59,
+  "REGIONAL_RANKING": {
+    "first": "Europe",
+    "second": "North America",
+    "third": "Asia Pacific"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Product Type": [
+      "Fried Potato",
+      "Baked Potato",
+      "Potato Shapes",
+      "Mashed Potatoes"
+    ],
+    "Preparation": [
+      "Par-Fried Potatoes",
+      "Fully-Fried Potatoes",
+      "Frozen Raw Potatoes"
+    ],
+    "Application": [
+      "Retail",
+      "Quick Service Restaurants",
+      "Households"
+    ],
+    "End Use": [
+      "Residential",
+      "Commercial",
+      "Foodservice"
+    ],
+    "Distribution Channel": [
+      "Online",
+      "Offline"
+    ]
+  }
+}

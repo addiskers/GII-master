@@ -1,0 +1,37 @@
+{
+  "market_name": "SEO Software Market",
+  "unit": "Billion",
+  "cagr": 13.4,
+  "value_2024": 69.3,
+  "value_2033": 214.91,
+  "REGIONAL_RANKING": {
+    "first": "North America",
+    "second": "Europe",
+    "third": "Asia Pacific"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "fastest_growing",
+    "United Kingdom": "dominant",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Marketing Type": [
+      "SEO Marketing",
+      "Social Media Marketing",
+      "Email Marketing",
+      "Content Marketing",
+      "Pay Per Click Marketing",
+      "Display Marketing",
+      "Video Marketing",
+      "Others"
+    ],
+    "Enterprise Size": [
+      "Small and Medium Enterprises (SMEs)",
+      "Large Enterprises"
+    ],
+    "Deployment": [
+      "On-premise",
+      "Cloud"
+    ]
+  }
+}

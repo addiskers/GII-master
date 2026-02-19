@@ -1,0 +1,8 @@
+{
+  "total_submissions": 349,
+  "corrected_submissions": 23,
+  "others_clf_accuracy": 0.9087656529516994,
+  "remove_clf_accuracy": 0.8599560071226563,
+  "market_count": 349,
+  "embedder_name": "all-MiniLM-L6-v2"
+}

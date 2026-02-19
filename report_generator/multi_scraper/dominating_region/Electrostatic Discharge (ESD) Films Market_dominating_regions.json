@@ -1,0 +1,42 @@
+{
+  "market_name": "Electrostatic Discharge (ESD) Films Market",
+  "unit": "Billion",
+  "cagr": 7.3,
+  "value_2024": 4.3,
+  "value_2033": 8.11,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "emerging",
+    "France": "fastest_growing"
+  },
+  "SEGMENTS": {
+    "Packaging": [
+      "ESD Bags",
+      "Conductive Films"
+    ],
+    "Polymer Types": [
+      "Polyethylene Terephthalate (PET)",
+      "Polyethylene (PE)",
+      "Polyvinyl Chloride (PVC)",
+      "Polypropylene (PP)",
+      "Fluorinated Ethylene Propylene (FEP)"
+    ],
+    "Charging Methods": [
+      "Conductive",
+      "Antistatic",
+      "Insulative"
+    ],
+    "Applications": [
+      "Electronics Packaging",
+      "Healthcare and Medical",
+      "Consumer Electronics",
+      "Industrial",
+      "Automotive"
+    ]
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "market_name": "charger market",
+  "unit": "Million",
+  "cagr": 12,
+  "value_2024": 123,
+  "value_2033": 341.09,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Charger Type": [
+      "Wired Chargers",
+      "Wireless Chargers"
+    ],
+    "Application": [
+      "Consumer Electronics",
+      "Automotive Chargers"
+    ],
+    "Power Output": [
+      "Low Power",
+      "High Power"
+    ],
+    "End User": [
+      "Retail Consumers",
+      "Business Entities"
+    ]
+  }
+}

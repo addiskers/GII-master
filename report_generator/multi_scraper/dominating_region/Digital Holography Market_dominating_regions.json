@@ -1,0 +1,54 @@
+{
+  "market_name": "Digital Holography Market",
+  "unit": "Billion",
+  "cagr": 5.0,
+  "value_2024": 6.4,
+  "value_2033": 9.93,
+  "REGIONAL_RANKING": {
+    "first": "North America",
+    "second": "Asia Pacific",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Offering": [
+      "Hardware",
+      "Software",
+      "Services"
+    ],
+    "Dimensions": [
+      "Two Dimensional (2D)",
+      "Three Dimensional (3D)"
+    ],
+    "Technology": [
+      "In-line Holography",
+      "Off-axis Holography",
+      "Phase-shifting Holography",
+      "Synthetic Aperture Techniques"
+    ],
+    "Process Type": [
+      "Digital Recording",
+      "Reconstruction"
+    ],
+    "Application": [
+      "Medical Imaging",
+      "Data Storage",
+      "Microscopy",
+      "Particle Characterization",
+      "Holographic Imaging",
+      "Holographic Telepresence"
+    ],
+    "End Use Vertical": [
+      "Healthcare",
+      "Education",
+      "Military",
+      "Industrial Automation",
+      "Consumer Electronics",
+      "Entertainment"
+    ]
+  }
+}

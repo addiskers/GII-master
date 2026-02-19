@@ -1,0 +1,53 @@
+{
+  "market_name": "Ethylene Oxide Market",
+  "unit": "Billion",
+  "cagr": 27.7,
+  "value_2024": 7.5,
+  "value_2033": 67.73,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "emerging",
+    "France": "fastest_growing"
+  },
+  "SEGMENTS": {
+    "Product Type": [
+      "Ethylene Glycols",
+      "Ethanolamines",
+      "Polyethylene Glycol",
+      "Other Derivatives"
+    ],
+    "Production Method": [
+      "Catalytic Oxidation",
+      "Non-Catalytic Oxidation",
+      "Direct Oxidation",
+      "Hydrocarbon Oxidation"
+    ],
+    "Application": [
+      "Ethylene Glycol Production",
+      "Sterilization",
+      "Fumigant",
+      "Chemical Intermediate",
+      "Other Applications"
+    ],
+    "End Use": [
+      "Agriculture",
+      "Automotive",
+      "Food and Beverage",
+      "Personal Care",
+      "Pharmaceuticals",
+      "Textiles",
+      "Others"
+    ],
+    "Distribution Channel": [
+      "Direct Sales",
+      "Distributors",
+      "Online Sales",
+      "Retail"
+    ]
+  }
+}

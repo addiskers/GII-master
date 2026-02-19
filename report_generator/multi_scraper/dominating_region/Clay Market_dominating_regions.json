@@ -1,0 +1,51 @@
+{
+  "market_name": "Clay Market",
+  "unit": "Billion",
+  "cagr": 3.62,
+  "value_2024": 28.7,
+  "value_2033": 39.53,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "Europe",
+    "third": "North America"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "emerging",
+    "France": "fastest_growing"
+  },
+  "SEGMENTS": {
+    "Form": [
+      "Lump",
+      "Powder",
+      "Granules",
+      "Slurry"
+    ],
+    "Clay Type": [
+      "Kaolin",
+      "Montmorillonite",
+      "Bentonite",
+      "Fuller's Earth",
+      "Illite"
+    ],
+    "Application": [
+      "Ceramics and Pottery",
+      "Construction",
+      "Paper Manufacturing",
+      "Refractories",
+      "Foundry and Molding"
+    ],
+    "End-Use Industry": [
+      "Automotive",
+      "Electronics",
+      "Oil and Gas",
+      "Cosmetics",
+      "Others"
+    ],
+    "Production Method": [
+      "Surface Mining",
+      "Underground Mining",
+      "In-Situ Mining"
+    ]
+  }
+}

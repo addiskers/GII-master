@@ -1,0 +1,50 @@
+{
+  "market_name": "Personal Care Packaging Market",
+  "unit": "Billion",
+  "cagr": 3.6,
+  "value_2024": 94.5,
+  "value_2033": 129.92,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "dominant"
+  },
+  "SEGMENTS": {
+    "Material": [
+      "Plastics",
+      "Paper",
+      "Metal",
+      "Glass"
+    ],
+    "Product Type": [
+      "Bottles & Jars",
+      "Bags & Pouches",
+      "Tubes",
+      "Boxes & Cartons",
+      "Trays & Films",
+      "Caps & Closures",
+      "Others"
+    ],
+    "Application": [
+      "Skin Care",
+      "Hair Care",
+      "Oral Care",
+      "Body Care",
+      "Bath & Shower",
+      "Fragrances",
+      "Make-Up Products",
+      "Deodorants",
+      "Baby Care",
+      "Others"
+    ],
+    "Packaging Type": [
+      "Rigid",
+      "Flexible"
+    ]
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "market_name": "Automatic Voltage Stabilizer Market",
+  "unit": "Billion",
+  "cagr": 4.3,
+  "value_2024": 5.6,
+  "value_2033": 8.18,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "Europe",
+    "third": "North America"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Product Types": [
+      "Servo Voltage Stabilizers",
+      "Static Voltage Stabilizers",
+      "Digital Voltage Stabilizers"
+    ],
+    "Voltage Capacity": [
+      "Low Voltage",
+      "Medium Voltage",
+      "High Voltage"
+    ],
+    "Sales Channels": [
+      "Online Sales",
+      "Retail Sales",
+      "Distributors"
+    ],
+    "Application Areas": [
+      "Power Generation",
+      "Telecommunications",
+      "Healthcare"
+    ],
+    "End-Users": [
+      "Residential Users",
+      "Commercial Users",
+      "Industrial Users"
+    ]
+  }
+}

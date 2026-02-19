@@ -1,0 +1,46 @@
+{
+  "market_name": "Neon Gas Market",
+  "unit": "Billion",
+  "cagr": 6.9,
+  "value_2024": 24.6,
+  "value_2033": 44.85,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "emerging",
+    "France": "fastest_growing"
+  },
+  "SEGMENTS": {
+    "Purity": [
+      "99.9% Purity",
+      "99.99% Purity",
+      "99.999% Purity"
+    ],
+    "Source": [
+      "Air Separation",
+      "Cryogenic Distillation",
+      "Membrane Separation"
+    ],
+    "Packaging Type": [
+      "Cylinders",
+      "Tubes",
+      "Tanks"
+    ],
+    "Application": [
+      "Semiconductor",
+      "LCD",
+      "Imaging And Lighting",
+      "Other Applications"
+    ],
+    "End-Use Industry": [
+      "Automotive",
+      "Aerospace",
+      "Medical",
+      "Consumer Electronics"
+    ]
+  }
+}

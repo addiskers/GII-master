@@ -1,83 +1,38 @@
 {% extends 'auth/base.html' %}
 {% block content %}
   <style>
-    .container{max-width:100%;margin:0;padding-left:24px}
-    :root{
-      --primary:#6C5CE7;
-      --bg:#f5f6fa;
-      --text:#1f2430;
-      --muted:#7a8aa0;
-      --border:#e6e9f0;
-      --card:#ffffff;
-      --success-bg:#e9f7ef;
-      --success:#1e7d44;
-      --warning-bg:#fff7e6;
-      --warning:#b46900;
-    }
-    .page-chrome{position:relative}
-    .page-chrome:before,.page-chrome:after{content:"";position:fixed;left:0;right:0;height:10px;background:var(--primary);z-index:0}
-    .page-chrome:before{top:0}.page-chrome:after{bottom:0}
-    .admin-layout{display:grid;grid-template-columns:250px 1fr;gap:18px;margin-top:12px}
-    .sidebar{background:var(--card);border-radius:14px;box-shadow:0 10px 30px rgba(31,36,48,0.08);padding:18px;min-height:70vh}
-    .brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--text);margin-bottom:14px}
-    .brand .logo{width:28px;height:28px;border-radius:8px;border:2px solid var(--primary);display:flex;align-items:center;justify-content:center;color:var(--primary)}
-    .nav{display:flex;flex-direction:column;gap:8px}
-    .nav a{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:10px;color:#394150;text-decoration:none;border:1px solid var(--border)}
-    .nav a:hover{background:#f7f7fb}
-    .nav a.active{background:var(--primary);color:#fff;border-color:var(--primary)}
-    .main{display:flex;flex-direction:column;gap:14px}
-    .card{background:var(--card);border-radius:14px;box-shadow:0 10px 30px rgba(31,36,48,0.08);padding:16px}
-    .table-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-    .search{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--border);border-radius:999px;padding:6px 12px}
-    .search input{border:none;outline:none;flex:1}
-    .table-pro{width:100%;border-collapse:separate;border-spacing:0}
-    .table-pro thead th{background:#f7f7fb;color:#394150;font-weight:600;padding:12px;border-bottom:1px solid var(--border);font-size:13px}
-    .table-pro tbody td{padding:12px;border-bottom:1px solid #f0f2f6;color:#2f3443;font-size:13px}
-    .table-pro tbody tr:hover{background:#fafbff}
-    .badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:12px;font-weight:600}
-    .badge-success{background:var(--success-bg);color:var(--success);border:1px solid #cbead7}
-    .badge-warning{background:var(--warning-bg);color:var(--warning);border:1px solid #ffe0b2}
-    .muted{color:var(--muted)}
-    .page-title{font-size:22px;font-weight:700;color:var(--text);margin:0 0 4px 0}
-    .page-subtitle{color:var(--muted);margin:0;font-size:14px}
-    .btn-view{background:var(--primary);color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;font-weight:600;transition:all 0.2s}
-    .btn-view:hover{background:#5a4fd1;transform:translateY(-1px)}
-    .btn-edit{background:#ff9800;color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;font-weight:600;margin-left:6px}
-    .btn-edit:hover{background:#f57c00}
-    .btn-save{background:#1e7d44;color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:13px;cursor:pointer;font-weight:600}
-    .btn-save:hover{background:#166534}
-    .btn-cancel{background:#6c757d;color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:13px;cursor:pointer;font-weight:600;margin-left:8px}
-    .edit-input{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;margin-top:4px}
-    .edit-textarea{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;margin-top:4px;min-height:100px;resize:vertical}
-    .form-group{margin-bottom:16px}
-    .form-label{font-size:12px;font-weight:600;color:var(--muted);margin-bottom:4px;display:block}
+    .edit-input{width:100%;padding:9px 11px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit}
+    .edit-textarea{width:100%;padding:9px 11px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;min-height:110px;resize:vertical}
+    .edit-input:focus,.edit-textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(108,92,231,0.1)}
+    .section-divider{font-size:13px;font-weight:700;color:var(--text);padding-bottom:8px;border-bottom:2px solid var(--border);margin:0 0 14px 0}
   </style>
-  <div class="page-chrome">
-    <div class="admin-layout">
-      <aside class="sidebar" aria-label="Researcher navigation">
-        <div class="brand"><div class="logo">⬢</div> Dashboard <span class="muted">v0.1</span></div>
-        <nav class="nav" id="researcherNav">
-          <a href="{{ url_for('researcher_dashboard') }}">Dashboard</a>
-          <a href="{{ url_for('researcher_submissions') }}" class="active">My Submissions</a>
-          <a href="{{ url_for('tool') }}">Research Tool</a>
-          <a href="{{ url_for('researcher_notifications') }}">Notifications</a>
-          <a href="{{ url_for('profile') }}">Profile</a>
-          <a href="{{ url_for('logout') }}">Logout</a>
-        </nav>
-      </aside>
+<div class="app-layout">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><div class="logo-icon">SQ</div> Researcher</div>
+    <nav class="sidebar-nav">
+      <a href="{{ url_for('researcher_dashboard') }}"><span class="nav-icon">🏠</span> Dashboard</a>
+      <a href="{{ url_for('researcher_submissions') }}" class="active"><span class="nav-icon">📋</span> My Submissions</a>
+      <a href="{{ url_for('tool') }}"><span class="nav-icon">🔬</span> Research Tool</a>
+      <hr class="sidebar-divider">
+      <a href="{{ url_for('profile') }}"><span class="nav-icon">👤</span> Profile</a>
+      <a href="{{ url_for('logout') }}"><span class="nav-icon">🚪</span> Logout</a>
+    </nav>
+  </aside>
 
-      <main class="main">
-        <div class="card">
-          <h2 class="page-title">My Submissions</h2>
-          <p class="page-subtitle">View and edit your RD submission details</p>
+  <main class="main-content">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">My Submissions</h2>
+          <p class="card-subtitle">View and edit your RD submission details</p>
         </div>
+        <div class="table-toolbar">
+          <span class="muted text-sm fw-600">{{ submissions|length }} submissions</span>
+          <div class="search-box"><span class="muted">🔍</span><input id="searchBox" type="text" placeholder="Search market name…"></div>
+        </div>
+      </div>
 
-        <div class="card">
-          <div class="table-toolbar">
-            <div style="font-size:14px;font-weight:600;color:var(--muted)">{{ submissions|length }} Total Submissions</div>
-            <div class="search"><span class="muted">🔍</span><input id="searchBox" type="text" placeholder="Search market name..." /></div>
-          </div>
-
+      <div class="table-wrap">
           <table class="table-pro">
             <thead>
               <tr>
@@ -90,7 +45,6 @@
                 <th>Size 2033</th>
                 <th>Segments</th>
                 <th>Companies</th>
-                <th>Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -113,28 +67,21 @@
                 <td>{{ s.segments|length }}</td>
                 <td>{{ s.companies|length }}</td>
                 <td>
-                  {% if s.downloaded %}
-                    <span class="badge badge-success">Downloaded</span>
-                  {% else %}
-                    <span class="badge badge-warning">Pending</span>
-                  {% endif %}
-                </td>
-                <td>
                   <button class="btn-view" data-id="{{ s.id }}">View</button>
                 </td>
               </tr>
               {% endfor %}
               {% if not submissions %}
-                <tr><td colspan="11" class="muted">No submissions yet</td></tr>
+                <tr><td colspan="10" class="muted">No submissions yet</td></tr>
               {% endif %}
             </tbody>
           </table>
-        </div>
-      </main>
+      </div>
     </div>
-  </div>
+  </main>
+</div>
 
-  <!-- Detail/Edit Modal -->
+<!-- Detail/Edit Modal -->
   <div id="detailModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;padding:20px">
     <div style="background:#fff;border-radius:16px;max-width:900px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3)">
       <div style="padding:24px;border-bottom:1px solid #e6e9f0;display:flex;align-items:center;justify-content:space-between">
@@ -153,16 +100,6 @@
     let isEditMode = false;
     const submissions = {{ submissions|tojson }};
 
-    // Active tab highlighting
-    (function(){
-      const nav = document.getElementById('researcherNav');
-      if(!nav) return;
-      const links = Array.from(nav.querySelectorAll('a'));
-      links.forEach(l => l.classList.remove('active'));
-      const target = links.find(l => l.textContent.trim() === 'My Submissions');
-      if(target) target.classList.add('active');
-    })();
-
     // Search functionality
     const searchBox = document.getElementById('searchBox');
     const rows = Array.from(document.querySelectorAll('tbody tr'));
@@ -175,18 +112,6 @@
         });
       });
     }
-
-    // Timestamp formatting
-    Array.from(document.querySelectorAll('span.ts')).forEach(el => {
-      const iso = el.textContent.trim();
-      if (!iso) return;
-      const m = iso.match(/^(\d{4})-(\d{2})-(\d{2})[T\s](\d{2}):(\d{2})/);
-      if (m) {
-        const [,y,mo,d,h,mi] = m;
-        const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-        el.textContent = `${d} ${months[parseInt(mo,10)-1]} ${y}, ${h}:${mi}`;
-      }
-    });
 
     // Modal elements
     const modal = document.getElementById('detailModal');

@@ -41,7 +41,7 @@
         }
         .header {
             width: 100%;
-            height: 80px;
+            min-height: 96px;
             background: linear-gradient(90deg, var(--white) 0%, #f9f9ff 100%);
             box-shadow: 0 2px 10px var(--shadow);
             border: 1px solid var(--border);
@@ -51,14 +51,15 @@
         .header-content {
             display: flex;
             align-items: center;
-            height: 100%;
-            padding: 0 15px;
+            padding: 10px 15px;
             position: relative;
+            gap: 12px;
         }
         .logo-section {
             display: flex;
             align-items: center;
             flex: 1;
+            min-width: 0;
         }
         .logo-icon {
             width: 50px;
@@ -67,7 +68,6 @@
             border-radius: 8px;
             position: relative;
             margin-right: 15px;
-            margin-top: 5px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -101,32 +101,44 @@
             z-index: 2;
         }
         .brand-text {
-            position: relative;
-            margin-top: -20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 4px;
+            min-width: 0;
+            flex: 1;
         }
         .brand-title {
             color: var(--primary);
             font-family: 'Poppins', sans-serif;
-            font-size: 24px;
+            font-size: 18px;
             font-weight: 700;
-            line-height: 32px;
+            line-height: 1.2;
             margin: 0;
         }
         .brand-subtitle {
-            color: var(--text-secondary);
-            font-family: 'Poppins', sans-serif;
-            font-size: 16px;
-            font-weight: 400;
-            line-height: 24px;
             margin: 0;
-            position: absolute;
-            top: 32px;
-            left: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        .name-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 9px;
+            border-radius: 999px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 10px;
+            font-weight: 600;
             white-space: nowrap;
+            background: rgba(96,20,250,0.08);
+            color: var(--primary);
+            border: 1px solid rgba(96,20,250,0.18);
+            letter-spacing: 0.3px;
         }
         .navigation-tabs {
             display: flex;
-            height: 40px;
+            height: auto;
             gap: 4px;
         }
         .tab-button {
@@ -157,7 +169,7 @@
         .main-content {
             display: flex;
             flex: 1;
-            height: calc(100vh - 80px);
+            height: 0;
             overflow: hidden;
         }
         .left-sidebar {
@@ -1095,6 +1107,23 @@
             background: #d32f2f;
             transform: translateY(-1px);
         }
+        .copy-list-btn {
+            height: 32px;
+            background: #6014FA;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 0 10px;
+            margin-left: 8px;
+            transition: all 0.2s ease;
+        }
+        .copy-list-btn:hover {
+            background: #4c0fd0;
+            transform: translateY(-1px);
+        }
     </style>
 </head>
 <body>
@@ -1110,7 +1139,23 @@
                     </div>
                     <div class="brand-text">
                         <h1 class="brand-title">Market Research Automation</h1>
-                        <p class="brand-subtitle">Extract TOC and company profiles from market research reports</p>
+                        <div class="brand-subtitle">
+                            <span class="name-tag">GRANDVIEW RESEARCH</span>
+                            <span class="name-tag">MARKETSANDMARKETS</span>
+                            <span class="name-tag">SNS INSIDER</span>
+                            <span class="name-tag">MORDOR INTELLIGENCE</span>
+                            <span class="name-tag">FORTUNE BUSINESS INSIGHTS</span>
+                            <span class="name-tag">FUTURE MARKET INSIGHTS</span>
+                            <span class="name-tag">ALLIED MARKET RESEARCH</span>
+                            <span class="name-tag">SkyQuest Technology</span>
+                            <span class="name-tag">MRF</span>
+                            <span class="name-tag">TECHNAVIO</span>
+                            <span class="name-tag">STRAITS RESEARCH</span>
+                            <span class="name-tag">Precedence Research</span>
+                            <span class="name-tag">Verified Market Research</span>
+                            <span class="name-tag">Verified Market Reports</span>
+                            <span class="name-tag">Global Market Insights</span>
+                        </div>
                     </div>
                 </div>
                 <div class="navigation-tabs">
@@ -1188,13 +1233,12 @@ https://www.marketsandmarkets.com/Market-Reports/example-market-123.html"></text
                         <small style="display: block; margin-top: 8px; font-size: 11px; color: #737373; font-style: italic;">💡 Tip: Don't use the word 'Global' in title</small>
                     </div>
                     <!-- Image Generation Section -->
-                    <div style="margin-top:20px; border:2px solid #6014FA; border-radius:12px; padding:20px; background:linear-gradient(135deg, #f8f8ff 0%, #fafbff 100%); box-shadow:0 2px 8px rgba(96, 20, 250, 0.08);">
-                        <div style="display:flex; align-items:center; margin-bottom:18px;">
+                    <div style="margin-top:10px; border:2px solid #6014FA; border-radius:12px; padding:10px 14px; background:linear-gradient(135deg, #f8f8ff 0%, #fafbff 100%); box-shadow:0 2px 8px rgba(96, 20, 250, 0.08);">
+                        <div style="display:flex; align-items:center; margin-bottom:8px;">
                             <div style="width:4px; height:24px; background:#6014FA; border-radius:2px; margin-right:12px;"></div>
                             <h3 style="margin:0; font-size:16px; font-weight:700; color:#2C2C2C; letter-spacing:0.3px;">AI Image Generator</h3>
                             <span style="margin-left:auto; font-size:11px; color:#737373; font-weight:600;">AUTO-GENERATE</span>
                         </div>
-                        <p style="margin:0 0 18px 0; font-size:12px; color:#6B7280; line-height:1.5;">Generate market-themed images based on your title using AI. Perfect for market research visualization.</p>
                         
                         <!-- Input Section -->
                         <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:14px;">
@@ -1237,14 +1281,13 @@ https://www.marketsandmarkets.com/Market-Reports/example-market-123.html"></text
                         <div id="image-status-message" style="display:none; padding:12px; border-radius:6px; font-size:12px; font-weight:500; text-align:center;"></div>
                     </div>
                     <!-- Cascading Dropdown Section -->
-                    <div class="industry-classification" style="margin-top:20px; border:2px solid #6014FA; border-radius:12px; padding:20px; background:linear-gradient(135deg, #f8f8ff 0%, #fafbff 100%); box-shadow:0 2px 8px rgba(96, 20, 250, 0.08);">
-                        <div style="display:flex; align-items:center; margin-bottom:18px;">
+                    <div class="industry-classification" style="margin-top:10px; border:2px solid #6014FA; border-radius:12px; padding:10px 14px; background:linear-gradient(135deg, #f8f8ff 0%, #fafbff 100%); box-shadow:0 2px 8px rgba(96, 20, 250, 0.08);">
+                        <div style="display:flex; align-items:center; margin-bottom:8px;">
                             <div style="width:4px; height:24px; background:#6014FA; border-radius:2px; margin-right:12px;"></div>
                             <h3 style="margin:0; font-size:16px; font-weight:700; color:#2C2C2C; letter-spacing:0.3px;">Industry Classification</h3>
                             <span style="margin-left:auto; font-size:11px; color:#737373; font-weight:600;">4-LEVEL TAXONOMY</span>
                         </div>
-                        <p style="margin:0 0 12px 0; font-size:12px; color:#6B7280; line-height:1.4;">Select your industry classification across four hierarchical levels for precise market positioning.</p>
-                        <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:14px;">
+                        <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:10px;">
                             <!-- Sector Dropdown -->
                             <div>
                                 <label for="sector-dropdown" style="font-size:11px; font-weight:700; display:block; margin-bottom:6px; color:#2C2C2C; text-transform:uppercase; letter-spacing:0.3px;">Sector</label>
@@ -1276,7 +1319,7 @@ https://www.marketsandmarkets.com/Market-Reports/example-market-123.html"></text
                         </div>
                     </div>
                     <div class="market-inputs" style="margin-top:14px;">
-                        <div style="background:linear-gradient(135deg, #f9f9ff 0%, #fbfbff 100%); border:2px solid #6014FA; border-radius:12px; padding:20px; margin-top:20px; box-shadow:0 2px 8px rgba(96, 20, 250, 0.08);">
+                        <div style="background:linear-gradient(135deg, #f9f9ff 0%, #fbfbff 100%); border:2px solid #6014FA; border-radius:12px; padding:10px 14px; box-shadow:0 2px 8px rgba(96, 20, 250, 0.08);">
                             <div style="display:flex; align-items:center; margin-bottom:16px;">
                                 <div style="width:4px; height:24px; background:#6014FA; border-radius:2px; margin-right:12px;"></div>
                                 <h3 style="margin:0; font-size:16px; font-weight:700; color:#2C2C2C; letter-spacing:0.3px;">Market Inputs</h3>
@@ -1330,13 +1373,12 @@ https://www.marketsandmarkets.com/Market-Reports/example-market-123.html"></text
                             </div>
                         </div>
                     <!-- KMI Input Section (For TOC Only) -->
-                    <div style="margin-top:20px; border:2px solid #6014FA; border-radius:12px; padding:20px; background:linear-gradient(135deg, #f8f8ff 0%, #fafbff 100%); box-shadow:0 2px 8px rgba(96, 20, 250, 0.08);">
-                        <div style="display:flex; align-items:center; margin-bottom:18px;">
+                    <div style="margin-top:10px; border:2px solid #6014FA; border-radius:12px; padding:10px 14px; background:linear-gradient(135deg, #f8f8ff 0%, #fafbff 100%); box-shadow:0 2px 8px rgba(96, 20, 250, 0.08);">
+                        <div style="display:flex; align-items:center; margin-bottom:8px;">
                             <div style="width:4px; height:24px; background:#6014FA; border-radius:2px; margin-right:12px;"></div>
                             <h3 style="margin:0; font-size:16px; font-weight:700; color:#2C2C2C; letter-spacing:0.3px;">KMI (Key Market Insights)</h3>
                             <span style="margin-left:auto; font-size:11px; color:#737373; font-weight:600;">For TOC Only</span>
                         </div>
-                        <p style="margin:0 0 14px 0; font-size:12px; color:#6B7280; line-height:1.5;">Enter key market insights - one per line. These will be included in TOC.</p>
                         <textarea id="kmi-data-input" placeholder="Enter Key Market Insights here, one per line...
 Example:
 kmi1
@@ -1353,12 +1395,10 @@ kmi2" style="width:100%; padding:12px; border:2px solid #E5E5E5; border-radius:8
                             <button class="ai-generate-button" id="ai-generate-segments">
                                 AI
                             </button>
-                            <!-- <button class="ai-generate-button decrement-level-button" id="decrement-level">
-                                - 1 Lvl
-                            </button> -->
                             <button class="clear-segments-button" id="clear-segments">
                                 Clear All
                             </button>
+                            <button class="copy-list-btn" id="copy-segments-btn" title="Copy segments as numbered list">Copy</button>
                         </div>
                         <div class="segments-dropzone">
                             <p class="dropzone-text">Drag and drop segments here</p>
@@ -1369,7 +1409,10 @@ kmi2" style="width:100%; padding:12px; border:2px solid #E5E5E5; border-radius:8
                         </div>
                         <div class="bulk-import" style="margin-top:8px;">
                             <label for="bulk-segments-input" style="display:block; font-size:12px; color:#6B7280; margin-bottom:6px;">Bulk Segments Import</label>
-                            <textarea id="bulk-segments-input" placeholder="Paste numbered segments here, e.g.:\n1. Transit Type\n1.1. Metro\n1.1.1. Urban Metro" style="width:100%; padding:10px; border:1px solid #E5E5E5; border-radius:6px; font-size:12px; min-height:100px; resize:vertical;"></textarea>
+                            <textarea id="bulk-segments-input" placeholder="Paste numbered segments here, e.g.:
+1. Transit Type
+1.1. Metro
+1.1.1. Urban Metro" style="width:100%; padding:10px; border:1px solid #E5E5E5; border-radius:6px; font-size:12px; min-height:100px; resize:vertical;"></textarea>
                             <button id="import-bulk-segments-btn" class="process-button" style="margin-top:8px; width:100%;">Import Bulk Segments</button>
                             <button id="get-all-segments-btn" class="generate-item-button" style="margin-top:8px; width:100%; background:#fff; color:#6014FA; border:1px solid #E5E5E5;">Get All Segments</button>
                         </div>
@@ -1399,6 +1442,7 @@ kmi2" style="width:100%; padding:12px; border:2px solid #E5E5E5; border-radius:8
                             <button class="clear-segments-button" id="clear-companies">
                                 Clear All
                             </button>
+                            <button class="copy-list-btn" id="copy-companies-btn" title="Copy companies">Copy</button>
                         </div>
                         <div class="companies-dropzone">
                             <p class="dropzone-text">Drag and drop company names here</p>
@@ -1412,9 +1456,7 @@ kmi2" style="width:100%; padding:12px; border:2px solid #E5E5E5; border-radius:8
                     <!-- 4 Main Action Buttons -->
                     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 16px; row-gap: 14px;">
                         <button id="generate-report-btn" class="generate-item-button" style="height: 44px;">Generate Report</button>
-                        <button id="save-data-btn" class="save-data-button" title="Save all data to JSON file" style="width: 100%; height: 44px;">
-                            💾 Save
-                        </button>
+                        <button id="save-data-btn" class="save-data-button" title="Save all data to JSON file" style="width: 100%; height: 44px;">Save</button>
                         <button id="generate-toc-btn" class="generate-item-button" style="height: 44px; background: #2563eb; margin-top: 4px;" title="Generate Table of Contents">
                             📄 Generate TOC
                         </button>
@@ -2746,6 +2788,36 @@ kmi2" style="width:100%; padding:12px; border:2px solid #E5E5E5; border-radius:8
                     });
                 }
 
+                // Copy Segments button
+                const copySegBtn = document.getElementById('copy-segments-btn');
+                if (copySegBtn) {
+                    copySegBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const segments = this.collectAllSegmentsForViewer();
+                        if (!segments || segments.length === 0) {
+                            this.showNotification('No segments to copy.', 'warning');
+                            return;
+                        }
+                        this._copyText(segments.join('\n'), copySegBtn, 'Segments copied to clipboard.', 'Copy failed.');
+                    });
+                }
+
+                // Copy Companies button
+                const copyCompBtn = document.getElementById('copy-companies-btn');
+                if (copyCompBtn) {
+                    copyCompBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const companies = Array.from(document.querySelectorAll('.dropped-companies .dropped-item span')).map(span => span.textContent.trim());
+                        if (!companies.length) {
+                            this.showNotification('No companies to copy.', 'warning');
+                            return;
+                        }
+                        this._copyText(companies.join('\n'), copyCompBtn, 'Companies copied to clipboard.', 'Copy failed.');
+                    });
+                }
+
                 // Add Decrement Level (-1 level) button listener
                 const decrementLevelBtn = document.getElementById('decrement-level');
                 if (decrementLevelBtn) {
@@ -2758,6 +2830,48 @@ kmi2" style="width:100%; padding:12px; border:2px solid #E5E5E5; border-radius:8
             }
 
             // Removed: fetchCreators() - creator role removed
+
+            _copyText(text, btn, successMsg, failMsg) {
+                const orig = btn.textContent;
+                const onSuccess = () => {
+                    btn.textContent = '✓ Copied!';
+                    setTimeout(() => { btn.textContent = orig; }, 1500);
+                    this.showNotification(successMsg, 'success');
+                };
+                const onFail = () => {
+                    btn.textContent = '✗ Failed';
+                    setTimeout(() => { btn.textContent = orig; }, 1500);
+                    this.showNotification(failMsg, 'error');
+                };
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(text).then(onSuccess).catch(() => {
+                        // fallback for HTTP
+                        try {
+                            const ta = document.createElement('textarea');
+                            ta.value = text;
+                            ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0';
+                            document.body.appendChild(ta);
+                            ta.focus();
+                            ta.select();
+                            const ok = document.execCommand('copy');
+                            document.body.removeChild(ta);
+                            ok ? onSuccess() : onFail();
+                        } catch (e) { onFail(); }
+                    });
+                } else {
+                    try {
+                        const ta = document.createElement('textarea');
+                        ta.value = text;
+                        ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0';
+                        document.body.appendChild(ta);
+                        ta.focus();
+                        ta.select();
+                        const ok = document.execCommand('copy');
+                        document.body.removeChild(ta);
+                        ok ? onSuccess() : onFail();
+                    } catch (e) { onFail(); }
+                }
+            }
 
             clearAllSegments() {
                 const droppedSegments = document.querySelector('.dropped-segments');
@@ -6000,7 +6114,8 @@ kmi2" style="width:100%; padding:12px; border:2px solid #E5E5E5; border-radius:8
                         ai_gen_seg: aiToSend,
                         companies: companies,
                         createdBy: 'user',
-                        version: '1.0'
+                        version: '1.0',
+                        active_seconds: window._activeTimer ? window._activeTimer.flush() : null
                     };
 
                     const response = await fetch('/api/save-data', {
@@ -6227,6 +6342,77 @@ kmi2" style="width:100%; padding:12px; border:2px solid #E5E5E5; border-radius:8
             const app = new MarketResearchAutomation();
             app.initializeImageGenerator();
         });
+    </script>
+
+    <script>
+    // Active-time tracker: counts only seconds when tab is visible AND user was recently active
+    // window._activeTimer.flush() returns total active_seconds accumulated since page load
+    (function () {
+        const IDLE_THRESHOLD_MS = 5 * 60 * 1000; // 5 minutes idle = pause timer
+        let accumulated = 0;       // total active seconds counted
+        let tickStart = null;      // timestamp when current active tick began
+        let lastActivity = Date.now();
+        let visible = !document.hidden;
+
+        function isActive() {
+            return visible && (Date.now() - lastActivity) < IDLE_THRESHOLD_MS;
+        }
+
+        function startTick() {
+            if (tickStart === null && isActive()) {
+                tickStart = Date.now();
+            }
+        }
+
+        function pauseTick() {
+            if (tickStart !== null) {
+                accumulated += Math.floor((Date.now() - tickStart) / 1000);
+                tickStart = null;
+            }
+        }
+
+        // Tick every second: if active, keep counting; if gone idle/hidden, pause
+        setInterval(() => {
+            if (isActive()) {
+                startTick();
+            } else {
+                pauseTick();
+            }
+        }, 1000);
+
+        // Visibility change: pause when hidden, resume when visible
+        document.addEventListener('visibilitychange', () => {
+            visible = !document.hidden;
+            if (visible) {
+                lastActivity = Date.now();
+                startTick();
+            } else {
+                pauseTick();
+            }
+        });
+
+        // Activity events: reset idle clock
+        ['mousemove', 'keydown', 'mousedown', 'touchstart', 'scroll'].forEach(ev => {
+            document.addEventListener(ev, () => {
+                lastActivity = Date.now();
+                if (visible && tickStart === null) startTick();
+            }, { passive: true });
+        });
+
+        startTick();
+
+        window._activeTimer = {
+            // Call on save: captures remaining tick and returns total, then resets for next title
+            flush() {
+                pauseTick();
+                const total = accumulated;
+                accumulated = 0;
+                startTick();
+                return total > 0 ? total : null;
+            },
+            getSeconds() { return accumulated + (tickStart ? Math.floor((Date.now() - tickStart) / 1000) : 0); }
+        };
+    })();
     </script>
 </body>
 </html>

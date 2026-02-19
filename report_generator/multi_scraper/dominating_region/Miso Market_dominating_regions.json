@@ -1,0 +1,54 @@
+{
+  "market_name": "Miso Market",
+  "unit": "Billion",
+  "cagr": 3.6,
+  "value_2024": 94.5,
+  "value_2033": 129.92,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Product Type": [
+      "White Miso",
+      "Red Miso",
+      "Yellow Miso",
+      "Organic Miso",
+      "Non-GMO Miso",
+      "Low-Sodium Miso"
+    ],
+    "Source of Ingredients": [
+      "Soybean-Based Miso",
+      "Rice-Based Miso",
+      "Barley-Based Miso",
+      "Legume-Based Miso"
+    ],
+    "Application": [
+      "Soups and Broths",
+      "Salad Dressings",
+      "Marinades and Glazes",
+      "Fermented Foods",
+      "Baking and Cooking Ingredients"
+    ],
+    "End User": [
+      "Households",
+      "Restaurants and Cafes",
+      "Food Manufacturers",
+      "Health Food Stores",
+      "Catering Services"
+    ],
+    "Distribution Channel": [
+      "Online Retail",
+      "Supermarkets and Hypermarkets",
+      "Specialty Health Stores",
+      "Convenience Stores",
+      "Direct Sales"
+    ]
+  }
+}

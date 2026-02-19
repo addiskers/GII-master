@@ -1,0 +1,44 @@
+{
+  "market_name": "Biomethane Market",
+  "unit": "Billion",
+  "cagr": 20.2,
+  "value_2024": 0.9,
+  "value_2033": 4.71,
+  "REGIONAL_RANKING": {
+    "first": "Europe",
+    "second": "North America",
+    "third": "Asia Pacific"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Feedstock": [
+      "Biowaste",
+      "Energy Crops",
+      "Animal Manure",
+      "Industrial Organic Waste",
+      "Others"
+    ],
+    "Production Method": [
+      "Anaerobic Digestion",
+      "Thermal Gasification",
+      "Others"
+    ],
+    "Application": [
+      "Automotive",
+      "Power Generation",
+      "Heating",
+      "Others"
+    ],
+    "End-Use Industry": [
+      "Residential",
+      "Commercial",
+      "Transportation",
+      "Utilities",
+      "Others"
+    ]
+  }
+}

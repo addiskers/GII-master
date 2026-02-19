@@ -1,0 +1,52 @@
+{
+  "market_name": "Tonic Wine Market",
+  "unit": "Billion",
+  "cagr": 9.0,
+  "value_2024": 0.8,
+  "value_2033": 1.74,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "Europe",
+    "third": "North America"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "fastest_growing",
+    "United Kingdom": "dominant",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Ingredient Type": [
+      "Cinchona Bark",
+      "Gentian Root",
+      "Orange Peel",
+      "Other Botanicals"
+    ],
+    "Packaging": [
+      "Glass Bottles",
+      "Plastic Bottles",
+      "Cartons"
+    ],
+    "Flavor Profile": [
+      "Bitter",
+      "Sweet",
+      "Semi-Sweet",
+      "Dry"
+    ],
+    "Alcohol Content": [
+      "High (Over 15%)",
+      "Medium (10-15%)",
+      "Low (Less than 10%)"
+    ],
+    "Distribution Channel": [
+      "Supermarkets/Hypermarkets",
+      "Convenience Stores",
+      "Specialty Stores",
+      "Online Stores",
+      "Liquor Stores"
+    ],
+    "Application": [
+      "Household",
+      "Food Service"
+    ]
+  }
+}

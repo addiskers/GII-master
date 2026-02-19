@@ -1,0 +1,38 @@
+{
+  "market_name": "Chicken Market",
+  "unit": "Billion",
+  "cagr": 6.2,
+  "value_2024": 163.4,
+  "value_2033": 280.78,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Chicken Meat Type": [
+      "Whole Chicken",
+      "Chicken Parts",
+      "Processed Chicken"
+    ],
+    "Product Form": [
+      "Fresh Chicken",
+      "Frozen Chicken",
+      "Cooked Chicken"
+    ],
+    "Sales Channel": [
+      "Retail",
+      "Food Service"
+    ],
+    "Quality Grade": [
+      "Organic",
+      "Conventional",
+      "Free-range"
+    ]
+  }
+}

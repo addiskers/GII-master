@@ -1,0 +1,48 @@
+{
+  "market_name": "Truffle Market",
+  "unit": "Billion",
+  "cagr": 9.0,
+  "value_2024": 0.8,
+  "value_2033": 1.74,
+  "REGIONAL_RANKING": {
+    "first": "Europe",
+    "second": "North America",
+    "third": "Asia Pacific"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "emerging",
+    "United Kingdom": "fastest_growing",
+    "France": "dominant"
+  },
+  "SEGMENTS": {
+    "Truffle Varieties": [
+      "Black Truffles",
+      "White Truffles",
+      "Red Truffles",
+      "Burgundy Truffles",
+      "Chinese Black Truffles"
+    ],
+    "Truffle Forms": [
+      "Fresh",
+      "Processed"
+    ],
+    "Cultivation Method": [
+      "Wild-Harvested",
+      "Cultivated"
+    ],
+    "Application": [
+      "Food & Beverages",
+      "Cosmetics & Personal Care",
+      "Pharmaceuticals",
+      "Perfumery"
+    ],
+    "Packaging": [
+      "Fresh",
+      "Processed"
+    ],
+    "Distribution Channel": [
+      "B2B",
+      "B2C"
+    ]
+  }
+}

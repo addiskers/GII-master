@@ -1,0 +1,47 @@
+{
+  "market_name": "Animal Genetics Market",
+  "unit": "Billion",
+  "cagr": 5.0,
+  "value_2024": 5.5,
+  "value_2033": 8.53,
+  "REGIONAL_RANKING": {
+    "first": "North America",
+    "second": "Europe",
+    "third": "Asia Pacific"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "dominant"
+  },
+  "SEGMENTS": {
+    "Product & Service": [
+      "Animal Genetic Materials",
+      "Animal Genetic Testing Services"
+    ],
+    "Animal Type": [
+      "Canine",
+      "Poultry",
+      "Porcine",
+      "Bovine",
+      "Others"
+    ],
+    "End User": [
+      "Veterinary Hospitals & Clinics",
+      "Research Centers & Institutes",
+      "Animal Farms",
+      "Diagnostic Centers"
+    ],
+    "Technology": [
+      "NGS",
+      "PCR",
+      "rDNA",
+      "Microarrays",
+      "Other Technologies"
+    ],
+    "Distribution Channel": [
+      "Private",
+      "Public"
+    ]
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "market_name": "Forage Market",
+  "unit": "Billion",
+  "cagr": 3.6,
+  "value_2024": 94.5,
+  "value_2033": 129.92,
+  "REGIONAL_RANKING": {
+    "first": "North America",
+    "second": "Europe",
+    "third": "Asia Pacific"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "dominant"
+  },
+  "SEGMENTS": {
+    "Product Type": [
+      "Grasses",
+      "Legumes",
+      "Cereals",
+      "Other Forages"
+    ],
+    "Processing method": [
+      "Fresh Forage",
+      "Hay",
+      "Silage",
+      "Haylage/Baleage",
+      "Pellets & Cubes"
+    ],
+    "Animal Type": [
+      "Ruminants (Livestock)",
+      "Equine (Horses)",
+      "Others"
+    ],
+    "Quality": [
+      "Supreme",
+      "Premium/Choice",
+      "Good/Standard",
+      "Utility/Fair"
+    ],
+    "Usage Type": [
+      "On-Farm Consumption",
+      "Domestic Commercial Market",
+      "Export/International Trade"
+    ],
+    "Cultivation Practice": [
+      "Conventional",
+      "Organic",
+      "Regenerative/Rotational"
+    ]
+  }
+}

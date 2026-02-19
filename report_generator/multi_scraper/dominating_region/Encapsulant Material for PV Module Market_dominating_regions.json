@@ -1,0 +1,48 @@
+{
+  "market_name": "Encapsulant Material for PV Module Market",
+  "unit": "Billion",
+  "cagr": 7.3,
+  "value_2024": 4.3,
+  "value_2033": 8.11,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "Europe",
+    "third": "North America"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "emerging",
+    "France": "fastest_growing"
+  },
+  "SEGMENTS": {
+    "Material Type": [
+      "Ethylene Vinyl Acetate",
+      "Polyvinyl Butyral",
+      "Polyolefins",
+      "Silicones",
+      "Ethylene Ionomers",
+      "Others"
+    ],
+    "Module Design": [
+      "Framed Modules",
+      "Frameless Modules",
+      "Bifacial Modules"
+    ],
+    "PV Module Technology": [
+      "Monocrystalline Silicon",
+      "Polycrystalline Silicon",
+      "Thin-Film Photovoltaics"
+    ],
+    "Additives Types": [
+      "Antioxidants",
+      "UV Stabilizers",
+      "Anti-Reflective Coatings",
+      "Fire Retardants"
+    ],
+    "End Use": [
+      "Commercial",
+      "Industrial",
+      "Residential"
+    ]
+  }
+}

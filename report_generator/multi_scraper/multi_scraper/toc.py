@@ -3,6 +3,7 @@ from docx import Document
 from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
 from docx.shared import Pt
+from docx.enum.text import WD_ALIGN_PARAGRAPH
 import tempfile
 import os
 from docx.shared import RGBColor
@@ -15,15 +16,9 @@ def build_standard_toc(market_name, ai_segments_data=None, company_names=None, k
     0. Key Market Insights (from KMI data)
     1. Market Segments (from saved JSON)
     2. Regions
-    3. Competitive Intelligence
-    4. Key Company Profiles
-    5. Conclusion & Recommendations
-    
-    Returns list of tuples: (heading_text, level)
     """
     toc = []
     
-    # ===== 0. KEY MARKET INSIGHTS =====
     if kmi_data:
         if isinstance(kmi_data, list):
             for kmi in kmi_data:
@@ -36,8 +31,7 @@ def build_standard_toc(market_name, ai_segments_data=None, company_names=None, k
                 if kmi.strip():
                     toc.append((kmi.strip(), 1))
     
-    # ===== 1. MARKET SEGMENTS (from saved JSON) =====
-    segment_names = []  # Collect segment names for regions
+    segment_names = []
     segments_list = None
     
     if ai_segments_data:
@@ -48,7 +42,6 @@ def build_standard_toc(market_name, ai_segments_data=None, company_names=None, k
     
     if segments_list:
         def extract_level_from_segment(segment_text):
-            """Extract hierarchy level from segment numbering (e.g., '1.1.2' = level 2)"""
             import re
             match = re.match(r'^(\d+(?:\.\d+)*)', segment_text)
             if match:
@@ -57,13 +50,10 @@ def build_standard_toc(market_name, ai_segments_data=None, company_names=None, k
             return 0
         
         def clean_segment_text(segment_text):
-            """Remove numbering from segment text"""
             import re
             return re.sub(r'^\d+(?:\.\d+)*\.\s*', '', segment_text)
         
-        # Handle string-based segments (from saved JSON)
         if segments_list and isinstance(segments_list[0], str):
-            # Process segments and group by top-level
             current_segment_group = None
             current_segment_group_level = -1
             
@@ -73,20 +63,16 @@ def build_standard_toc(market_name, ai_segments_data=None, company_names=None, k
                     clean_text = clean_segment_text(segment)
                     
                     if level == 0:
-                        # Top-level segment - add section heading
                         segment_names.append(clean_text)
                         toc.append((f"Global {market_name} Size by {clean_text} & CAGR (2026-2033)", 0))
                         toc.append(("Market Overview", 1))
                         current_segment_group = clean_text
                         current_segment_group_level = 0
                     else:
-                        # Sub-level segment
                         toc.append((clean_text, level))
     
-    # ===== 2. REGIONS =====
     toc.append((f"Global {market_name} Size & CAGR (2026-2033)", 0))
     
-    # Format segment names for regions
     segment_text = ", ".join(segment_names) if segment_names else "Product Type, Application, Chemistry, End User, Market Structure"
     
     regions = [
@@ -102,7 +88,6 @@ def build_standard_toc(market_name, ai_segments_data=None, company_names=None, k
         for country in countries:
             toc.append((country, 2))
     
-    # ===== 3. COMPETITIVE INTELLIGENCE =====
     toc.append(("Competitive Intelligence", 0))
     toc.append(("Top 5 Player Comparison", 1))
     toc.append(("Market Positioning of Key Players, 2025", 1))
@@ -115,24 +100,21 @@ def build_standard_toc(market_name, ai_segments_data=None, company_names=None, k
     toc.append(("Company's Segmental Share Analysis", 2))
     toc.append(("Revenue Y-O-Y Comparison (2023-2025)", 2))
     
-    # ===== 4. KEY COMPANY PROFILES =====
     toc.append(("Key Company Profiles", 0))
     
-    # Use provided company names or default list
     if company_names:
         if isinstance(company_names, str):
             company_list = [c.strip() for c in company_names.split('\n') if c.strip()]
         else:
             company_list = company_names if isinstance(company_names, list) else []
         
-        for company in company_list[:50]:  # Support up to 50 companies
+        for company in company_list[:50]:
             toc.append((company, 1))
             toc.append(("Company Overview", 2))
             toc.append(("Business Segment Overview", 2))
             toc.append(("Financial Updates", 2))
             toc.append(("Key Developments", 2))
     
-    # ===== 5. CONCLUSION & RECOMMENDATIONS =====
     toc.append(("Conclusion & Recommendations", 0))
     
     return toc
@@ -162,7 +144,6 @@ def transform_market_data(data, market_name):
                     else:
                         segments[current_segment].append([item])
     
-    # If no segments found with the expected format, create a default segment
     if not segments:
         segments["General"] = ["Market Overview", "Analysis"]
     
@@ -171,7 +152,7 @@ def transform_market_data(data, market_name):
         formatted_subs = []
         for sub in sub_segments:
             if isinstance(sub, list):
-                if formatted_subs:  # Only add to last if there are items
+                if formatted_subs:
                     formatted_subs[-1] += f" ({', '.join(sub)})"
             else:
                 formatted_subs.append(sub)
@@ -210,7 +191,6 @@ def generate_segmental_analysis(segments_data, market_name):
                 f"Based on {segment}, the market is segmented into {joined_sub_details}."
             )
 
-    # Handle empty segment_names list
     if len(segment_names) > 1:
         text += ", ".join(segment_names) + " and region. "
     elif len(segment_names) == 1:
@@ -241,7 +221,6 @@ def title_h1(segments_data, market_name):
 
         segments_text_list.append("By " + segment + subsegments_text)
 
-    # Define full and short region text
     region_text_full = "By Region"
     region_text_short = "By Region"
     
@@ -254,19 +233,15 @@ def title_h1(segments_data, market_name):
         word_count = len(title_text.split())
         return title_text
     
-    # STEP 1: If exceeds 35 words, simplify region text first
     if word_count > 35:
         segments_text_list[-1] = region_text_short
         segments_text = ", ".join(segments_text_list)
         title_text = f"{market_name} Size, Share, Growth Analysis, {segments_text} - Industry Forecast 2026-2033"
         word_count = len(title_text.split())
     
-    # STEP 2: If still exceeds 35 words, remove last segment's sub-items (before Region)
     if word_count > 35 and len(segments_text_list) > 1:
-        # Find last non-region segment and remove its sub-items
-        for i in range(len(segments_text_list) - 2, -1, -1):  # -2 because last is Region
+        for i in range(len(segments_text_list) - 2, -1, -1):
             if "(" in segments_text_list[i]:
-                # Extract just "By SegmentName" without sub-items
                 segment_name = segments_text_list[i].split("(")[0].strip()
                 segments_text_list[i] = segment_name
                 break
@@ -275,25 +250,19 @@ def title_h1(segments_data, market_name):
         title_text = f"{market_name} Size, Share, Growth Analysis, {segments_text} - Industry Forecast 2026-2033"
         word_count = len(title_text.split())
     
-    # STEP 3: If still exceeds 35 words, keep only last segment with sub-items, remove others
     if word_count > 35 and len(segments_text_list) > 1:
-        # Keep first segments without sub-items, only last one before region has sub-items
         simplified_list = []
-        for i, seg in enumerate(segments_text_list[:-1]):  # Exclude Region
-            if i == len(segments_text_list) - 2:  # Last segment before region
-                # Keep this one as is (may have sub-items)
+        for i, seg in enumerate(segments_text_list[:-1]):
+            if i == len(segments_text_list) - 2:
                 simplified_list.append(seg)
             else:
-                # Remove sub-items from all others
                 segment_name = seg.split("(")[0].strip()
                 simplified_list.append(segment_name)
-        
-        simplified_list.append(segments_text_list[-1])  # Add Region back
+        simplified_list.append(segments_text_list[-1])
         segments_text = ", ".join(simplified_list)
         title_text = f"{market_name} Size, Share, Growth Analysis, {segments_text} - Industry Forecast 2026-2033"
 
     return title_text
-
 
 def export_to_word(data, market_name, value_2024, currency, cagr, companies, output_path="Market_Report.docx"):
 
@@ -332,25 +301,47 @@ def export_to_word(data, market_name, value_2024, currency, cagr, companies, out
     segments_heading_run = set_poppins_style(segments_heading, size=16, bold=True, color=RGBColor(0, 0, 0))
     segments_heading_run.text = "Segments"
 
-    for line in formatted_output:
-        if line.startswith("Segment"):
-            segment_heading = doc.add_heading(level=2)
-            segment_run = set_poppins_style(segment_heading, size=16, bold=True, color=RGBColor(0, 0, 0))
-            segment_run.text = "Segment"
+    for seg_name, sub_segments in segments.items():
+        segment_heading = doc.add_heading(level=2)
+        segment_run = set_poppins_style(segment_heading, size=16, bold=True, color=RGBColor(0, 0, 0))
+        segment_run.text = "Segment"
 
-            segment_name_paragraph = doc.add_paragraph()
-            segment_name_run = set_poppins_style(segment_name_paragraph, size=12, color=RGBColor(0, 0, 0))
-            segment_name_run.text = line.split(":")[0].replace("Segment", "").strip()
+        segment_name_paragraph = doc.add_paragraph()
+        segment_name_run = set_poppins_style(segment_name_paragraph, size=12, color=RGBColor(0, 0, 0))
+        segment_name_run.text = seg_name
 
-            sub_segment_label = doc.add_heading(level=2)
-            sub_segment_label_run = set_poppins_style(
-                sub_segment_label, size=16, bold=False, color=RGBColor(0, 0, 0)
-            )
-            sub_segment_label_run.text = "Sub-Segments"
+        level1_items = []
+        level2_children = {}
+        current_l1 = None
+        for sub in sub_segments:
+            if isinstance(sub, str):
+                level1_items.append(sub)
+                current_l1 = sub
+                level2_children[sub] = []
+            elif isinstance(sub, list) and current_l1:
+                level2_children[current_l1].extend(sub)
 
-            sub_segment_paragraph = doc.add_paragraph()
-            sub_segment_run = set_poppins_style(sub_segment_paragraph, size=12, color=RGBColor(0, 0, 0))
-            sub_segment_run.text = line.split("Sub-Segments")[1].strip()
+        sub_segment_label = doc.add_heading(level=2)
+        sub_segment_label_run = set_poppins_style(
+            sub_segment_label, size=16, bold=False, color=RGBColor(0, 0, 0)
+        )
+        sub_segment_label_run.text = "Sub-Segments"
+
+        sub_segment_paragraph = doc.add_paragraph()
+        sub_segment_run = set_poppins_style(sub_segment_paragraph, size=12, color=RGBColor(0, 0, 0))
+        sub_segment_run.text = ", ".join(level1_items)
+
+        for l1_name, l2_items in level2_children.items():
+            if l2_items:
+                sub_sub_label = doc.add_heading(level=2)
+                sub_sub_label_run = set_poppins_style(
+                    sub_sub_label, size=16, bold=False, color=RGBColor(0, 0, 0)
+                )
+                sub_sub_label_run.text = f"Sub-Segments-For-{l1_name}"
+
+                sub_sub_paragraph = doc.add_paragraph()
+                sub_sub_run = set_poppins_style(sub_sub_paragraph, size=12, color=RGBColor(0, 0, 0))
+                sub_sub_run.text = ", ".join(l2_items)
 
     market_heading = doc.add_heading(level=1)
     market_heading_run = set_poppins_style(market_heading, size=16, bold=True, color=RGBColor(0, 0, 0))
@@ -373,15 +364,18 @@ def export_to_word(data, market_name, value_2024, currency, cagr, companies, out
     top_players_run.text = "Top Player's Company Profiles"
     
     for c1 in companies.splitlines():
-        company_paragraph = doc.add_paragraph(style="List Paragraph")
-        company_paragraph_style = company_paragraph._element.get_or_add_pPr()
-        numbering = company_paragraph_style.get_or_add_numPr()
-        numId = OxmlElement('w:numId')
-        numId.set(qn('w:val'), '1')
+        if not c1.strip():
+            continue
+        company_paragraph = doc.add_paragraph(style="Normal")
+        company_paragraph.alignment = WD_ALIGN_PARAGRAPH.LEFT
+        pPr = company_paragraph._element.get_or_add_pPr()
+        numPr = pPr.get_or_add_numPr()
         ilvl = OxmlElement('w:ilvl')
         ilvl.set(qn('w:val'), '0')
-        numbering.append(ilvl)
-        numbering.append(numId)
+        numId = OxmlElement('w:numId')
+        numId.set(qn('w:val'), '1')
+        numPr.append(ilvl)
+        numPr.append(numId)
         company_run = set_poppins_style(company_paragraph, size=12, color=RGBColor(0, 0, 0))
         company_run.text = c1.strip()
 
@@ -411,11 +405,9 @@ if not os.path.exists(doc_path):
     doc.save(doc_path)
 
 def get_level(i):
-    """Determine level based on indentation style."""
     return i.split(" ", 1)[0].count(".")
 
 def clean(name):
-    """Clean and title case the name."""
     a = name.split(" ", 1)[1]
     if "(Page No." in a:
         a = a.split(" (Page No.", 1)[0].strip()
@@ -485,7 +477,6 @@ def index():
         
         segment_data = request.form.get("segment_data", "").strip()
         
-        # Only process headings/levels if segment_data is not provided
         if not segment_data:
             headings = request.form.getlist("headings[]")
             levels = request.form.getlist("levels[]")
@@ -499,7 +490,6 @@ def index():
                 else:
                     data["toc_entries"].append((heading.title(), level))
         else:
-            # Process segment_data instead
             for seg in segment_data.splitlines():
                 seg_level = get_level1(seg) - 1
                 cleaned = clean1(seg)

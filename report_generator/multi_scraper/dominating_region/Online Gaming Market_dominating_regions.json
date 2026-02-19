@@ -1,0 +1,56 @@
+{
+  "market_name": "Online Gaming Market",
+  "unit": "Billion",
+  "cagr": 10.2,
+  "value_2024": 123.4,
+  "value_2033": 295.77,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "dominant",
+    "France": "fastest_growing"
+  },
+  "SEGMENTS": {
+    "Gaming Type": [
+      "First-Person Shooter",
+      "Multiplayer Online Battle Arena",
+      "Massively Multiplayer Online RPG",
+      "Battle Royale",
+      "Real-time Strategy",
+      "Online Casino Games",
+      "Others"
+    ],
+    "Platform": [
+      "Mobile",
+      "PC",
+      "Console",
+      "AR/VR"
+    ],
+    "Gamer Type": [
+      "Casual Gamers",
+      "Hardcore Gamers",
+      "Professional Gamers",
+      "Social Gamers",
+      "Single-player Enthusiasts",
+      "Multiplayer Enthusiasts"
+    ],
+    "Demographics": [
+      "Kids (Under 12)",
+      "Teens (13-17)",
+      "Young Adults (18-24)",
+      "Adults (25-34)",
+      "Middle-Aged (35-54)",
+      "Seniors (55+)"
+    ],
+    "Genre": [
+      "Action & Adventure",
+      "Simulation & Sports",
+      "Racing",
+      "Others"
+    ]
+  }
+}

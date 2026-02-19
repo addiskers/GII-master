@@ -1,0 +1,31 @@
+{
+  "market_name": "Insulation Market",
+  "unit": "Billion",
+  "cagr": 6.6,
+  "value_2024": 72.5,
+  "value_2033": 128.87,
+  "REGIONAL_RANKING": {
+    "first": "Asia Pacific",
+    "second": "North America",
+    "third": "Europe"
+  },
+  "EUROPE_COUNTRY_CLASSIFICATION": {
+    "Germany": "dominant",
+    "United Kingdom": "fastest_growing",
+    "France": "emerging"
+  },
+  "SEGMENTS": {
+    "Product": [
+      "Fibrous Insulation",
+      "Rigid Insulation",
+      "Advanced Insulation"
+    ],
+    "End Use": [
+      "Infrastructure",
+      "HVAC & OEM",
+      "Transportation",
+      "Packaging",
+      "Others"
+    ]
+  }
+}
