@@ -1377,12 +1377,36 @@ https://www.marketsandmarkets.com/Market-Reports/example-market-123.html"></text
                         <div style="display:flex; align-items:center; margin-bottom:8px;">
                             <div style="width:4px; height:24px; background:#6014FA; border-radius:2px; margin-right:12px;"></div>
                             <h3 style="margin:0; font-size:16px; font-weight:700; color:#2C2C2C; letter-spacing:0.3px;">KMI (Key Market Insights)</h3>
-                            <span style="margin-left:auto; font-size:11px; color:#737373; font-weight:600;">For TOC Only</span>
+                            <span style="margin-left:auto; font-size:11px; color:#737373; font-weight:600;">For TOC &amp; SkyQuest</span>
                         </div>
-                        <textarea id="kmi-data-input" placeholder="Enter Key Market Insights here, one per line...
+                        <!-- Fixed KMI checkboxes (always included in SkyQuest submission) -->
+                        <div id="kmi-fixed-checkboxes" style="display:flex; flex-wrap:wrap; gap:6px 12px; margin-bottom:10px;">
+                            <label style="display:flex; align-items:center; gap:5px; font-size:12px; font-weight:500; color:#2C2C2C; cursor:pointer;">
+                                <input type="checkbox" class="kmi-fixed-cb" value="Key Success Factors" checked disabled style="accent-color:#6014FA;"> Key Success Factors
+                            </label>
+                            <label style="display:flex; align-items:center; gap:5px; font-size:12px; font-weight:500; color:#2C2C2C; cursor:pointer;">
+                                <input type="checkbox" class="kmi-fixed-cb" value="Market Impacting Factors" checked disabled style="accent-color:#6014FA;"> Market Impacting Factors
+                            </label>
+                            <label style="display:flex; align-items:center; gap:5px; font-size:12px; font-weight:500; color:#2C2C2C; cursor:pointer;">
+                                <input type="checkbox" class="kmi-fixed-cb" value="Top Investment Pockets" checked disabled style="accent-color:#6014FA;"> Top Investment Pockets
+                            </label>
+                            <label style="display:flex; align-items:center; gap:5px; font-size:12px; font-weight:500; color:#2C2C2C; cursor:pointer;">
+                                <input type="checkbox" class="kmi-fixed-cb" value="Ecosystem Mapping" checked disabled style="accent-color:#6014FA;"> Ecosystem Mapping
+                            </label>
+                            <label style="display:flex; align-items:center; gap:5px; font-size:12px; font-weight:500; color:#2C2C2C; cursor:pointer;">
+                                <input type="checkbox" class="kmi-fixed-cb" value="Market Attractiveness Index 2025" checked disabled style="accent-color:#6014FA;"> Market Attractiveness Index 2025
+                            </label>
+                            <label style="display:flex; align-items:center; gap:5px; font-size:12px; font-weight:500; color:#2C2C2C; cursor:pointer;">
+                                <input type="checkbox" class="kmi-fixed-cb" value="PESTEL Analysis" checked disabled style="accent-color:#6014FA;"> PESTEL Analysis
+                            </label>
+                            <label style="display:flex; align-items:center; gap:5px; font-size:12px; font-weight:500; color:#2C2C2C; cursor:pointer;">
+                                <input type="checkbox" class="kmi-fixed-cb" value="Regulatory Landscape" checked disabled style="accent-color:#6014FA;"> Regulatory Landscape
+                            </label>
+                        </div>
+                        <textarea id="kmi-data-input" placeholder="Enter additional Key Market Insights here, one per line (optional)...
 Example:
-kmi1
-kmi2" style="width:100%; padding:12px; border:2px solid #E5E5E5; border-radius:8px; font-size:12px; font-weight:500; background:white; color:#2C2C2C; font-family:'Segoe UI', sans-serif; resize:vertical; min-height:100px; transition:all 0.2s ease;"></textarea>
+Pricing Analysis
+Case Studies" style="width:100%; padding:12px; border:2px solid #E5E5E5; border-radius:8px; font-size:12px; font-weight:500; background:white; color:#2C2C2C; font-family:'Segoe UI', sans-serif; resize:vertical; min-height:60px; transition:all 0.2s ease;"></textarea>
                     </div>
                     <div class="segments-section">
                         <h3>Segments</h3>
@@ -3130,16 +3154,6 @@ kmi2" style="width:100%; padding:12px; border:2px solid #E5E5E5; border-radius:8
                 this.clearAllSegments();
                 const droppedSegments = document.querySelector('.dropped-segments');
                 this.addAIGeneratedSegments(parsed, droppedSegments, 1);
-
-                // Preserve parsed bulk-imported segments as original AI segments (immutable copy)
-                this.originalAiSegments = JSON.parse(JSON.stringify(parsed));
-                // Console log for testing: show length and a small sample (first 3)
-                try {
-                    console.log('originalAiSegments set (source: bulk import)', { length: this.originalAiSegments.length, sample: this.originalAiSegments.slice(0, 3) });
-                } catch (e) { console.warn('Failed to log originalAiSegments (bulk import)', e); }
-                // Store parsed JSON similarly to AI segments and snapshot for submission
-                this.aiSegmentsJSON = { segments: JSON.parse(JSON.stringify(parsed)) };
-                this.aiSegmentsSnapshotFlat = this.flattenSegments(parsed);
 
                 if (this.segmentsViewerVisible) {
                     this.updateSegmentsViewer();
@@ -6115,7 +6129,8 @@ kmi2" style="width:100%; padding:12px; border:2px solid #E5E5E5; border-radius:8
                         companies: companies,
                         createdBy: 'user',
                         version: '1.0',
-                        active_seconds: window._activeTimer ? window._activeTimer.flush() : null
+                        active_seconds: window._activeTimer ? window._activeTimer.flush() : null,
+                        additional_kmi: (document.getElementById('kmi-data-input')?.value.trim() || '').split('\n').map(s => s.trim()).filter(Boolean).join(',')
                     };
 
                     const response = await fetch('/api/save-data', {
@@ -6150,8 +6165,11 @@ kmi2" style="width:100%; padding:12px; border:2px solid #E5E5E5; border-radius:8
                     return;
                 }
 
-                // Collect KMI data
-                const kmiData = document.getElementById('kmi-data-input')?.value.trim() || '';
+                // Collect KMI data: fixed checkboxes + additional from textarea
+                const fixedKmi = Array.from(document.querySelectorAll('.kmi-fixed-cb:checked')).map(cb => cb.value);
+                const extraKmi = (document.getElementById('kmi-data-input')?.value.trim() || '')
+                    .split('\n').map(s => s.trim()).filter(Boolean);
+                const kmiData = [...fixedKmi, ...extraKmi].join('\n');
                 
                 // Collect segments visible in View Segments (final edited list)
                 const segments = this.collectAllSegmentsForViewer();
@@ -6175,7 +6193,8 @@ kmi2" style="width:100%; padding:12px; border:2px solid #E5E5E5; border-radius:8
                         market_name: title,
                         segments: segments, // final edited view segments from UI (strings)
                         company_data: companies,
-                        kmi_data: kmiData
+                        kmi_data: kmiData,
+                        additional_kmi: (document.getElementById('kmi-data-input')?.value.trim() || '').split('\n').map(s => s.trim()).filter(Boolean).join(',')
                     };
 
                     // Optionally include the original AI segments for reference (not used if `segments` provided)
@@ -6188,7 +6207,7 @@ kmi2" style="width:100%; padding:12px; border:2px solid #E5E5E5; border-radius:8
                         fetch('/api/save-current-segments', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ market_name: title, segments })
+                            body: JSON.stringify({ market_name: title, segments, additional_kmi: requestData.additional_kmi })
                         }).catch(() => {});
                     } catch (e) {}
 
@@ -6276,7 +6295,8 @@ kmi2" style="width:100%; padding:12px; border:2px solid #E5E5E5; border-radius:8
                         cagr: parseFloat(cagr),
                         marketSize2024: parseFloat(marketSize2024),
                         projectedSize2033: parseFloat(projectedSize2033)
-                    }
+                    },
+                    additional_kmi: (document.getElementById('kmi-data-input')?.value.trim() || '').split('\n').map(s => s.trim()).filter(Boolean).join(',')
                 };
 
                     // Optionally include the original AI segments for reference
@@ -6301,7 +6321,8 @@ kmi2" style="width:100%; padding:12px; border:2px solid #E5E5E5; border-radius:8
                                 cagr: parseFloat(cagr),
                                 marketSize2024: parseFloat(marketSize2024),
                                 projectedSize2033: parseFloat(projectedSize2033)
-                            }
+                            },
+                            additional_kmi: requestData.additional_kmi
                         })
                     }).catch(() => {});
                 } catch (e) {}
@@ -6346,11 +6367,10 @@ kmi2" style="width:100%; padding:12px; border:2px solid #E5E5E5; border-radius:8
 
     <script>
     // Active-time tracker: counts only seconds when tab is visible AND user was recently active
-    // window._activeTimer.flush() returns total active_seconds accumulated since page load
     (function () {
-        const IDLE_THRESHOLD_MS = 5 * 60 * 1000; // 5 minutes idle = pause timer
-        let accumulated = 0;       // total active seconds counted
-        let tickStart = null;      // timestamp when current active tick began
+        const IDLE_THRESHOLD_MS = 5 * 60 * 1000;
+        let accumulated = 0;    
+        let tickStart = null;      
         let lastActivity = Date.now();
         let visible = !document.hidden;
 

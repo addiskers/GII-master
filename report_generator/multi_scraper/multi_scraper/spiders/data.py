@@ -5560,19 +5560,38 @@ def build_meta_description(market_name, value_2024, value_2025, value_2033, curr
     )
 
 def title_h1(segments_data, market_name):
-    segment_all = []
+    # Build segment parts with ALL sub-segments
+    segment_parts = []  # list of (segment_name, [sub_segments])
     for segment, sub_segments in segments_data.items():
         top_level_subsegments = [s for s in sub_segments if isinstance(s, str)]
-        if top_level_subsegments:
-            sub_text = f" ({', '.join(top_level_subsegments[:2])})"
-        else:
-            sub_text = ""
-        segment_all.append("By " + segment + sub_text)
-    if segment_all:
-        text_seg = ", ".join(segment_all)
-        return f"{market_name} Size, Share, Growth Analysis, {text_seg}, By Region - Industry Forecast 2026-2033"
-    else:
-        return f"{market_name} Size, Share, Growth Analysis, By Region - Industry Forecast 2026-2033"
+        segment_parts.append((segment, list(top_level_subsegments)))
+
+    def build_title(parts):
+        pieces = []
+        for seg_name, subs in parts:
+            if subs:
+                pieces.append(f"By {seg_name} ({', '.join(subs)})")
+            else:
+                pieces.append(f"By {seg_name}")
+        pieces.append("By Region")
+        text_seg = ", ".join(pieces)
+        return f"{market_name} Size, Share, Growth Analysis, {text_seg} - Industry Forecast 2026-2033"
+
+    title = build_title(segment_parts)
+
+    # If >40 words, remove sub-segments from the LAST segment first, then work backwards
+    while len(title.split()) > 40 and segment_parts:
+        trimmed = False
+        for i in range(len(segment_parts) - 1, -1, -1):
+            if segment_parts[i][1]:  # has sub-segments
+                segment_parts[i] = (segment_parts[i][0], [])  # remove them
+                trimmed = True
+                break
+        if not trimmed:
+            break  # nothing left to trim
+        title = build_title(segment_parts)
+
+    return title
 def add_rd_metadata_section(doc, metadata_pairs):
     for key, value in metadata_pairs:
         # Special handling for Report Type
@@ -6070,61 +6089,36 @@ def export_to_word_RD(data_dict, value_2024, value_2025, value_2033, currency, c
         if not any(keyword in main_segment.lower() for keyword in region_keywords):
             segments_dict_filtered[main_segment] = sub_segments
     
-    # Build initial segments text with full sub-items
-    segments_text_list = []
+    # Build segment parts with ALL sub-segments
+    segment_parts = []  # list of (segment_name, [sub_segment_names])
     for main_segment, sub_segments in segments_dict_filtered.items():
-        if sub_segments:
-            segments_text_list.append(f"By {main_segment} (" + ", ".join(list(sub_segments.keys())[:2]) + ")")
-        else:
-            segments_text_list.append(f"By {main_segment}")
-    
-    # Add permanent Region segment (full version)
-    region_text_full = "By Region (North America, Europe, Asia-Pacific, Latin America, Middle East & Africa)"
-    region_text_short = "By Region"
-    
-    segments_text_list.append(region_text_full)
-    segments_text = ", ".join(segments_text_list)
-    title_text = f"{data_dict['title']} {segments_text} - Industry Forecast 2026-2033"
-    
-    word_count = len(title_text.split())
-    
-    # STEP 1: If exceeds 40 words, simplify region text first
-    if word_count > 40:
-        segments_text_list[-1] = region_text_short
-        segments_text = ", ".join(segments_text_list)
-        title_text = f"{data_dict['title']} {segments_text} - Industry Forecast 2026-2033"
-        word_count = len(title_text.split())
-    
-    # STEP 2: If still exceeds 40 words, remove last segment's sub-items (before Region)
-    if word_count > 40 and len(segments_text_list) > 1:
-        # Find last non-region segment and remove its sub-items
-        for i in range(len(segments_text_list) - 2, -1, -1):  # -2 because last is Region
-            if "(" in segments_text_list[i]:
-                # Extract just "By SegmentName" without sub-items
-                segment_name = segments_text_list[i].split("(")[0].strip()
-                segments_text_list[i] = segment_name
-                break
-        
-        segments_text = ", ".join(segments_text_list)
-        title_text = f"{data_dict['title']} {segments_text} - Industry Forecast 2026-2033"
-        word_count = len(title_text.split())
-    
-    # STEP 3: If still exceeds 40 words, keep only last segment with sub-items, remove others
-    if word_count > 40 and len(segments_text_list) > 1:
-        # Keep first segments without sub-items, only last one before region has sub-items
-        simplified_list = []
-        for i, seg in enumerate(segments_text_list[:-1]):  # Exclude Region
-            if i == len(segments_text_list) - 2:  # Last segment before region
-                # Keep this one as is (may have sub-items)
-                simplified_list.append(seg)
+        sub_names = list(sub_segments.keys()) if sub_segments else []
+        segment_parts.append((main_segment, sub_names))
+
+    def build_h1(parts):
+        pieces = []
+        for seg_name, subs in parts:
+            if subs:
+                pieces.append(f"By {seg_name} ({', '.join(subs)})")
             else:
-                # Remove sub-items from all others
-                segment_name = seg.split("(")[0].strip()
-                simplified_list.append(segment_name)
-        
-        simplified_list.append(segments_text_list[-1])  # Add Region back
-        segments_text = ", ".join(simplified_list)
-        title_text = f"{data_dict['title']} {segments_text} - Industry Forecast 2026-2033"
+                pieces.append(f"By {seg_name}")
+        pieces.append("By Region")
+        segs_str = ", ".join(pieces)
+        return f"{data_dict['title']} {segs_str} - Industry Forecast 2026-2033"
+
+    title_text = build_h1(segment_parts)
+
+    # If >40 words, remove sub-segments from the LAST segment first, then work backwards
+    while len(title_text.split()) > 40 and segment_parts:
+        trimmed = False
+        for i in range(len(segment_parts) - 1, -1, -1):
+            if segment_parts[i][1]:  # still has sub-segments
+                segment_parts[i] = (segment_parts[i][0], [])  # remove them
+                trimmed = True
+                break
+        if not trimmed:
+            break
+        title_text = build_h1(segment_parts)
     
     run_p = p.add_run(title_text)
     color = RGBColor(0, 0, 0)

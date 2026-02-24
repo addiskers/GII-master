@@ -172,13 +172,22 @@ def init_db():
         last_downloaded_at TEXT,
 
         -- Active working time tracking (seconds of real active time, excluding idle/tab-hidden)
-        active_seconds INTEGER DEFAULT NULL
+        active_seconds INTEGER DEFAULT NULL,
+
+        -- Additional KMI (Key Market Insights) beyond the fixed ones
+        additional_kmi TEXT DEFAULT NULL
     )
     ''')
 
     # Migration: add active_seconds to existing DBs that predate this column
     try:
         db.execute('ALTER TABLE rd_submissions ADD COLUMN active_seconds INTEGER DEFAULT NULL')
+    except Exception:
+        pass
+
+    # Migration: add additional_kmi column
+    try:
+        db.execute('ALTER TABLE rd_submissions ADD COLUMN additional_kmi TEXT DEFAULT NULL')
     except Exception:
         pass
     
@@ -1692,6 +1701,12 @@ def save_data_endpoint():
             app.logger.exception('Failed to create backup of existing saved_data file')
         
         # Prepare the data structure, including original AI-generated segments
+        # Collect additional KMI (beyond the fixed ones)
+        additional_kmi = data.get('additional_kmi', '')
+        if isinstance(additional_kmi, list):
+            additional_kmi = ','.join([str(k).strip() for k in additional_kmi if str(k).strip()])
+        additional_kmi = str(additional_kmi).strip()
+
         save_data = {
             'title': title,
             'timestamp': data.get('timestamp', now_ist()),
@@ -1701,7 +1716,8 @@ def save_data_endpoint():
             'ai_gen_seg': ai_flat,  # Always save ai_gen_seg as a flat list of numbered strings
             'companies': companies,
             'createdBy': session.get('username', 'unknown'),
-            'version': '1.0'
+            'version': '1.0',
+            'additional_kmi': additional_kmi
         }
         
         # Write to JSON file
@@ -1745,7 +1761,8 @@ def save_data_endpoint():
                         companies = ?,
                         created_by = ?,
                         version = ?,
-                        active_seconds = COALESCE(?, active_seconds)
+                        active_seconds = COALESCE(?, active_seconds),
+                        additional_kmi = ?
                     WHERE market_name = ?
                 ''', (
                     session.get('username', 'unknown'),
@@ -1767,6 +1784,7 @@ def save_data_endpoint():
                     save_data.get('createdBy'),
                     save_data.get('version'),
                     active_seconds,
+                    additional_kmi,
                     title
                 ))
                 db.commit()
@@ -1777,8 +1795,8 @@ def save_data_endpoint():
                     (market_name, researcher_username, json_path, submitted_at, timestamp,
                      sector, industry_group, industry, sub_industry,
                      value_unit, cagr, market_size_2024, market_size_2025, projected_size_2033,
-                     segments, ai_gen_seg, companies, created_by, version, active_seconds)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                     segments, ai_gen_seg, companies, created_by, version, active_seconds, additional_kmi)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ''', (
                     title,
                     session.get('username', 'unknown'),
@@ -1799,7 +1817,8 @@ def save_data_endpoint():
                     json.dumps(companies),
                     save_data.get('createdBy'),
                     save_data.get('version'),
-                    active_seconds
+                    active_seconds,
+                    additional_kmi
                 ))
                 db.commit()
                 app.logger.info(f'RD submission record CREATED for {title}')
@@ -1868,6 +1887,10 @@ def update_submission():
             updates.append('companies = ?')
             params.append(json.dumps(data['companies']) if isinstance(data['companies'], list) else data['companies'])
         
+        if 'additional_kmi' in data:
+            updates.append('additional_kmi = ?')
+            params.append(data['additional_kmi'])
+        
         if not updates:
             return jsonify({'error': 'No fields to update'}), 400
         
@@ -1915,6 +1938,8 @@ def update_submission():
                     file_data['ai_gen_seg'] = data['ai_gen_seg']
                 if 'companies' in data:
                     file_data['companies'] = data['companies']
+                if 'additional_kmi' in data:
+                    file_data['additional_kmi'] = data['additional_kmi']
                 
                 with open(row['json_path'], 'w', encoding='utf-8') as f:
                     json.dump(file_data, f, indent=2, ensure_ascii=False)
@@ -1996,6 +2021,12 @@ def save_current_segments():
         # Accept classification and input data
         industry_classification = data.get('industryClassification')
         market_inputs = data.get('marketInputs')
+        
+        # Accept additional KMI
+        additional_kmi = data.get('additional_kmi', '')
+        if isinstance(additional_kmi, list):
+            additional_kmi = ','.join([str(k).strip() for k in additional_kmi if str(k).strip()])
+        additional_kmi = str(additional_kmi).strip() if additional_kmi else None
 
         current_dir = os.path.dirname(os.path.abspath(__file__))
         saved_data_dir = os.path.join(current_dir, 'saved_data')
@@ -2044,7 +2075,8 @@ def save_current_segments():
             'companies': company_data if company_data else existing_data.get('companies', ''),
             'value_2024': value_2024 if value_2024 is not None else existing_data.get('value_2024', 0.0),
             'currency': currency if currency else existing_data.get('currency', 'million'),
-            'cagr': cagr if cagr is not None else existing_data.get('cagr', 0.0)
+            'cagr': cagr if cagr is not None else existing_data.get('cagr', 0.0),
+            'additional_kmi': additional_kmi if additional_kmi else existing_data.get('additional_kmi', '')
         }
         
         # Try to write with retry logic for Windows file locking issues
@@ -2166,6 +2198,113 @@ def generate_toc():
         traceback.print_exc()
         return jsonify({'error': f'Failed to generate TOC: {str(e)}'}), 500
 
+@app.route('/api/generate-toc-from-submission', methods=['POST'])
+@login_required(role=('researcher','admin'))
+def generate_toc_from_submission():
+    """Generate TOC document from a saved RD submission (by submission_id)"""
+    try:
+        from multi_scraper.toc import build_standard_toc
+        from docx.oxml import OxmlElement
+        from docx.oxml.ns import qn
+        from docx.shared import Pt
+
+        data = request.json or {}
+        submission_id = data.get('submission_id')
+
+        if not submission_id:
+            return jsonify({'error': 'submission_id is required'}), 400
+
+        db = get_db()
+        cur = db.execute('SELECT * FROM rd_submissions WHERE id = ?', (submission_id,))
+        row = cur.fetchone()
+        if not row:
+            return jsonify({'error': 'Submission not found'}), 404
+
+        submission = dict(row)
+        market_name = (submission.get('market_name') or 'Market').strip()
+
+        # Parse segments from DB (stored as JSON string)
+        segments = submission.get('segments', '[]')
+        if isinstance(segments, str):
+            try:
+                segments = json.loads(segments)
+            except Exception:
+                segments = []
+
+        if not isinstance(segments, list) or len(segments) == 0:
+            return jsonify({'error': 'No segments found for this submission'}), 400
+
+        # Parse companies
+        companies = submission.get('companies', '[]')
+        if isinstance(companies, str):
+            try:
+                companies = json.loads(companies)
+            except Exception:
+                companies = []
+        company_data = '\n'.join(companies) if isinstance(companies, list) else str(companies)
+
+        # Get additional KMI
+        additional_kmi = submission.get('additional_kmi', '') or ''
+
+        # Build KMI string: fixed + additional
+        fixed_kmi = [
+            'Key Success Factors', 'Market Impacting Factors',
+            'Top Investment Pockets', 'Ecosystem Mapping',
+            'Market Attractiveness Index 2025', 'PESTEL Analysis',
+            'Regulatory Landscape'
+        ]
+        extra = [k.strip() for k in additional_kmi.split(',') if k.strip()] if additional_kmi else []
+        all_kmi = list(fixed_kmi)
+        for k in extra:
+            if k not in all_kmi:
+                all_kmi.append(k)
+        kmi_data = '\n'.join(all_kmi)
+
+        toc_content = build_standard_toc(market_name, ai_segments_data=segments, company_names=company_data, kmi_data=kmi_data)
+
+        toc_temp_file_name = f"TOC_{market_name}_Market_SkyQuest.docx"
+        toc_temp_file_path = os.path.join(tempfile.gettempdir(), toc_temp_file_name)
+
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        doc_path = os.path.join(base_dir, 'multi_scraper', 'toc.docx')
+
+        if not os.path.exists(doc_path):
+            toc_doc = Document()
+            toc_doc.save(doc_path)
+
+        toc_doc = Document(doc_path)
+
+        for heading, level in toc_content:
+            paragraph = toc_doc.add_paragraph(heading)
+            paragraph.style = 'List Paragraph'
+            numbering = paragraph._element.get_or_add_pPr().get_or_add_numPr()
+            numId = OxmlElement('w:numId')
+            numId.set(qn('w:val'), '1')
+            ilvl = OxmlElement('w:ilvl')
+            ilvl.set(qn('w:val'), str(level))
+            numbering.append(numId)
+            numbering.append(ilvl)
+            run = paragraph.runs[0]
+            run.font.size = Pt(11)
+            run.font.name = 'Calibri'
+            if level == 0:
+                run.bold = True
+            paragraph.paragraph_format.line_spacing = 1.5
+
+        toc_doc.save(toc_temp_file_path)
+
+        return jsonify({
+            'success': True,
+            'file_path': toc_temp_file_path,
+            'filename': toc_temp_file_name
+        }), 200
+
+    except Exception as e:
+        print(f"Error generating TOC from submission: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': f'Failed to generate TOC: {str(e)}'}), 500
+
 @app.route('/api/generate-short-rd', methods=['POST'])
 def generate_short_rd():
     """Generate Short Research Document using segments from request body only"""
@@ -2234,6 +2373,12 @@ def generate_short_rd():
                 pass
         
         # Merge with existing data, updating only provided fields
+        # Collect additional KMI
+        additional_kmi = data.get('additional_kmi', '')
+        if isinstance(additional_kmi, list):
+            additional_kmi = ','.join([str(k).strip() for k in additional_kmi if str(k).strip()])
+        additional_kmi = str(additional_kmi).strip()
+
         short_rd_payload = {
             "market_name": market_name,
             "segments": data.get('segments', existing_data.get('segments', [])),
@@ -2245,7 +2390,8 @@ def generate_short_rd():
             "companies": company_data,
             "value_2024": value_2024,
             "currency": currency,
-            "cagr": cagr
+            "cagr": cagr,
+            "additional_kmi": additional_kmi if additional_kmi else existing_data.get('additional_kmi', '')
         }
         
         # Try to write with retry logic for Windows file locking issues
@@ -2415,10 +2561,6 @@ def download_file():
 @login_required(role='admin')
 def submit_to_skyquest():
     """Submit report to SkyQuest website API - Admin only
-    
-    Process: Get token -> Generate DOCX -> Generate Image -> Generate Excel -> Upload
-    Each step is done sequentially with no retries.
-    Note: DOCX takes ~10min, Image ~1-2min, Excel ~2min
     """
     import requests
     import shutil
@@ -2686,10 +2828,40 @@ def submit_to_skyquest():
         if 'report_graph' not in files:
             return jsonify({'error': 'Excel file is required but could not be generated. Check logs for details.'}), 400
         
+        FIXED_KMI = [
+            'Key Success Factors',
+            'Market Impacting Factors',
+            'Top Investment Pockets',
+            'Ecosystem Mapping',
+            'Market Attractiveness Index 2025',
+            'PESTEL Analysis',
+            'Regulatory Landscape'
+        ]
+        
+        # Get additional KMI from database submission
+        additional_kmi_str = submission.get('additional_kmi', '') or ''
+        additional_kmi_list = [k.strip() for k in additional_kmi_str.split(',') if k.strip()] if additional_kmi_str else []
+        
+        # Combine fixed + additional, deduplicate while preserving order
+        all_kmi = list(FIXED_KMI)
+        for k in additional_kmi_list:
+            if k not in all_kmi:
+                all_kmi.append(k)
+        
+        kmi_string = ','.join(all_kmi)
+        
+        # Form data to send alongside files
+        form_data = {
+            'key_market_insights': (None, kmi_string)
+        }
+        # Merge form_data into files dict (requests sends (None, value) as form fields)
+        files.update(form_data)
+        
         print(f'[SkyQuest] Files to upload:')
         print(f'[SkyQuest]   - report_rd: {doc_path}')
         print(f'[SkyQuest]   - report_image: {image_path if image_path else "None (optional)"}')
         print(f'[SkyQuest]   - report_graph: {excel_path}')
+        print(f'[SkyQuest]   - key_market_insights: {kmi_string}')
         
         try:
             upload_response = requests.post(upload_url, headers=headers, files=files, timeout=300)
@@ -2703,7 +2875,7 @@ def submit_to_skyquest():
             
             if upload_response.status_code == 200:
                 print('[SkyQuest] Upload successful!')
-                
+        
                 # Update submission status in database
                 db.execute('''
                     UPDATE rd_submissions 
