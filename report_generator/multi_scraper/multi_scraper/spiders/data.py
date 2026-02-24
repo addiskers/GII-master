@@ -4671,7 +4671,7 @@ def get_gpt5_question_and_answer(market_name):
  
     Paragraph 1 (~100 words): Provide a structured answer with clear organization. Define key aspects, explain current state, provide context about the market situation, add some instances and make it more engaging and contextually relevant.
  
-    Paragraph 2 (~50 words): Focus on one clear real world development related to the {market_name} market. . Reference a recent development using a specific company name and a month and year, followed by a comma. Emphasize how this innovation {question} supports market growth or efficiency with the help of the technolgy mentioned in the question.
+    Paragraph 2 (~50 words): Focus on one clear real world development related to the {market_name} market. . Reference a recent development using a specific company name  month and year, followed by a comma. Emphasize how this innovation {question} supports market growth or efficiency with the help of the technolgy mentioned in the question.
  
     - Do not use bullets, numbering, or "Executive summary".
     - Do not use unnecessary hyphens, ':', ';'.
@@ -4894,7 +4894,17 @@ Restraints
 Use the same structure, capitalization rules, bullet formatting, explanation length, and tone as defined for Drivers.
 Restraints
 Same structure.
+Subheading 1
+Write the subheading on a new line. Maximum 6 words. Use title case for all words EXCEPT the specific sentence verbs listed below. Do NOT use __, <b>, **, or any formatting characters. The first word of the subheading must always be capitalized, even if it appears in the sentence verbs list.
 
+Bullet explanation
+On the next line, add one bullet point. Indent the bullet with exactly one tab so it appears offset from the margin. The explanation text must start immediately after the bullet, not indented further. The explanation must be 80 to 90 words and justified. Explain clearly why or how this factor restricts or slows market growth using qualitative discussion only. Do not use analytical or numerical data. Maintain a factual and professional tone.
+
+Subheading 2
+Follow the same rules as Subheading 1. Maximum 6 words. Use title case for all words EXCEPT the allowed lowercase sentence verbs listed above. Do NOT use formatting characters.
+
+Bullet explanation
+On the next line, add one bullet point, indented by one tab. The explanation must be 80 to 90 words and justified. Follow the same formatting, content, and tone rules as above. Ensure this is a SECOND DISTINCT restraint factor affecting the market.
 Rules:
 
 - Output must be plain text only.
@@ -5117,12 +5127,16 @@ PARAGRAPH 1 - DOMINATING SUB-SEGMENT (~70 words):
 - Use qualitative reasoning with cause-and-effect explanation
 - Do not use numbers or percentages
 
-PARAGRAPH 2 - MARKET GROWTH CONTRIBUTION (~50 words):
-- Explain how the same dominating sub-segment contributes to overall market growth
-- Describe how its adoption, scalability, or value creation expands the market
-- Focus on market development and opportunity creation
-- Do NOT mention any other sub-segments
-- Do not use numbers, statistics, or percentages
+PARAGRAPH 2 - FASTEST GROWING SUB-SEGMENT (~50 words):
+- MUST START WITH a transition connector such as:
+  "However,", "On the other hand,", "Meanwhile,", "Conversely,", or another appropriate contrast/transition phrase relevant to the market context
+- After the connector, immediately introduce a DIFFERENT sub-segment and describe it as the most rapidly expanding / witnessing the strongest growth momentum / emerging as the key high-growth area in the {market_name}
+- Identify a DIFFERENT sub-segment from the same segment other than the dominating one in Paragraph 1
+- Explain why this sub-segment is growing the fastest in the {market_name}
+- Focus on growth drivers such as rising adoption, innovation, expanding applications, regulatory momentum, or emerging demand
+- Explain how this sub-segment is accelerating future market expansion and opportunity creation
+- Do NOT mention or refer to the dominating sub-segment from Paragraph 1
+- Do not use numbers, statistics, comparisons, or percentages
 
 QUESTION FORMAT:
 - Use lowercase sentence case for questions. Start with a lowercase letter after the question word (e.g., "What role do...", "How is..." in What "W" is capital and in How "H" is capital)
@@ -5984,27 +5998,6 @@ def export_to_word_RD(data_dict, value_2024, value_2025, value_2033, currency, c
     for run in p.runs:
         run.font.size = Pt(12)
         run.font.name = "Poppins"
-    
-    # Add 3rd paragraph - Recent developments summary (~50 words)
-    recent_text = ai_contents['recent']
-    recent_lines = [line.strip() for line in recent_text.split("\n") if line.strip() and (line.startswith("•") or line.startswith("-"))]
-    if recent_lines:
-        # Extract first development and create summary
-        first_dev = recent_lines[0].lstrip("•- ").strip()
-        # Limit to approximately 50 words
-        words = first_dev.split()
-        if len(words) > 50:
-            recent_summary = ' '.join(words[:50])
-        else:
-            recent_summary = first_dev
-        
-        recent_para = doc.add_paragraph(
-            f"Recent market developments underscore significant shifts in {market_name.lower()} sector dynamics. {recent_summary}"
-        )
-        recent_para.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY_LOW
-        for run in recent_para.runs:
-            run.font.size = Pt(12)
-            run.font.name = "Poppins" 
     
     # Add question in bold, font size 12
     question = ai_contents['question']
