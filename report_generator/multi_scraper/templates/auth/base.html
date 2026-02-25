@@ -79,14 +79,7 @@
       .page-chrome::after  { bottom:0; }
 
       /* ── Sidebar + content layout ── */
-      .app-layout {
-        display: grid;
-        grid-template-columns: 240px 1fr;
-        gap: 20px;
-        padding: 20px 24px;
-        max-width: 1600px;
-        margin: 0 auto;
-      }
+      /* Layout handled in LAYOUT FIX section below */
 
       /* ── Sidebar ── */
       .sidebar {
@@ -124,7 +117,7 @@
       .sidebar-divider { border:none; border-top:1px solid var(--border); margin:10px 0; }
 
       /* ── Main content area ── */
-      .main-content { display:flex; flex-direction:column; gap:16px; min-width:0; }
+      .main-content { display:flex; flex-direction:column; gap:16px; flex:1; min-width:0; }
 
       /* ── Cards ── */
       .card {
@@ -132,6 +125,8 @@
         border-radius: 14px;
         box-shadow: 0 4px 20px rgba(31,36,48,0.07);
         padding: 20px;
+        width: 100%;
+        min-width: 0;
       }
       .card-header {
         display:flex; align-items:center; justify-content:space-between;
@@ -264,11 +259,59 @@
       .info-item h5 { font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; margin:0 0 6px 0; }
       .info-item p  { font-size:14px; font-weight:600; color:var(--text); margin:0; }
 
+      /* ===== GLOBAL ZOOM + OVERFLOW FIX ===== */
+      * {
+        box-sizing: border-box;
+        min-width: 0;
+      }
+
+      html, body {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+      }
+
+      /* ===== LAYOUT FIX ===== */
+      .app-layout {
+        display: flex;
+        min-width: 0;
+      }
+
+      .sidebar {
+        width: 240px;
+        flex-shrink: 0;
+      }
+
+      /* ===== TABLE FIX ===== */
+      .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+      }
+
+      .table-pro {
+        width: 100%;
+        min-width: 900px;
+      }
+
+      /* ===== GRID FIX ===== */
+      .grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        min-width: 0;
+      }
+
       /* ── Responsive ── */
       @media (max-width: 768px) {
         .app-layout { grid-template-columns:1fr; padding:12px; }
         .sidebar { position:static; min-height:auto; }
         .stats-grid { grid-template-columns:1fr 1fr; }
+      }
+
+      @media (max-width: 700px) {
+        .grid-2 {
+          grid-template-columns: 1fr;
+        }
       }
     </style>
   </head>

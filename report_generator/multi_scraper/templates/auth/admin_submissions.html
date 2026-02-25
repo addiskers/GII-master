@@ -34,7 +34,8 @@
         <div class="search-box"><span class="muted">🔍</span><input id="searchBox" type="text" placeholder="Search market name…"></div>
       </div>
 
-          <table class="table-pro">
+          <div class="table-responsive">
+            <table class="table-pro">
             <thead>
               <tr>
                 <th>Market</th>
@@ -91,6 +92,7 @@
               {% endif %}
             </tbody>
           </table>
+          </div>
     </div>
   </main>
 </div>
@@ -136,7 +138,7 @@
 
     function renderViewMode(sub) {
       return `
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-bottom:24px">
+        <div class="grid-2" style="margin-bottom:24px">
           <div>
             <div style="font-size:12px;font-weight:600;color:#7a8aa0;margin-bottom:4px">Researcher</div>
             <div style="font-size:14px;color:#1f2430">${sub.researcher_username}</div>
@@ -149,7 +151,7 @@
 
         <div style="margin-bottom:24px">
           <h4 style="font-size:14px;font-weight:700;color:#1f2430;margin:0 0 12px 0;padding-bottom:8px;border-bottom:2px solid #e6e9f0">Industry Classification</h4>
-          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px">
+          <div class="grid-2" style="gap:12px">
             <div><span style="font-size:12px;color:#7a8aa0">Sector:</span> <span style="font-size:13px;color:#1f2430">${sub.sector || '—'}</span></div>
             <div><span style="font-size:12px;color:#7a8aa0">Industry Group:</span> <span style="font-size:13px;color:#1f2430">${sub.industry_group || '—'}</span></div>
             <div><span style="font-size:12px;color:#7a8aa0">Industry:</span> <span style="font-size:13px;color:#1f2430">${sub.industry || '—'}</span></div>
@@ -159,7 +161,7 @@
 
         <div style="margin-bottom:24px">
           <h4 style="font-size:14px;font-weight:700;color:#1f2430;margin:0 0 12px 0;padding-bottom:8px;border-bottom:2px solid #e6e9f0">Market Inputs</h4>
-          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px">
+          <div class="grid-2" style="gap:12px">
             <div><span style="font-size:12px;color:#7a8aa0">CAGR:</span> <span style="font-size:13px;color:#1f2430;font-weight:600">${sub.cagr || '—'}%</span></div>
             <div><span style="font-size:12px;color:#7a8aa0">Unit:</span> <span style="font-size:13px;color:#1f2430">${sub.value_unit || '—'}</span></div>
             <div><span style="font-size:12px;color:#7a8aa0">Size 2024:</span> <span style="font-size:13px;color:#1f2430;font-weight:600">${sub.market_size_2024 || '—'}</span></div>
@@ -184,7 +186,7 @@
 
         <div>
           <h4 style="font-size:14px;font-weight:700;color:#1f2430;margin:0 0 12px 0;padding-bottom:8px;border-bottom:2px solid #e6e9f0">Companies (${(sub.companies || []).length})</h4>
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px">
             ${(sub.companies || []).map(c => `<div style="font-size:13px;color:#1f2430;padding:6px;background:#f8f9fc;border-radius:6px">${c}</div>`).join('') || '<div class="muted">No companies</div>'}
           </div>
         </div>
@@ -195,7 +197,7 @@
       return `
         <form id="editForm">
           <h4 style="font-size:14px;font-weight:700;color:#1f2430;margin:0 0 16px 0;padding-bottom:8px;border-bottom:2px solid #e6e9f0">Industry Classification</h4>
-          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:24px">
+          <div class="grid-2" style="gap:16px;margin-bottom:24px">
             <div class="form-group">
               <label class="form-label">Sector</label>
               <input type="text" class="edit-input" name="sector" value="${sub.sector || ''}">
@@ -215,7 +217,7 @@
           </div>
 
           <h4 style="font-size:14px;font-weight:700;color:#1f2430;margin:0 0 16px 0;padding-bottom:8px;border-bottom:2px solid #e6e9f0">Market Inputs</h4>
-          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:24px">
+          <div class="grid-2" style="gap:16px;margin-bottom:24px">
             <div class="form-group">
               <label class="form-label">CAGR (%)</label>
               <input type="text" class="edit-input" name="cagr" value="${sub.cagr || ''}">

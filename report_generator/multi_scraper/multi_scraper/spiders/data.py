@@ -5345,10 +5345,25 @@ def add_key_market_trends(doc, trends_text):
     for line in lines:
         if ":" in line:
             subhead, explanation = line.split(":", 1)
-            p = doc.add_paragraph(style='List Bullet')
+
+            p = doc.add_paragraph(style='List Paragraph')
+
+            # Force bullet using numbering properties (IMPORTANT)
+            pPr = p._element.get_or_add_pPr()
+            numPr = pPr.get_or_add_numPr()
+
+            numId = OxmlElement('w:numId')
+            numId.set(qn('w:val'), '1')
+
+            ilvl = OxmlElement('w:ilvl')
+            ilvl.set(qn('w:val'), '0')
+
+            numPr.append(ilvl)
+            numPr.append(numId)
             p.paragraph_format.left_indent = Pt(36)
             p.paragraph_format.first_line_indent = Pt(-18)
             p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+
             run1 = p.add_run(subhead.strip().title() + ": ")
             set_poppins_style(run1, size=12, bold=True)
             run2 = p.add_run(explanation.strip())
